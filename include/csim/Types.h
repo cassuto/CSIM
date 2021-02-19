@@ -10,19 +10,20 @@
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU      
  *  Lesser General Public License for more details.                        
  */
- 
-#ifndef CIRCUIT_H_
-#define CIRCUIT_H_
 
-namespace csim {
+#ifndef CSIM_TYPES_H_
+#define CSIM_TYPES_H_
 
-class Circuit {
-public:
-    Circuit();
-    ~Circuit();
+#include <cstdint>
+#include <complex>
 
-};
+namespace csim
+{
 
+    /*
+     * Complex number
+     */
+    typedef std::complex<double> Complex;
 }
 
-#endif // CIRCUIT_H_
+#endif // CSIM_TYPES_H_

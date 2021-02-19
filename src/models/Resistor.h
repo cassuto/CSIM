@@ -9,8 +9,13 @@ namespace csim
     class Resistor : public ModelBase
     {
     public:
-        Resistor(Circuit *circuit);
+        Resistor();
         virtual ~Resistor();
+
+    public:
+        virtual void prepareDC();
+        virtual void prepareAC();
+        virtual void prepareTR();
     };
 
 }

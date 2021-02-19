@@ -10,23 +10,38 @@
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU      
  *  Lesser General Public License for more details.                        
  */
- 
-#ifndef MODELBASE_H_
-#define MODELBASE_H_
 
-namespace csim {
+#ifndef CSIM_MODELBASE_H_
+#define CSIM_MODELBASE_H_
 
-class Circuit;
+#include <vector>
+#include "csim/SubCircuit.h"
+#include "csim/PropertyBag.h"
 
-class ModelBase {
-public:
-    ModelBase(Circuit *circuit);
-    virtual ~ModelBase();
-    
-protected:
-    Circuit *m_circuit;
-};
+namespace csim
+{
+
+    class ModelBase : public SubCircuit
+    {
+    public:
+        ModelBase(int terminals);
+        virtual ~ModelBase();
+
+        inline PropertyBag &property()
+        {
+            return m_props;
+        }
+
+    protected:
+    public:
+        virtual void prepareDC() = 0;
+        virtual void prepareAC() = 0;
+        virtual void prepareTR() = 0;
+
+    private:
+        PropertyBag m_props;
+    };
 
 }
 
-#endif // MODELBASE_H_
+#endif // CSIM_MODELBASE_H_

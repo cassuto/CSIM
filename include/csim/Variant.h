@@ -14,7 +14,7 @@
 #ifndef CSIM_VARIANT_H_
 #define CSIM_VARIANT_H_
 
-#include <cstdint>
+#include "csim/Types.h"
 #include <string>
 
 namespace csim

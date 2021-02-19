@@ -16,7 +16,7 @@
 namespace csim
 {
 
-    ModelBase::ModelBase(Circuit *circuit) : m_circuit(circuit)
+    ModelBase::ModelBase(int terminals) : SubCircuit(terminals)
     {
     }
 

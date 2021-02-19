@@ -26,26 +26,28 @@ namespace csim
         m_type = type;
     }
 
-    Variant::Variant(const Variant &src) {
+    Variant::Variant(const Variant &src)
+    {
         m_type = src.m_type;
-        switch(src.m_type) {
-            case VariantUint8:
-            case VariantUint16:
-            case VariantUint32:
-            case VariantUint64:
-            case VariantInt8:
-            case VariantInt16:
-            case VariantInt32:
-            case VariantInt64:
-            case VariantDouble:
-            case VariantBoolean:
-                m_dat = src.m_dat;
-                break;
-            case VariantString:
-                m_str = src.m_str;
-                break;
-            default:
-                assert(0);
+        switch (src.m_type)
+        {
+        case VariantUint8:
+        case VariantUint16:
+        case VariantUint32:
+        case VariantUint64:
+        case VariantInt8:
+        case VariantInt16:
+        case VariantInt32:
+        case VariantInt64:
+        case VariantDouble:
+        case VariantBoolean:
+            m_dat = src.m_dat;
+            break;
+        case VariantString:
+            m_str = src.m_str;
+            break;
+        default:
+            assert(0);
         }
     }
 

@@ -20,11 +20,22 @@
 namespace csim
 {
 
-    Resistor::Resistor(Circuit *circuit) : ModelBase(circuit)
+    Resistor::Resistor() : ModelBase(2)
     {
+        property().addProperty("R", Variant(Variant::VariantDouble), true);
     }
 
     Resistor::~Resistor()
+    {
+    }
+
+    void Resistor::prepareDC()
+    {
+    }
+    void Resistor::prepareAC()
+    {
+    }
+    void Resistor::prepareTR()
     {
     }
 

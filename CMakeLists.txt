@@ -6,7 +6,7 @@ set(SRCS
 
 	"${CMAKE_CURRENT_SOURCE_DIR}/src/utils/Variant.cc"
 
-	"${CMAKE_CURRENT_SOURCE_DIR}/src/Circuit.cc"
+	"${CMAKE_CURRENT_SOURCE_DIR}/src/SubCircuit.cc"
 
 	"${CMAKE_CURRENT_SOURCE_DIR}/src/main.cc"
 )

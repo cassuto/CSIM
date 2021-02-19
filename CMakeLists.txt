@@ -1,6 +1,8 @@
 cmake_minimum_required(VERSION 3.9)
 project(fastcsim)
 
+option(enable_testcases "Build all of tests." ON)
+
 set(COMMON_WARNINGS					"-Wall -Wno-unused-function")
 
 set(CMAKE_CXX_FLAGS_DEBUG           "-g ${COMMON_WARNINGS}")
@@ -28,3 +30,8 @@ include_directories(
 
 add_subdirectory("${PROJECT_SOURCE_DIR}/src/")
 add_subdirectory("${PROJECT_SOURCE_DIR}/src/models")
+
+if (enable_testcases)
+	enable_testing()
+	add_subdirectory("${PROJECT_SOURCE_DIR}/testcases")
+endif ()

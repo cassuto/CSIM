@@ -11,47 +11,36 @@
  *  Lesser General Public License for more details.                        
  */
 
-#ifndef CSIM_TYPES_H_
-#define CSIM_TYPES_H_
+#ifndef CSIM_MATH_H_
+#define CSIM_MATH_H_
 
-#include <cstdint>
 #include <complex>
-
-namespace csimModel
-{
-
-    /*
-     * Complex class restricted to model SDK
-     */
-    class MComplex
-    {
-    public:
-        MComplex();
-        MComplex(double real);
-        MComplex(double real, double imag);
-
-        double real() const;
-        double imag() const;
-
-        MComplex operator+(const MComplex &rval);
-        MComplex operator+=(const MComplex &rval);
-        MComplex operator-(const MComplex &rval);
-        MComplex operator-=(const MComplex &rval);
-
-        MComplex operator*(double rval);
-        MComplex operator*=(double rval);
-        MComplex operator/(double rval);
-        MComplex operator/=(double rval);
-
-    private:
-        double m_real, m_imag;
-    };
-
-}
+#include "csim/model/Types.h"
 
 namespace csim
 {
-    class Circuit;
+
+    /*
+     * Fast Complex restricted to the core
+     */
+    class Complex : public std::complex<double>
+    {
+    public:
+        Complex() : std::complex<double>(0, 0) {}
+        Complex(const csimModel::MComplex &src) : std::complex<double>(src.real(), src.imag()) {}
+        inline double real() const
+        {
+            return std::real(*this);
+        }
+        inline double imag() const
+        {
+            return std::imag(*this);
+        }
+        inline csimModel::MComplex toMComplex() const
+        {
+            return csimModel::MComplex(real(), imag());
+        }
+    };
 }
 
-#endif // CSIM_TYPES_H_
+#endif // CSIM_MATH_H_

@@ -14,16 +14,20 @@
 #ifndef CSIM_MODELBASE_H_
 #define CSIM_MODELBASE_H_
 
+#include <vector>
 #include "csim/model/Types.h"
 #include "csim/model/PropertyBag.h"
 
 namespace csimModel
 {
 
+#define MODELBASE_CONSTRUCTOR_DEF csim::Circuit *circuit_
+#define MODELBASE_CONSTRUCTOR_VAR circuit_
+
     class ModelBase
     {
     public:
-        ModelBase();
+        ModelBase(MODELBASE_CONSTRUCTOR_DEF);
         virtual ~ModelBase();
 
     public:
@@ -35,39 +39,73 @@ namespace csimModel
     public:
         PropertyBag &property();
 
+        int getNumTerml() const;
+        int getNumNode() const;
+        int getNumVS() const;
+        void setNode(int terml, int node);
+        int getNode(int terml) const;
+        void setVS(int idx, int branch);
+        int getVS(int idx) const;
+
         /* MNA matrices */
-        const MComplex &getY(int row, int col) const;
-        const MComplex &getB(int row, int col) const;
-        const MComplex &getC(int row, int col) const;
-        const MComplex &getD(int row, int col) const;
-        const MComplex &getI(int row) const;
-        const MComplex &getE(int row) const;
-        const MComplex &getU(int row) const;
-        const MComplex &getJ(int row) const;
+        MComplex getY(int row, int col) const;
+        MComplex getB(int row, int col) const;
+        MComplex getC(int row, int col) const;
+        MComplex getD(int row, int col) const;
+        MComplex getI(int row) const;
+        MComplex getE(int row) const;
+        MComplex getU(int row) const;
+        MComplex getJ(int row) const;
 
     protected:
-        void createMatrix(int numNodes, int numVS);
+        void resizeModel(int numTermls, int numNodes, int numVS);
 
         /* MNA matrices */
         void setY(int row, int col, const MComplex &val);
+        void addY(int row, int col, const MComplex &delta);
         void setB(int row, int col, const MComplex &val);
         void setC(int row, int col, const MComplex &val);
         void setD(int row, int col, const MComplex &val);
         void setI(int row, const MComplex &val);
+        void addI(int row, const MComplex &delta);
         void setE(int row, const MComplex &val);
         void setU(int row, const MComplex &val);
+        void addU(int row, const MComplex &delta);
         void setJ(int row, const MComplex &val);
 
-        /* Basic Elements */
-        void setVS(int k, int nodeP, int nodeN, double volt);
-
     private:
+        csim::Circuit *m_circuit;
         PropertyBag m_props;
         int m_numNodes;
-        int m_numVS;
-        MComplex *m_Y, *m_B, *m_C, *m_D, *m_I, *m_E, *m_U, *m_J;
+        std::vector<int> m_termls;
+        std::vector<int> m_VS;
     };
 
+    typedef ModelBase *(*pfnCreateModel_t)(MODELBASE_CONSTRUCTOR_DEF);
+    typedef void (*pfnDeleteModel_t)(ModelBase *model);
+}
+
+extern "C"
+{
+    /*
+     * Entry of Model Library.
+     * Called by Model Loader
+     */
+    extern csimModel::ModelBase *createModel(MODELBASE_CONSTRUCTOR_DEF);
+
+    /*
+     * Exit of Model Library.
+     * Called by Model Loader
+     */
+    extern void deleteModel(csimModel::ModelBase *model);
+
+    struct ModelDescriptor
+    {
+        const char *id;
+        const char *description;
+    };
+
+    extern const ModelDescriptor *descriptor;
 }
 
 #endif // CSIM_MODELBASE_H_

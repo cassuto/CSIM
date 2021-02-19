@@ -6,4 +6,4 @@ add_library(
     "${CMAKE_CURRENT_SOURCE_DIR}/Resistor.cc"
 )
 
-target_link_libraries(csimModelRegister csimModelBase)
+target_link_libraries(csimModelRegister csim)

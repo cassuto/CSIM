@@ -29,12 +29,54 @@ namespace csimModel
     {
     }
 
-    double MComplex::real()
+    double MComplex::real() const
     {
         return m_real;
     }
-    double MComplex::imag()
+    double MComplex::imag() const
     {
         return m_imag;
+    }
+
+    MComplex MComplex::operator+(const MComplex &rval)
+    {
+        return MComplex(m_real + rval.m_real, m_imag + rval.m_imag);
+    }
+    MComplex MComplex::operator+=(const MComplex &rval)
+    {
+        m_real += rval.m_real;
+        m_imag += rval.m_imag;
+        return (*this);
+    }
+    MComplex MComplex::operator-(const MComplex &rval)
+    {
+        return MComplex(m_real - rval.m_real, m_imag - rval.m_imag);
+    }
+    MComplex MComplex::operator-=(const MComplex &rval)
+    {
+        m_real -= rval.m_real;
+        m_imag -= rval.m_imag;
+        return (*this);
+    }
+
+    MComplex MComplex::operator*(double rval)
+    {
+        return MComplex(m_real * rval, m_imag * rval);
+    }
+    MComplex MComplex::operator*=(double rval)
+    {
+        m_real *= rval;
+        m_imag *= rval;
+        return (*this);
+    }
+    MComplex MComplex::operator/(double rval)
+    {
+        return MComplex(m_real / rval, m_imag / rval);
+    }
+    MComplex MComplex::operator/=(double rval)
+    {
+        m_real /= rval;
+        m_imag /= rval;
+        return (*this);
     }
 }

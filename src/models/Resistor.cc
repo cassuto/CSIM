@@ -20,7 +20,9 @@
 namespace csimModel
 {
 
-    Resistor::Resistor() : m_G(0.0)
+    Resistor::Resistor(MODELBASE_CONSTRUCTOR_DEF)
+        : ModelBase(MODELBASE_CONSTRUCTOR_VAR),
+          m_G(0.0)
     {
         property().addProperty("R", Variant(Variant::VariantDouble).setDouble(1.0), true);
     }
@@ -34,11 +36,11 @@ namespace csimModel
         double R = property().getProperty("R").getDouble();
         if (R == 0.0)
         {
-            createMatrix(2, 1);
+            resizeModel(2, 2, 1);
         }
         else
         {
-            createMatrix(2, 0);
+            resizeModel(2, 2, 0);
             m_G = 1.0 / R;
         }
     }
@@ -49,12 +51,16 @@ namespace csimModel
 
         if (R == 0.0)
         {
-            setVS(0, 0, 1, 0.0);
+            int k = getVS(0);
+            setB(getNode(0), k, +1.0);
+            setB(getNode(1), k, -1.0);
+            setC(k, getNode(0), 1.0), setC(k, getNode(1), -1.0);
+            setE(k, 0.0);
         }
         else
         {
-            setY(0, 0, +m_G), setY(0, 1, -m_G);
-            setY(1, 0, -m_G), setY(1, 1, +m_G);
+            addY(getNode(0), getNode(0), +m_G), addY(getNode(0), getNode(1), -m_G);
+            addY(getNode(1), getNode(0), -m_G), addY(getNode(1), getNode(1), +m_G);
         }
     }
     void Resistor::prepareAC()
@@ -71,3 +77,21 @@ namespace csimModel
     }
 
 }
+
+extern "C" csimModel::ModelBase *createModel(MODELBASE_CONSTRUCTOR_DEF)
+{
+    return new csimModel::Resistor(MODELBASE_CONSTRUCTOR_VAR);
+}
+
+extern "C" void deleteModel(csimModel::ModelBase *model)
+{
+    delete model;
+}
+
+static ModelDescriptor _descriptor = {
+    /* id */
+    "resistor",
+    /* description */
+    "Generic ideal resistor"};
+
+const ModelDescriptor *descriptor = &_descriptor;

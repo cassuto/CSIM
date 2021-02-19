@@ -10,10 +10,21 @@ set(CMAKE_CXX_FLAGS_PROFILE         "-O2 -pg ${COMMON_WARNINGS}")
 set(CMAKE_MODULE_LINKER_FLAGS_PROFILE "-pg")
 set(CMAKE_SHARED_LINKER_FLAGS_PROFILE "-pg")
 
+#
+# Check platform
+#
+if (WIN32)
+	add_definitions(-DCSIM_IN_WIN32)
+elseif (UNIX)
+	add_definitions(-DCSIM_IN_UNIX)
+else ()
+	message(FATAL_ERROR "Unsupported platform ${CMAKE_SYSTEM}")
+endif ()
+
 include_directories(
 	"${PROJECT_SOURCE_DIR}/include"
 	"${PROJECT_SOURCE_DIR}/src"
 )
 
-add_subdirectory("${PROJECT_SOURCE_DIR}/src/models/base")
+add_subdirectory("${PROJECT_SOURCE_DIR}/src/")
 add_subdirectory("${PROJECT_SOURCE_DIR}/src/models")

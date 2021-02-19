@@ -12,77 +12,28 @@
  */
 
 #include <cassert>
+#include "csim/internal/Circuit.h"
 #include "csim/model/ModelBase.h"
 
 namespace csimModel
 {
 
-    ModelBase::ModelBase()
-        : m_numNodes(0),
-          m_numVS(0),
-          m_Y(0l), m_B(0l), m_C(0l), m_D(0l), m_I(0l), m_E(0l), m_U(0l), m_J(0l)
+    ModelBase::ModelBase(MODELBASE_CONSTRUCTOR_DEF)
+        : m_circuit(MODELBASE_CONSTRUCTOR_VAR),
+          m_numNodes(0)
     {
     }
 
     ModelBase::~ModelBase()
     {
-        delete[] m_Y;
-        delete[] m_U;
-        delete[] m_I;
-        delete[] m_B;
-        delete[] m_C;
-        delete[] m_D;
-        delete[] m_J;
-        delete[] m_E;
     }
 
-    /**
-     * @brief Create matrices
-     * @param numNodes The number of nodes.
-     * @param numVS The number of voltage sources, 0 if none.
-     */
-    void ModelBase::createMatrix(int numNodes, int numVS)
+    void ModelBase::resizeModel(int numTermls, int numNodes, int numVS)
     {
+        assert(numTermls && numNodes >= numTermls);
+        m_termls.resize(numTermls);
+        m_VS.resize(numVS);
         m_numNodes = numNodes;
-        m_numVS = numVS;
-
-        if (m_numNodes)
-        {
-            delete[] m_Y;
-            delete[] m_U;
-            delete[] m_I;
-            m_Y = new MComplex[m_numNodes * m_numNodes];
-            m_U = new MComplex[m_numNodes];
-            m_I = new MComplex[m_numNodes];
-        }
-        if (m_numVS)
-        {
-            delete[] m_B;
-            delete[] m_C;
-            delete[] m_D;
-            delete[] m_J;
-            delete[] m_E;
-            m_B = new MComplex[m_numNodes * m_numVS];
-            m_C = new MComplex[m_numVS * m_numNodes];
-            m_D = new MComplex[m_numVS * m_numVS];
-            m_J = new MComplex[m_numVS];
-            m_E = new MComplex[m_numVS];
-        }
-    }
-
-    /**
-     * @brief Set an independent voltage source.
-     * @param k Index of SubCircuit branch
-     * @param nodeP Node index of positive pole
-     * @param nodeN Node index of negative pole
-     * @param volt Voltage value.
-     */
-    void ModelBase::setVS(int k, int nodeP, int nodeN, double volt)
-    {
-        setB(nodeP, k, 1.0);
-        setB(nodeN, k, -1.0);
-        setC(k, nodeP, 1.0), setC(k, nodeN, -1.0);
-        setE(k, volt);
     }
 
     PropertyBag &ModelBase::property()
@@ -90,88 +41,130 @@ namespace csimModel
         return m_props;
     }
 
+    int ModelBase::getNumTerml() const
+    {
+        return m_termls.size();
+    }
+    int ModelBase::getNumNode() const
+    {
+        return m_numNodes;
+    }
+    int ModelBase::getNumVS() const
+    {
+        return m_VS.size();
+    }
+
+    void ModelBase::setNode(int terml, int node)
+    {
+        m_termls[terml] = node;
+    }
+    int ModelBase::getNode(int terml) const
+    {
+        return m_termls[terml];
+    }
+    void ModelBase::setVS(int idx, int branch)
+    {
+        m_VS[idx] = branch;
+    }
+    int ModelBase::getVS(int idx) const
+    {
+        return m_VS[idx];
+    }
+
     /* MNA matrices */
-    const MComplex &ModelBase::getY(int row, int col) const
+    MComplex ModelBase::getY(int row, int col) const
     {
-        assert(row < m_numNodes && col < m_numNodes);
-        return m_Y[row * m_numNodes + col];
+        assert(row < m_circuit->getNumNodes() && col < m_circuit->getNumNodes());
+        return m_circuit->getA(row, col).toMComplex();
     }
-    const MComplex &ModelBase::getB(int row, int col) const
+    MComplex ModelBase::getB(int row, int col) const
     {
-        assert(row < m_numNodes && col < m_numVS);
-        return m_B[row * m_numVS + col];
+        assert(row < m_circuit->getNumNodes() && col < m_circuit->getNumVS());
+        return m_circuit->getA(row, m_circuit->getNumNodes() + col).toMComplex();
     }
-    const MComplex &ModelBase::getC(int row, int col) const
+    MComplex ModelBase::getC(int row, int col) const
     {
-        assert(row < m_numVS && col < m_numNodes);
-        return m_C[row * m_numNodes + col];
+        assert(row < m_circuit->getNumVS() && col < m_circuit->getNumNodes());
+        return m_circuit->getA(m_circuit->getNumNodes() + row, col).toMComplex();
     }
-    const MComplex &ModelBase::getD(int row, int col) const
+    MComplex ModelBase::getD(int row, int col) const
     {
-        assert(row < m_numVS && col < m_numVS);
-        return m_D[row * m_numVS + col];
+        assert(row < m_circuit->getNumVS() && col < m_circuit->getNumVS());
+        return m_circuit->getA(m_circuit->getNumNodes() + row, m_circuit->getNumNodes() + col).toMComplex();
     }
-    const MComplex &ModelBase::getI(int row) const
+    MComplex ModelBase::getI(int row) const
     {
-        assert(row < m_numNodes);
-        return m_I[row];
+        assert(row < m_circuit->getNumNodes());
+        return m_circuit->getZ(row).toMComplex();
     }
-    const MComplex &ModelBase::getE(int row) const
+    MComplex ModelBase::getE(int row) const
     {
-        assert(row < m_numVS);
-        return m_E[row];
+        assert(row < m_circuit->getNumVS());
+        return m_circuit->getZ(m_circuit->getNumNodes() + row).toMComplex();
     }
-    const MComplex &ModelBase::getU(int row) const
+    MComplex ModelBase::getU(int row) const
     {
-        assert(row < m_numNodes);
-        return m_U[row];
+        assert(row < m_circuit->getNumNodes());
+        return m_circuit->getX(row).toMComplex();
     }
-    const MComplex &ModelBase::getJ(int row) const
+    MComplex ModelBase::getJ(int row) const
     {
-        assert(row < m_numVS);
-        return m_J[row];
+        assert(row < m_circuit->getNumVS());
+        return m_circuit->getX(m_circuit->getNumNodes() + row).toMComplex();
     }
 
     /* MNA matrices */
     void ModelBase::setY(int row, int col, const MComplex &val)
     {
-        assert(row < m_numNodes && col < m_numNodes);
-        m_Y[row * m_numNodes + col] = val;
+        assert(row < m_circuit->getNumNodes() && col < m_circuit->getNumNodes());
+        m_circuit->setA(row, col, val);
+    }
+    void ModelBase::addY(int row, int col, const MComplex &delta)
+    {
+        setY(row, col, getY(row, col) + delta);
     }
     void ModelBase::setB(int row, int col, const MComplex &val)
     {
-        assert(row < m_numNodes && col < m_numVS);
-        m_B[row * m_numVS + col] = val;
+        assert(row < m_circuit->getNumNodes() && col < m_circuit->getNumVS());
+        m_circuit->setA(row, m_circuit->getNumNodes() + col, val);
     }
     void ModelBase::setC(int row, int col, const MComplex &val)
     {
-        assert(row < m_numVS && col < m_numNodes);
-        m_C[row * m_numNodes + col] = val;
+        assert(row < m_circuit->getNumVS() && col < m_circuit->getNumNodes());
+        m_circuit->setA(m_circuit->getNumNodes() + row, col, val);
     }
     void ModelBase::setD(int row, int col, const MComplex &val)
     {
-        assert(row < m_numVS && col < m_numVS);
-        m_D[row * m_numVS + col] = val;
+        assert(row < m_circuit->getNumVS() && col < m_circuit->getNumVS());
+        m_circuit->setA(m_circuit->getNumNodes() + row, m_circuit->getNumNodes() + col, val);
     }
     void ModelBase::setI(int row, const MComplex &val)
     {
-        assert(row < m_numNodes);
-        m_I[row] = val;
+        assert(row < m_circuit->getNumNodes());
+        m_circuit->setZ(row, val);
+    }
+    void ModelBase::addI(int row, const MComplex &delta)
+    {
+        setI(row, getI(row) + delta);
     }
     void ModelBase::setE(int row, const MComplex &val)
     {
-        assert(row < m_numVS);
-        m_E[row] = val;
+        assert(row < m_circuit->getNumVS());
+        m_circuit->setZ(m_circuit->getNumNodes() + row, val);
     }
     void ModelBase::setU(int row, const MComplex &val)
     {
-        assert(row < m_numNodes);
-        m_U[row] = val;
+        assert(row < m_circuit->getNumNodes());
+        m_circuit->setX(row, val);
+    }
+    void ModelBase::addU(int row, const MComplex &delta)
+    {
+        setU(row, getU(row) + delta);
     }
     void ModelBase::setJ(int row, const MComplex &val)
     {
-        assert(row < m_numVS);
-        m_J[row] = val;
+        assert(row < m_circuit->getNumVS());
+        m_circuit->setX(m_circuit->getNumNodes() + row, val);
     }
 
 }

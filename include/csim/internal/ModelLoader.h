@@ -11,47 +11,44 @@
  *  Lesser General Public License for more details.                        
  */
 
-#ifndef CSIM_TYPES_H_
-#define CSIM_TYPES_H_
+#ifndef CSIM_MODELLOADER_H_
+#define CSIM_MODELLOADER_H_
 
-#include <cstdint>
-#include <complex>
+#include "csim/model/ModelBase.h"
 
 namespace csimModel
 {
-
-    /*
-     * Complex class restricted to model SDK
-     */
-    class MComplex
-    {
-    public:
-        MComplex();
-        MComplex(double real);
-        MComplex(double real, double imag);
-
-        double real() const;
-        double imag() const;
-
-        MComplex operator+(const MComplex &rval);
-        MComplex operator+=(const MComplex &rval);
-        MComplex operator-(const MComplex &rval);
-        MComplex operator-=(const MComplex &rval);
-
-        MComplex operator*(double rval);
-        MComplex operator*=(double rval);
-        MComplex operator/(double rval);
-        MComplex operator/=(double rval);
-
-    private:
-        double m_real, m_imag;
-    };
-
+    class ModelBase;
 }
 
 namespace csim
 {
     class Circuit;
+
+    class ModelEntry
+    {
+    public:
+        ModelEntry(csimModel::pfnCreateModel_t pfnCreate, csimModel::pfnDeleteModel_t pfnDelete, const ModelDescriptor *descriptor)
+            : m_pfnCreate(pfnCreate),
+              m_pfnDelete(pfnDelete),
+              m_descriptor(descriptor)
+        {
+        }
+
+        csimModel::ModelBase *createInstance(MODELBASE_CONSTRUCTOR_DEF);
+
+    private:
+        csimModel::pfnCreateModel_t m_pfnCreate;
+        csimModel::pfnDeleteModel_t m_pfnDelete;
+        const ModelDescriptor *m_descriptor;
+    };
+
+    class ModelLoader
+    {
+    public:
+        static ModelEntry *load(const char *filename);
+    };
+
 }
 
-#endif // CSIM_TYPES_H_
+#endif // CSIM_MODELLOADER_H_

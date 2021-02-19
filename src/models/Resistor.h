@@ -9,7 +9,7 @@ namespace csimModel
     class Resistor : public ModelBase
     {
     public:
-        Resistor();
+        Resistor(MODELBASE_CONSTRUCTOR_DEF);
         virtual ~Resistor();
 
     public:

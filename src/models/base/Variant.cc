@@ -16,10 +16,12 @@
  */
 
 #include <cassert>
-#include "csim/Variant.h"
+#include "csim/model/Variant.h"
 
-namespace csim
+namespace csimModel
 {
+
+    Variant::Variant() : m_type(VariantUnknown) {}
 
     Variant::Variant(VariantType type)
     {
@@ -49,6 +51,11 @@ namespace csim
         default:
             assert(0);
         }
+    }
+
+    Variant::VariantType Variant::getType() const
+    {
+        return m_type;
     }
 
     /*

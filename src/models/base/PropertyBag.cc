@@ -16,9 +16,9 @@
  */
 
 #include <cassert>
-#include "csim/PropertyBag.h"
+#include "csim/model/PropertyBag.h"
 
-namespace csim
+namespace csimModel
 {
 
     void PropertyBag::addProperty(const char *entry, const Variant &def, bool required)

@@ -14,10 +14,10 @@
 #ifndef CSIM_VARIANT_H_
 #define CSIM_VARIANT_H_
 
-#include "csim/Types.h"
+#include "csim/model/Types.h"
 #include <string>
 
-namespace csim
+namespace csimModel
 {
 
     class Variant
@@ -25,7 +25,8 @@ namespace csim
     public:
         enum VariantType
         {
-            VariantUint8 = 0,
+            VariantUnknown = 0,
+            VariantUint8,
             VariantUint16,
             VariantUint32,
             VariantUint64,
@@ -38,13 +39,11 @@ namespace csim
             VariantString,
         };
 
+        Variant();
         explicit Variant(VariantType type);
         explicit Variant(const Variant &src);
 
-        inline VariantType getType() const
-        {
-            return m_type;
-        }
+        VariantType getType() const;
 
         Variant &setU8(uint8_t u8);
         Variant &setU16(uint16_t u16);

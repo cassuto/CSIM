@@ -17,13 +17,26 @@
 #include <cstdint>
 #include <complex>
 
-namespace csim
+namespace csimModel
 {
 
     /*
-     * Complex number
+     * Complex class restricted to model SDK
      */
-    typedef std::complex<double> Complex;
+    class MComplex
+    {
+    public:
+        MComplex();
+        MComplex(double real);
+        MComplex(double real, double imag);
+
+        double real();
+        double imag();
+
+    private:
+        double m_real, m_imag;
+    };
+
 }
 
 #endif // CSIM_TYPES_H_

@@ -1,9 +1,9 @@
 #ifndef RESISTOR_H_
 #define RESISTOR_H_
 
-#include "csim/ModelBase.h"
+#include "csim/model/ModelBase.h"
 
-namespace csim
+namespace csimModel
 {
 
     class Resistor : public ModelBase
@@ -13,9 +13,14 @@ namespace csim
         virtual ~Resistor();
 
     public:
+        virtual void configure();
         virtual void prepareDC();
         virtual void prepareAC();
         virtual void prepareTR();
+        virtual void iterateStep();
+
+    private:
+        double m_G;
     };
 
 }

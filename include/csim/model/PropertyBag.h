@@ -15,9 +15,10 @@
 #define CSIM_PROPERTYBAG_H_
 
 #include <map>
-#include "csim/Variant.h"
+#include <string>
+#include "csim/model/Variant.h"
 
-namespace csim
+namespace csimModel
 {
 
     class PropertyBag

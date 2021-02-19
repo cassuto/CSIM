@@ -17,25 +17,56 @@
 
 #include "Resistor.h"
 
-namespace csim
+namespace csimModel
 {
 
-    Resistor::Resistor() : ModelBase(2)
+    Resistor::Resistor() : m_G(0.0)
     {
-        property().addProperty("R", Variant(Variant::VariantDouble), true);
+        property().addProperty("R", Variant(Variant::VariantDouble).setDouble(1.0), true);
     }
 
     Resistor::~Resistor()
     {
     }
 
+    void Resistor::configure()
+    {
+        double R = property().getProperty("R").getDouble();
+        if (R == 0.0)
+        {
+            createMatrix(2, 1);
+        }
+        else
+        {
+            createMatrix(2, 0);
+            m_G = 1.0 / R;
+        }
+    }
+
     void Resistor::prepareDC()
     {
+        double R = property().getProperty("R").getDouble();
+
+        if (R == 0.0)
+        {
+            setVS(0, 0, 1, 0.0);
+        }
+        else
+        {
+            setY(0, 0, +m_G), setY(0, 1, -m_G);
+            setY(1, 0, -m_G), setY(1, 1, +m_G);
+        }
     }
     void Resistor::prepareAC()
     {
+        prepareDC();
     }
     void Resistor::prepareTR()
+    {
+        prepareDC();
+    }
+
+    void Resistor::iterateStep()
     {
     }
 

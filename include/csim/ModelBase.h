@@ -10,9 +10,23 @@
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU      
  *  Lesser General Public License for more details.                        
  */
+ 
+#ifndef MODELBASE_H_
+#define MODELBASE_H_
 
-int main(int argc, char *argv[])
-{
+namespace csim {
 
-    return 0;
+class Circuit;
+
+class ModelBase {
+public:
+    ModelBase(Circuit *circuit);
+    virtual ~ModelBase();
+    
+protected:
+    Circuit *m_circuit;
+};
+
 }
+
+#endif // MODELBASE_H_

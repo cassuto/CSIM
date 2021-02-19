@@ -2,6 +2,12 @@ cmake_minimum_required(VERSION 3.9)
 project(fastcsim)
 
 set(SRCS
+	"${CMAKE_CURRENT_SOURCE_DIR}/src/models/ModelBase.cc"
+
+	"${CMAKE_CURRENT_SOURCE_DIR}/src/utils/Variant.cc"
+
+	"${CMAKE_CURRENT_SOURCE_DIR}/src/Circuit.cc"
+
 	"${CMAKE_CURRENT_SOURCE_DIR}/src/main.cc"
 )
 

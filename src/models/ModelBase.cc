@@ -11,8 +11,17 @@
  *  Lesser General Public License for more details.                        
  */
 
-int main(int argc, char *argv[])
+#include "csim/ModelBase.h"
+
+namespace csim
 {
 
-    return 0;
+    ModelBase::ModelBase(Circuit *circuit) : m_circuit(circuit)
+    {
+    }
+
+    ModelBase::~ModelBase()
+    {
+    }
+
 }

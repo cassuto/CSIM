@@ -11,8 +11,8 @@
  *  Lesser General Public License for more details.                        
  */
 
-#ifndef MODELBASE_H_
-#define MODELBASE_H_
+#ifndef CSIM_VARIANT_H_
+#define CSIM_VARIANT_H_
 
 #include <cstdint>
 #include <string>
@@ -33,39 +33,43 @@ namespace csim
             VariantInt16,
             VariantInt32,
             VariantInt64,
-            VariantFloat,
             VariantDouble,
             VariantBoolean,
             VariantString,
         };
 
         explicit Variant(VariantType type);
-        void setU8(uint8_t u8);
-        void setU16(uint16_t u16);
-        void setU32(uint32_t u32);
-        void setU64(uint64_t u64);
-        void setI8(int8_t i8);
-        void setI16(int16_t i16);
-        void setI32(int32_t i32);
-        void setI64(int64_t i64);
-        void setFloat(float f);
-        void setDouble(double d);
-        void setBoolean(bool b);
-        void setString(const char *str);
+        explicit Variant(const Variant &src);
 
-        uint8_t getU8();
-        uint16_t getU16();
-        uint32_t getU32();
-        uint64_t getU64();
-        int8_t getI8();
-        int16_t getI16();
-        int32_t getI32();
-        int64_t getI64();
-        float getFloat();
-        double getDouble();
-        bool getBoolean();
-        const char *getString();
-        
+        inline VariantType getType() const
+        {
+            return m_type;
+        }
+
+        Variant &setU8(uint8_t u8);
+        Variant &setU16(uint16_t u16);
+        Variant &setU32(uint32_t u32);
+        Variant &setU64(uint64_t u64);
+        Variant &setI8(int8_t i8);
+        Variant &setI16(int16_t i16);
+        Variant &setI32(int32_t i32);
+        Variant &setI64(int64_t i64);
+        Variant &setDouble(double d);
+        Variant &setBoolean(bool b);
+        Variant &setString(const char *str);
+
+        uint8_t getU8() const;
+        uint16_t getU16() const;
+        uint32_t getU32() const;
+        uint64_t getU64() const;
+        int8_t getI8() const;
+        int16_t getI16() const;
+        int32_t getI32() const;
+        int64_t getI64() const;
+        double getDouble() const;
+        bool getBoolean() const;
+        const char *getString() const;
+
     private:
         VariantType m_type;
         union
@@ -87,4 +91,4 @@ namespace csim
 
 }
 
-#endif // MODELBASE_H_
+#endif // CSIM_VARIANT_H_

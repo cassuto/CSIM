@@ -25,7 +25,7 @@ namespace csim
         : m_numNodes(0),
           m_numVS(0),
           m_matrixRows(0),
-          m_A(0l), m_x(0l), m_z(0l)
+          m_A(nullptr), m_x(nullptr), m_z(nullptr)
     {
     }
 

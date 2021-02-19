@@ -37,40 +37,76 @@ namespace csim
      */
     ModelEntry *ModelLoader::load(const char *filename)
     {
-        csimModel::pfnCreateModel_t pfnCreate = 0l;
-        csimModel::pfnDeleteModel_t pfnDelete = 0l;
-        const ModelDescriptor *descriptor = 0l;
+        csimModel::pfnCreateModel_t pfnCreate = nullptr;
+        csimModel::pfnDeleteModel_t pfnDelete = nullptr;
+        const ModelDescriptor *descriptor = nullptr;
 
 #if defined(CSIM_IN_WIN32)
+        HINSTANCE handle = LoadLibraryA(filename);
+        if (!handle)
+        {
+            return nullptr;
+        }
 
-#elif defined(IN_UNIX)
+        pfnCreate = (csimModel::pfnCreateModel_t)GetProcAddress(handle, "createModel");
+        if (!pfnCreate)
+        {
+            goto error_out;
+        }
+
+        pfnDelete = (csimModel::pfnDeleteModel_t)GetProcAddress(handle, "deleteModel");
+        if (!pfnDelete)
+        {
+            goto error_out;
+        }
+
+        descriptor = (const ModelDescriptor *)GetProcAddress(handle, "descriptor");
+        if (!descriptor)
+        {
+            goto error_out;
+        }
+
+        goto success;
+    error_out:
+        FreeLibrary(handle);
+        return nullptr;
+    success:
+
+#elif defined(CSIM_IN_UNIX)
         void *handle = dlopen(filename, RTLD_LAZY);
         if (!handle)
         {
             fprintf(stderr, "ERROR: ModelLoader::load() %s \n", dlerror());
-            return 0l;
+            return nullptr;
         }
+        char *error;
 
         pfnCreate = (csimModel::pfnCreateModel_t)dlsym(handle, "createModel");
         if (!pfnCreate || ((error = dlerror()) != NULL))
         {
             fprintf(stderr, "ERROR: pfnCreate() %s \n", error);
-            return 0l;
+            goto error_out;
         }
 
         pfnDelete = (csimModel::pfnDeleteModel_t)dlsym(handle, "deleteModel");
         if (!pfnDelete || ((error = dlerror()) != NULL))
         {
             fprintf(stderr, "ERROR: pfnDelete() %s \n", error);
-            return 0l;
+            goto error_out;
         }
 
         descriptor = (const ModelDescriptor *)dlsym(handle, "descriptor");
         if (!descriptor || ((error = dlerror()) != NULL))
         {
             fprintf(stderr, "ERROR: descriptor %s \n", error);
-            return 0l;
+            goto error_out;
         }
+
+        goto success;
+    error_out:
+        dlclose(handle);
+        return nullptr;
+    success:
 #endif
 
         ModelEntry *model = new ModelEntry(pfnCreate, pfnDelete, descriptor);

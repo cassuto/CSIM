@@ -37,6 +37,11 @@ namespace csim
 
         csimModel::ModelBase *createInstance(MODELBASE_CONSTRUCTOR_DEF);
 
+        inline const ModelDescriptor *descriptor() const
+        {
+            return m_descriptor;
+        }
+
     private:
         csimModel::pfnCreateModel_t m_pfnCreate;
         csimModel::pfnDeleteModel_t m_pfnDelete;

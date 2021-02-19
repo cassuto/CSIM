@@ -105,7 +105,7 @@ extern "C"
         const char *description;
     };
 
-    extern const ModelDescriptor *descriptor;
+    extern const ModelDescriptor descriptor;
 }
 
 #endif // CSIM_MODELBASE_H_

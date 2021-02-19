@@ -88,10 +88,8 @@ extern "C" void deleteModel(csimModel::ModelBase *model)
     delete model;
 }
 
-static ModelDescriptor _descriptor = {
+const ModelDescriptor descriptor = {
     /* id */
     "resistor",
     /* description */
     "Generic ideal resistor"};
-
-const ModelDescriptor *descriptor = &_descriptor;

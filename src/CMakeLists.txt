@@ -7,6 +7,8 @@ set(SRCS
     "${CMAKE_CURRENT_SOURCE_DIR}/models/base/PropertyBag.cc"
     "${CMAKE_CURRENT_SOURCE_DIR}/models/base/MComplex.cc"
     "${CMAKE_CURRENT_SOURCE_DIR}/models/loader/Loader.cc"
+    "${CMAKE_CURRENT_SOURCE_DIR}/solver/LinearSolver.cc"
+    "${CMAKE_CURRENT_SOURCE_DIR}/solver/LinearSolverGauss.cc"
     "${CMAKE_CURRENT_SOURCE_DIR}/Circuit.cc"
 )
 

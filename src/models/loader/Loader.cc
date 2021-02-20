@@ -118,4 +118,9 @@ namespace csim
         return m_pfnCreate(MODELBASE_CONSTRUCTOR_VAR);
     }
 
+    void ModelEntry::deleteInstance(csimModel::ModelBase *model)
+    {
+        m_pfnDelete(model);
+    }
+
 }

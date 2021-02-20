@@ -1,5 +1,6 @@
 #include "gtest/gtest.h"
 #include <iostream>
+#include <cstring>
 #include "csim/internal/Circuit.h"
 #include "csim/internal/ModelLoader.h"
 
@@ -9,9 +10,9 @@ namespace csim
     {
         ModelEntry *entry = ModelLoader::load("cygcsimModelResistor.dll");
         ASSERT_NE(nullptr, entry);
-        std::cout<<"ID = "<<entry->descriptor()->id<<std::endl;
-        std::cout<<"DESC = "<<entry->descriptor()->description<<std::endl;
-
+        EXPECT_GT(strlen(entry->descriptor()->id), 0);
+        EXPECT_GT(strlen(entry->descriptor()->description), 0);
+        
         Circuit *circuit = new Circuit();
         csimModel::ModelBase *model = entry->createInstance(circuit);
         ASSERT_NE(nullptr, model);
@@ -20,12 +21,17 @@ namespace csim
         model->configure();
 
         ASSERT_EQ(2, model->getNumTerml());
+
+        delete circuit;
+        entry->deleteInstance(model);
+        delete entry;
     }
 
     TEST(loadNonModel, tstLoader)
     {
         ModelEntry *entry = ModelLoader::load("cygcsim.dll");
         ASSERT_EQ(nullptr, entry);
+        delete entry;
     }
 
 } // namespace

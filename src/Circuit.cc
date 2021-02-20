@@ -16,6 +16,7 @@
  */
 
 #include <cassert>
+#include "csim/internal/LinearSolver.h"
 #include "csim/internal/Circuit.h"
 
 namespace csim
@@ -25,7 +26,8 @@ namespace csim
         : m_numNodes(0),
           m_numVS(0),
           m_matrixRows(0),
-          m_A(nullptr), m_x(nullptr), m_z(nullptr)
+          m_A(nullptr), m_x(nullptr), m_z(nullptr),
+          m_linearSolver(LinearSolver::createInstance("gauss"))
     {
     }
 
@@ -34,6 +36,7 @@ namespace csim
         delete[] m_A;
         delete[] m_x;
         delete[] m_z;
+        delete m_linearSolver;
     }
 
     /**
@@ -48,7 +51,7 @@ namespace csim
         m_numVS = numVS;
 
         m_matrixRows = (m_numNodes + m_numVS);
-        
+
         delete[] m_A;
         delete[] m_x;
         delete[] m_z;
@@ -88,6 +91,15 @@ namespace csim
     {
         assert(row < m_matrixRows);
         m_z[row] = val;
+    }
+
+    int Circuit::solveMNA()
+    {
+        int ret = 0;
+
+        ret = m_linearSolver->solve(m_A, m_matrixRows, m_x, m_z);
+        
+        return ret;
     }
 
 }

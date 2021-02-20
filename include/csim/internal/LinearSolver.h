@@ -11,36 +11,38 @@
  *  Lesser General Public License for more details.                        
  */
 
-#ifndef CSIM_MATH_H_
-#define CSIM_MATH_H_
+#ifndef CSIM_LINEARSOLVER_H_
+#define CSIM_LINEARSOLVER_H_
 
-#include <complex>
-#include "csim/model/Types.h"
+#include "csim/internal/Complex.h"
 
 namespace csim
 {
-
-    /*
-     * Fast Complex restricted to the core
-     */
-    class Complex : public std::complex<double>
+    class LinearSolver
     {
     public:
-        Complex() : std::complex<double>(0, 0) {}
-        Complex(const csimModel::MComplex &src) : std::complex<double>(src.real(), src.imag()) {}
-        inline double real() const
-        {
-            return std::real(*this);
-        }
-        inline double imag() const
-        {
-            return std::imag(*this);
-        }
-        inline csimModel::MComplex toMComplex() const
-        {
-            return csimModel::MComplex(real(), imag());
-        }
+        LinearSolver() {}
+        virtual ~LinearSolver() {}
+
+        virtual int solve(Complex *A, int n, Complex *x, Complex *B) = 0;
+
+    public:
+        static LinearSolver *createInstance(const char *algorithm);
+    };
+
+    class LinearSolverGauss : public LinearSolver
+    {
+    public:
+        LinearSolverGauss();
+        virtual ~LinearSolverGauss();
+
+        virtual int solve(Complex *A, int n, Complex *x, Complex *B);
+
+    private:
+        Complex *m_buf;
+        int m_bufRows;
+        size_t m_lenRow;
     };
 }
 
-#endif // CSIM_MATH_H_
+#endif // CSIM_LINEARSOLVER_H_

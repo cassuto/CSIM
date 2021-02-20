@@ -12,6 +12,8 @@ target_link_libraries(gtest pthread)
 
 set(TEST_SRCS
     "${CMAKE_CURRENT_SOURCE_DIR}/tstLoader.cc"
+    "${CMAKE_CURRENT_SOURCE_DIR}/tstLinearSolver.cc"
+    "${CMAKE_CURRENT_SOURCE_DIR}/tstLinearSolverGauss.cc"
 )
 
 add_executable(tstall ${TEST_SRCS})

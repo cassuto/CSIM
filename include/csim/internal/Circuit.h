@@ -14,10 +14,12 @@
 #ifndef CSIM_CIRCUIT_H_
 #define CSIM_CIRCUIT_H_
 
-#include "csim/internal/Math.h"
+#include "csim/internal/Complex.h"
 
 namespace csim
 {
+
+    class LinearSolver;
 
     class Circuit
     {
@@ -43,6 +45,8 @@ namespace csim
             return m_numVS;
         }
 
+        int solveMNA();
+
     private:
         void createMatrix(int numNodes, int numVS);
 
@@ -51,6 +55,7 @@ namespace csim
         int m_numVS;
         int m_matrixRows;
         Complex *m_A, *m_x, *m_z;
+        LinearSolver *m_linearSolver;
     };
 
 }

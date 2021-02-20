@@ -37,6 +37,8 @@ namespace csim
 
         csimModel::ModelBase *createInstance(MODELBASE_CONSTRUCTOR_DEF);
 
+        void deleteInstance(csimModel::ModelBase *model);
+
         inline const ModelDescriptor *descriptor() const
         {
             return m_descriptor;

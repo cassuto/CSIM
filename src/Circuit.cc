@@ -93,12 +93,19 @@ namespace csim
         m_z[row] = val;
     }
 
+    void Circuit::addComponent(csimModel::ModelBase *model)
+    {
+        m_models.push_back(model);
+    }
+
     int Circuit::solveMNA()
     {
         int ret = 0;
 
+        ret = 
+
         ret = m_linearSolver->solve(m_A, m_matrixRows, m_x, m_z);
-        
+
         return ret;
     }
 

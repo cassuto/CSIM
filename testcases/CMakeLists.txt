@@ -19,4 +19,4 @@ set(TEST_SRCS
 add_executable(tstall ${TEST_SRCS})
 target_link_libraries(tstall gtest gtest_main csim)
 
-add_custom_target(check COMMAND tstall --verbose) 
+add_custom_target(check COMMAND tstall --verbose)

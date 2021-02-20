@@ -14,7 +14,13 @@
 #ifndef CSIM_CIRCUIT_H_
 #define CSIM_CIRCUIT_H_
 
+#include <vector>
 #include "csim/internal/Complex.h"
+
+namespace csimModel
+{
+    class ModelBase;
+}
 
 namespace csim
 {
@@ -45,6 +51,7 @@ namespace csim
             return m_numVS;
         }
 
+        void addComponent(csimModel::ModelBase *model);
         int solveMNA();
 
     private:
@@ -56,6 +63,7 @@ namespace csim
         int m_matrixRows;
         Complex *m_A, *m_x, *m_z;
         LinearSolver *m_linearSolver;
+        std::vector<csimModel::ModelBase *> m_models;
     };
 
 }

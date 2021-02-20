@@ -52,17 +52,26 @@ namespace csim
         }
 
         void addComponent(csimModel::ModelBase *model);
-        int solveMNA();
+
+        int analyseDC();
+        int analyseAC();
+        int startTR();
 
     private:
         void createMatrix(int numNodes, int numVS);
+        int initMNA();
+        int solveMNA();
+        bool converged();
 
     private:
         int m_numNodes;
         int m_numVS;
         int m_matrixRows;
-        Complex *m_A, *m_x, *m_z;
+        Complex *m_A, *m_x, *m_x_1, *m_z, *m_z_1;
         LinearSolver *m_linearSolver;
+        int m_maxIterations;
+        double m_VepsMax, m_VepsrMax;
+        double m_IepsMax, m_IepsrMax;
         std::vector<csimModel::ModelBase *> m_models;
     };
 

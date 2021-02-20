@@ -25,22 +25,31 @@
 /** Operation has been successfully completed */
 #define CERR_SUCCEEDED (0)
 /** Operation has been failed */
-#define CERR_FAULT (1)
+#define CERR_FAULT (-1)
 /** Operation is time-out */
-#define CERR_TIMEOUT (2)
+#define CERR_TIMEOUT (-2)
 /** Operation has been aborted */
-#define CERR_ABORTED (3)
+#define CERR_ABORTED (-3)
 /** Out of memory */
-#define CERR_NO_MEMORY (4)
+#define CERR_NO_MEMORY (-4)
+/** Max number of iterations exceeded */
+#define CERR_MAX_ITERATION_EXCEEDED (-5)
 
 /* }}gen */
 
 #define UPDATE_RC(_rc_) \
   do                    \
   {                     \
-    if (_rc_)           \
-      return _rc_;      \
+    int rc__ = (_rc_);  \
+    if (rc__)           \
+      return rc__;      \
   } while (0)
+
+#define CSIM_OK(_rc_) \
+  ((_rc_) == 0 ? true : false)
+
+#define CSIM_FAILED(_rc_) \
+  ((_rc_) ? true : false)
 
 namespace csim
 {

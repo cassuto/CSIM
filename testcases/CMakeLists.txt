@@ -14,6 +14,7 @@ set(TEST_SRCS
     "${CMAKE_CURRENT_SOURCE_DIR}/tstLoader.cc"
     "${CMAKE_CURRENT_SOURCE_DIR}/tstLinearSolver.cc"
     "${CMAKE_CURRENT_SOURCE_DIR}/tstLinearSolverGauss.cc"
+    "${CMAKE_CURRENT_SOURCE_DIR}/tstLinearCircuit.cc"
 )
 
 add_executable(tstall ${TEST_SRCS})

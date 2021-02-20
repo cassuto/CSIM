@@ -18,8 +18,9 @@ namespace csim
         ASSERT_NE(nullptr, model);
 
         model->property().setProperty("R", csimModel::Variant(csimModel::Variant::VariantDouble).setDouble(10.0));
-        model->configure();
+        int ret = model->configure();
 
+        ASSERT_EQ(0, ret);
         ASSERT_EQ(2, model->getNumTerml());
 
         delete circuit;

@@ -17,7 +17,7 @@
 #define DLIB_PREFIX "lib"
 #endif
 
-static const double epsilon = 1e-3;
+static const double epsilon = 1e-4;
 static const char *csimLibrary = DLIB_PREFIX "csim" DLIB_SUFFIX;
 static const char *resistorLibrary = DLIB_PREFIX "csimModelResistor" DLIB_SUFFIX;
 static const char *VDCLibrary = DLIB_PREFIX "csimModelVDC" DLIB_SUFFIX;

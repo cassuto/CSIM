@@ -41,3 +41,5 @@ if (enable_testcases)
 	enable_testing()
 	add_subdirectory("${PROJECT_SOURCE_DIR}/testcases")
 endif ()
+
+add_subdirectory("${PROJECT_SOURCE_DIR}/doc")

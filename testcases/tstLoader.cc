@@ -1,5 +1,5 @@
 #include "gtest/gtest.h"
-#include <iostream>
+#include "constants.h"
 #include <cstring>
 #include "csim/internal/Circuit.h"
 #include "csim/internal/ModelLoader.h"
@@ -8,7 +8,7 @@ namespace csim
 {
     TEST(loadResistor, tstLoader)
     {
-        ModelEntry *entry = ModelLoader::load("cygcsimModelResistor.dll");
+        ModelEntry *entry = ModelLoader::load(resistorLibrary);
         ASSERT_NE(nullptr, entry);
         EXPECT_GT(strlen(entry->descriptor()->id), 0);
         EXPECT_GT(strlen(entry->descriptor()->description), 0);
@@ -30,7 +30,7 @@ namespace csim
 
     TEST(loadNonModel, tstLoader)
     {
-        ModelEntry *entry = ModelLoader::load("cygcsim.dll");
+        ModelEntry *entry = ModelLoader::load(csimLibrary);
         ASSERT_EQ(nullptr, entry);
         delete entry;
     }

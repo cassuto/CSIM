@@ -1,7 +1,6 @@
 #include "gtest/gtest.h"
 #include "tstLinearSolver.h"
-
-static const double epsilon = 1e-6;
+#include "constants.h"
 
 namespace csim
 {

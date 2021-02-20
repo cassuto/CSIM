@@ -40,44 +40,46 @@ namespace csimModel
     public:
         PropertyBag &property();
 
-        int getNumTerml() const;
-        int getNumNode() const;
-        int getNumVS() const;
-        void setNode(int terml, int node);
-        int getNode(int terml) const;
-        void setVS(int idx, int branch);
-        int getVS(int idx) const;
+        unsigned int getNumTerml() const;
+        unsigned int getNumInnerNode() const;
+        unsigned int getNumVS() const;
+        void setNode(unsigned int terml, unsigned int node);
+        unsigned int getNode(unsigned int terml) const;
+        void setInnerNode(unsigned int index, unsigned int node);
+        unsigned int getInnerNode(unsigned int index) const;
+        void setVS(unsigned int idx, unsigned int branch);
+        unsigned int getVS(unsigned int idx) const;
 
         /* MNA matrices */
-        MComplex getY(int row, int col) const;
-        MComplex getB(int row, int col) const;
-        MComplex getC(int row, int col) const;
-        MComplex getD(int row, int col) const;
-        MComplex getI(int row) const;
-        MComplex getE(int row) const;
-        MComplex getU(int row) const;
-        MComplex getJ(int row) const;
+        MComplex getY(unsigned int row, unsigned int col) const;
+        MComplex getB(unsigned int row, unsigned int col) const;
+        MComplex getC(unsigned int row, unsigned int col) const;
+        MComplex getD(unsigned int row, unsigned int col) const;
+        MComplex getI(unsigned int row) const;
+        MComplex getE(unsigned int row) const;
+        MComplex getU(unsigned int row) const;
+        MComplex getJ(unsigned int row) const;
 
     protected:
-        void resizeModel(int numTermls, int numNodes, int numVS);
+        void resizeModel(int numTermls, int numInnerNodes, int numVS);
 
         /* MNA matrices */
-        void setY(int row, int col, const MComplex &val);
-        void addY(int row, int col, const MComplex &delta);
-        void setB(int row, int col, const MComplex &val);
-        void setC(int row, int col, const MComplex &val);
-        void setD(int row, int col, const MComplex &val);
-        void setI(int row, const MComplex &val);
-        void addI(int row, const MComplex &delta);
-        void setE(int row, const MComplex &val);
-        void setU(int row, const MComplex &val);
-        void addU(int row, const MComplex &delta);
-        void setJ(int row, const MComplex &val);
+        void setY(unsigned int row, unsigned int col, const MComplex &val);
+        void addY(unsigned int row, unsigned int col, const MComplex &delta);
+        void setB(unsigned int row, unsigned int col, const MComplex &val);
+        void setC(unsigned int row, unsigned int col, const MComplex &val);
+        void setD(unsigned int row, unsigned int col, const MComplex &val);
+        void setI(unsigned int row, const MComplex &val);
+        void addI(unsigned int row, const MComplex &delta);
+        void setE(unsigned int row, const MComplex &val);
+        void setU(unsigned int row, const MComplex &val);
+        void addU(unsigned int row, const MComplex &delta);
+        void setJ(unsigned int row, const MComplex &val);
 
     private:
         csim::Circuit *m_circuit;
         PropertyBag m_props;
-        int m_numNodes;
+        std::vector<int> m_innerNodes;
         std::vector<int> m_termls;
         std::vector<int> m_VS;
     };

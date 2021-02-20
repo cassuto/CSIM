@@ -22,26 +22,36 @@
 namespace csim
 {
     LinearSolverGauss::LinearSolverGauss()
-        : m_buf(nullptr),
+        : m_bufRow(nullptr),
+          m_bufA(nullptr), m_bufB(nullptr),
           m_bufRows(0)
     {
     }
 
     LinearSolverGauss::~LinearSolverGauss()
     {
-        delete[] m_buf;
+        delete[] m_bufRow;
+        delete[] m_bufA;
+        delete[] m_bufB;
     }
 
-    int LinearSolverGauss::solve(Complex *A, int n, Complex *x, Complex *B)
+    int LinearSolverGauss::solve(const Complex *A, int n, Complex *x, const Complex *B)
     {
         if (m_bufRows != n)
         {
             m_bufRows = n;
             m_lenRow = sizeof(Complex) * n;
-            delete[] m_buf;
-            /* Memory to temporarily store a row */
-            m_buf = new Complex[m_bufRows];
+            delete[] m_bufRow;
+            delete[] m_bufA;
+            delete[] m_bufB;
+            /* Memory to temporarily store matrix */
+            m_bufRow = new Complex[m_bufRows];
+            m_bufA = new Complex[m_bufRows * m_bufRows];
+            m_bufB = new Complex[m_bufRows];
         }
+
+        memcpy(m_bufA, A, sizeof(*A) * n * n);
+        memcpy(m_bufB, B, sizeof(*B) * n);
 
         for (int i = 0; i < n; i++)
         {
@@ -49,45 +59,45 @@ namespace csim
             double maxcolumn = 0.0;
             for (int r = i; r < n; r++)
             {
-                if (abs(A[r * n + i]) > maxcolumn)
+                if (abs(m_bufA[r * n + i]) > maxcolumn)
                 {
-                    maxcolumn = abs(A[r * n + i]);
+                    maxcolumn = abs(m_bufA[r * n + i]);
                     pivot = r;
                 }
             }
             if (i != pivot)
             {
                 /* A r[i] <-> r[prvot] */
-                memcpy(m_buf, &A[i * n], m_lenRow);
-                memcpy(&A[i * n], &A[pivot * n], m_lenRow);
-                memcpy(&A[pivot * n], m_buf, m_lenRow);
+                memcpy(m_bufRow, &m_bufA[i * n], m_lenRow);
+                memcpy(&m_bufA[i * n], &m_bufA[pivot * n], m_lenRow);
+                memcpy(&m_bufA[pivot * n], m_bufRow, m_lenRow);
 
                 /* B r[i] <-> r[prvot] */
-                Complex t = B[i];
-                B[i] = B[pivot];
-                B[pivot] = t;
+                Complex t = m_bufB[i];
+                m_bufB[i] = m_bufB[pivot];
+                m_bufB[pivot] = t;
             }
 
             /* Gaussian elimination */
             for (int r = i + 1; r < n; r++)
             {
-                Complex f = A[r * n + i] / A[i * n + i];
+                Complex f = m_bufA[r * n + i] / m_bufA[i * n + i];
                 for (int c = i + 1; c < n; c++)
                 {
-                    A[r * n + c] -= f * A[i * n + c];
+                    m_bufA[r * n + c] -= f * m_bufA[i * n + c];
                 }
-                B[r] -= f * B[i];
+                m_bufB[r] -= f * m_bufB[i];
             }
         }
 
         for (int i = n - 1; i >= 0; i--)
         {
-            Complex f = B[i];
+            Complex f = m_bufB[i];
             for (int c = i + 1; c < n; c++)
             {
-                f -= A[i * n + c] * x[c];
+                f -= m_bufA[i * n + c] * x[c];
             }
-            x[i] = f / A[i * n + i];
+            x[i] = f / m_bufA[i * n + i];
         }
 
         return 0;

@@ -35,9 +35,9 @@ namespace csim
         {
         }
 
-        csimModel::ModelBase *createInstance(MODELBASE_CONSTRUCTOR_DEF);
+        csimModel::ModelBase *createInstance(MODELBASE_CONSTRUCTOR_DEF) const;
 
-        void deleteInstance(csimModel::ModelBase *model);
+        void deleteInstance(csimModel::ModelBase *model) const;
 
         inline const ModelDescriptor *descriptor() const
         {

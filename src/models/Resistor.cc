@@ -36,11 +36,11 @@ namespace csimModel
         double R = property().getProperty("R").getDouble();
         if (R == 0.0)
         {
-            resizeModel(2, 2, 1);
+            resizeModel(2, 0, 1);
         }
         else
         {
-            resizeModel(2, 2, 0);
+            resizeModel(2, 0, 0);
             m_G = 1.0 / R;
         }
         return 0;
@@ -52,7 +52,7 @@ namespace csimModel
 
         if (R == 0.0)
         {
-            int k = getVS(0);
+            unsigned int k = getVS(0);
             setB(getNode(0), k, +1.0);
             setB(getNode(1), k, -1.0);
             setC(k, getNode(0), 1.0), setC(k, getNode(1), -1.0);

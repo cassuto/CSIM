@@ -32,7 +32,7 @@ namespace csimModel
 
     int VDC::configure()
     {
-        resizeModel(2, 2, 1);
+        resizeModel(2, 0, 1);
         return 0;
     }
 
@@ -40,7 +40,7 @@ namespace csimModel
     {
         double V = property().getProperty("V").getDouble();
 
-        int k = getVS(0);
+        unsigned int k = getVS(0);
         setB(getNode(0), k, +1.0);
         setB(getNode(1), k, -1.0);
         setC(k, getNode(0), 1.0), setC(k, getNode(1), -1.0);

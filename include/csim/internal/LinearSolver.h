@@ -24,7 +24,7 @@ namespace csim
         LinearSolver() {}
         virtual ~LinearSolver() {}
 
-        virtual int solve(Complex *A, int n, Complex *x, Complex *B) = 0;
+        virtual int solve(const Complex *A, int n, Complex *x, const Complex *B) = 0;
 
     public:
         static LinearSolver *createInstance(const char *algorithm);
@@ -36,10 +36,10 @@ namespace csim
         LinearSolverGauss();
         virtual ~LinearSolverGauss();
 
-        virtual int solve(Complex *A, int n, Complex *x, Complex *B);
+        virtual int solve(const Complex *A, int n, Complex *x, const Complex *B);
 
     private:
-        Complex *m_buf;
+        Complex *m_bufRow, *m_bufA, *m_bufB;
         int m_bufRows;
         size_t m_lenRow;
     };

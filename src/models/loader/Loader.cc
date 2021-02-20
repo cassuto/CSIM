@@ -84,21 +84,18 @@ namespace csim
         pfnCreate = (csimModel::pfnCreateModel_t)dlsym(handle, "createModel");
         if (!pfnCreate || ((error = dlerror()) != NULL))
         {
-            fprintf(stderr, "ERROR: pfnCreate() %s \n", error);
             goto error_out;
         }
 
         pfnDelete = (csimModel::pfnDeleteModel_t)dlsym(handle, "deleteModel");
         if (!pfnDelete || ((error = dlerror()) != NULL))
         {
-            fprintf(stderr, "ERROR: pfnDelete() %s \n", error);
             goto error_out;
         }
 
         descriptor = (const ModelDescriptor *)dlsym(handle, "descriptor");
         if (!descriptor || ((error = dlerror()) != NULL))
         {
-            fprintf(stderr, "ERROR: descriptor %s \n", error);
             goto error_out;
         }
 
@@ -113,12 +110,12 @@ namespace csim
         return model;
     }
 
-    csimModel::ModelBase *ModelEntry::createInstance(MODELBASE_CONSTRUCTOR_DEF)
+    csimModel::ModelBase *ModelEntry::createInstance(MODELBASE_CONSTRUCTOR_DEF) const
     {
         return m_pfnCreate(MODELBASE_CONSTRUCTOR_VAR);
     }
 
-    void ModelEntry::deleteInstance(csimModel::ModelBase *model)
+    void ModelEntry::deleteInstance(csimModel::ModelBase *model) const
     {
         m_pfnDelete(model);
     }

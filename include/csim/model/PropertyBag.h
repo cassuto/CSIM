@@ -27,6 +27,13 @@ namespace csimModel
         void addProperty(const char *entry, const Variant &def, bool required);
         void setProperty(const char *entry, const Variant &val);
         const Variant &getProperty(const char *entry) const;
+        bool hasProperty(const char *entry) const;
+
+        /* Meta data iterator */
+        void metaBegin();
+        size_t metaGetPropertyName(char *buff, size_t maxsize) const;
+        bool metaGetPropertyRequired() const;
+        bool metaNext();
 
     private:
         struct Entry
@@ -35,6 +42,7 @@ namespace csimModel
             bool required;
         };
         std::map<std::string, Entry> m_props;
+        std::map<std::string, Entry>::iterator m_metaIter;
     };
 
 }

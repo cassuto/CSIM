@@ -25,6 +25,9 @@ elseif (UNIX)
 else ()
 	message(FATAL_ERROR "Unsupported platform ${CMAKE_SYSTEM}")
 endif ()
+if (CYGWIN)
+add_definitions(-DCSIM_IN_CYGWIN)
+endif ()
 
 include_directories(
 	"${PROJECT_SOURCE_DIR}/include"

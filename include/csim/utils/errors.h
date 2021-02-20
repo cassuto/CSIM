@@ -34,6 +34,16 @@
 #define CERR_NO_MEMORY (-4)
 /** Max number of iterations exceeded */
 #define CERR_MAX_ITERATION_EXCEEDED (-5)
+/** Duplicated reference of component */
+#define CERR_DUP_COMPONENT_REFERENCE (-6)
+/** Non Existent reference of component */
+#define CER_NO_SUCH_COMPONENT_REFERENCE (-7)
+/** Invalid index of terminal */
+#define CERR_INVALID_TERML_INDEX (-8)
+/** There are some terminals floating */
+#define CERR_FLOATING_TERMINALS (-9)
+/** No such property */
+#define CSIM_NO_SUCH_PROPERTY (-10)
 
 /* }}gen */
 

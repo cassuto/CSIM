@@ -1,5 +1,4 @@
 #include "gtest/gtest.h"
-#include <iostream>
 #include "tstLinearSolver.h"
 #include "csim/internal/LinearSolver.h"
 

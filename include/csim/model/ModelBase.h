@@ -31,10 +31,11 @@ namespace csimModel
         virtual ~ModelBase();
 
     public:
-        virtual void configure() = 0;
-        virtual void prepareDC() = 0;
-        virtual void prepareAC() = 0;
-        virtual void prepareTR() = 0;
+        virtual int configure() = 0;
+        virtual int prepareDC() = 0;
+        virtual int prepareAC() = 0;
+        virtual int prepareTR() = 0;
+        virtual int iterateTR() = 0;
 
     public:
         PropertyBag &property();

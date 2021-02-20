@@ -1,16 +1,16 @@
-#ifndef RESISTOR_H_
-#define RESISTOR_H_
+#ifndef MODEL_VDC_H_
+#define MODEL_VDC_H_
 
 #include "csim/model/ModelBase.h"
 
 namespace csimModel
 {
 
-    class Resistor : public ModelBase
+    class VDC : public ModelBase
     {
     public:
-        Resistor(MODELBASE_CONSTRUCTOR_DEF);
-        virtual ~Resistor();
+        VDC(MODELBASE_CONSTRUCTOR_DEF);
+        virtual ~VDC();
 
     public:
         virtual int configure();
@@ -18,11 +18,8 @@ namespace csimModel
         virtual int prepareAC();
         virtual int prepareTR();
         virtual int iterateTR();
-
-    private:
-        double m_G;
     };
 
 }
 
-#endif // RESISTOR_H_
+#endif // MODEL_VDC_H_

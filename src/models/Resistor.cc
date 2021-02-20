@@ -31,7 +31,7 @@ namespace csimModel
     {
     }
 
-    void Resistor::configure()
+    int Resistor::configure()
     {
         double R = property().getProperty("R").getDouble();
         if (R == 0.0)
@@ -43,9 +43,10 @@ namespace csimModel
             resizeModel(2, 2, 0);
             m_G = 1.0 / R;
         }
+        return 0;
     }
 
-    void Resistor::prepareDC()
+    int Resistor::prepareDC()
     {
         double R = property().getProperty("R").getDouble();
 
@@ -62,18 +63,20 @@ namespace csimModel
             addY(getNode(0), getNode(0), +m_G), addY(getNode(0), getNode(1), -m_G);
             addY(getNode(1), getNode(0), -m_G), addY(getNode(1), getNode(1), +m_G);
         }
+        return 0;
     }
-    void Resistor::prepareAC()
+    int Resistor::prepareAC()
     {
-        prepareDC();
+        return prepareDC();
     }
-    void Resistor::prepareTR()
+    int Resistor::prepareTR()
     {
-        prepareDC();
+        return prepareDC();
     }
 
-    void Resistor::iterateStep()
+    int Resistor::iterateTR()
     {
+        return 0;
     }
 
 }
@@ -90,6 +93,6 @@ extern "C" void deleteModel(csimModel::ModelBase *model)
 
 const ModelDescriptor descriptor = {
     /* id */
-    "resistor",
+    "R",
     /* description */
     "Generic ideal resistor"};

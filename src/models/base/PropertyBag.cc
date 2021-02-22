@@ -59,7 +59,7 @@ namespace csimModel
      * @brief Get the name of property at the current cursor.
      * @param buff Where to store the text
      * @param maxsize Maximum length that can be written to the buffer
-     * @retval Size of the actual text.
+     * @return Size of the actual text.
      */
     size_t PropertyBag::metaGetPropertyName(char *buff, size_t maxsize) const
     {
@@ -69,7 +69,7 @@ namespace csimModel
 
     /**
      * @brief Get whether the current property is required.
-     * @retval Boolean
+     * @return Boolean
      */
     bool PropertyBag::metaGetPropertyRequired() const
     {

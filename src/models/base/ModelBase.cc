@@ -120,7 +120,6 @@ namespace csimModel
         return m_circuit->getX(m_circuit->netlist()->getNumNodes() + row).toMComplex();
     }
 
-    /* MNA matrices */
     void ModelBase::setY(unsigned int row, unsigned int col, const MComplex &val)
     {
         assert(row < m_circuit->netlist()->getNumNodes() && col < m_circuit->netlist()->getNumNodes());
@@ -159,19 +158,4 @@ namespace csimModel
         assert(row < m_circuit->netlist()->getNumVS());
         m_circuit->setZ(m_circuit->netlist()->getNumNodes() + row, val);
     }
-    void ModelBase::setU(unsigned int row, const MComplex &val)
-    {
-        assert(row < m_circuit->netlist()->getNumNodes());
-        m_circuit->setX(row, val);
-    }
-    void ModelBase::addU(unsigned int row, const MComplex &delta)
-    {
-        setU(row, getU(row) + delta);
-    }
-    void ModelBase::setJ(unsigned int row, const MComplex &val)
-    {
-        assert(row < m_circuit->netlist()->getNumVS());
-        m_circuit->setX(m_circuit->netlist()->getNumNodes() + row, val);
-    }
-
 }

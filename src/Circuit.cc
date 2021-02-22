@@ -23,6 +23,7 @@
 #include "csim/internal/LinearSolver.h"
 #include "csim/internal/Netlist.h"
 #include "csim/internal/Circuit.h"
+#include <iostream>
 
 namespace csim
 {
@@ -94,6 +95,11 @@ namespace csim
         assert(row < m_matrixRows && col < m_matrixRows);
         m_A[row * m_matrixRows + col] = val;
     }
+    void Circuit::addA(unsigned int row, unsigned int col, const Complex &delta)
+    {
+        assert(row < m_matrixRows && col < m_matrixRows);
+        m_A[row * m_matrixRows + col] += delta;
+    }
     void Circuit::setX(unsigned int row, const Complex &val)
     {
         assert(row < m_matrixRows);
@@ -104,6 +110,11 @@ namespace csim
         assert(row < m_matrixRows);
         m_z[row] = val;
     }
+    void Circuit::addZ(unsigned int row, const Complex &delta)
+    {
+        assert(row < m_matrixRows);
+        m_z[row] += delta;
+    }
 
     int Circuit::analyseDC()
     {
@@ -113,7 +124,7 @@ namespace csim
             UPDATE_RC(mif.model->prepareDC());
         }
 
-        return solveMNA();
+        return solveMNA(0);
     }
 
     int Circuit::analyseAC()
@@ -123,7 +134,7 @@ namespace csim
         {
             UPDATE_RC(mif.model->prepareAC());
         }
-        return solveMNA();
+        return solveMNA(1);
     }
 
     int Circuit::startTR()
@@ -133,7 +144,7 @@ namespace csim
         {
             UPDATE_RC(mif.model->prepareTR());
         }
-        return solveMNA();
+        return solveMNA(2);
     }
 
     Complex Circuit::getNodeVolt(unsigned int node)
@@ -148,18 +159,63 @@ namespace csim
         return 0;
     }
 
-    int Circuit::solveMNA()
+    int Circuit::solveMNA(int analysis)
     {
         int ret;
         int iteration = 0;
         do
         {
-            for (auto &mif : m_netlist->models())
+            memset(m_A, 0, sizeof(*m_A) * m_matrixRows * m_matrixRows);
+            memset(m_z, 0, sizeof(*m_z) * m_matrixRows);
+
+            switch (analysis)
             {
-                UPDATE_RC(mif.model->iterateTR());
+            case 0:
+                for (auto &mif : m_netlist->models())
+                {
+                    UPDATE_RC(mif.model->iterateDC());
+                }
+                break;
+            case 1:
+                for (auto &mif : m_netlist->models())
+                {
+                    UPDATE_RC(mif.model->iterateAC());
+                }
+                break;
+            case 2:
+                for (auto &mif : m_netlist->models())
+                {
+                    UPDATE_RC(mif.model->iterateTR());
+                }
+                break;
+            default:
+                assert(0);
             }
+            
+            /*std::cout << "A=\n";
+            for (int i = 0; i < m_matrixRows; ++i)
+            {
+                for (int j = 0; j < m_matrixRows; ++j)
+                {
+                    std::cout << m_A[i * m_matrixRows + j].real() << " ";
+                }
+                std::cout << "\n";
+            }
+            std::cout << "z=\n";
+            for (int i = 0; i < m_matrixRows; ++i)
+            {
+                std::cout << m_z[i].real() << "\n";
+            }
+            std::cout << "---\n";*/
 
             ret = m_linearSolver->solve(m_A, m_matrixRows, m_x, m_z);
+
+            /*std::cout << "x=\n";
+            for (int i = 0; i < m_matrixRows; ++i)
+            {
+                std::cout << m_x[i].real() << "\n";
+            }
+            std::cout << "===\n";*/
 
             if (CSIM_OK(ret))
             {
@@ -191,13 +247,15 @@ namespace csim
         {
             /* U */
             double Veps = std::abs(m_x[i] - m_x_1[i]);
-            if (Veps > m_VepsMax + m_VepsrMax * std::abs(m_x[i])) {
+            if (Veps > m_VepsMax + m_VepsrMax * std::abs(m_x[i]))
+            {
                 return false;
             }
 
             /* I */
             double Ieps = std::abs(m_z[i] - m_z_1[i]);
-            if (Ieps > m_IepsMax + m_IepsrMax * std::abs(m_z[i])) {
+            if (Ieps > m_IepsMax + m_IepsrMax * std::abs(m_z[i]))
+            {
                 return false;
             }
         }
@@ -208,13 +266,15 @@ namespace csim
         {
             /* J */
             double Ieps = std::abs(m_x[i] - m_x_1[i]);
-            if (Ieps > m_IepsMax + m_IepsrMax * std::abs(m_x[i])) {
+            if (Ieps > m_IepsMax + m_IepsrMax * std::abs(m_x[i]))
+            {
                 return false;
             }
 
             /* E */
             double Veps = std::abs(m_z[i] - m_z_1[i]);
-            if (Veps > m_VepsMax + m_VepsrMax * std::abs(m_z[i])) {
+            if (Veps > m_VepsMax + m_VepsrMax * std::abs(m_z[i]))
+            {
                 return false;
             }
         }

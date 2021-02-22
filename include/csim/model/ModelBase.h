@@ -35,6 +35,8 @@ namespace csimModel
         virtual int prepareDC() = 0;
         virtual int prepareAC() = 0;
         virtual int prepareTR() = 0;
+        virtual int iterateDC() = 0;
+        virtual int iterateAC() = 0;
         virtual int iterateTR() = 0;
 
     public:
@@ -72,16 +74,13 @@ namespace csimModel
         void setI(unsigned int row, const MComplex &val);
         void addI(unsigned int row, const MComplex &delta);
         void setE(unsigned int row, const MComplex &val);
-        void setU(unsigned int row, const MComplex &val);
-        void addU(unsigned int row, const MComplex &delta);
-        void setJ(unsigned int row, const MComplex &val);
 
     private:
         csim::Circuit *m_circuit;
         PropertyBag m_props;
-        std::vector<int> m_innerNodes;
-        std::vector<int> m_termls;
-        std::vector<int> m_VS;
+        std::vector<unsigned int> m_termls;
+        std::vector<unsigned int> m_innerNodes;
+        std::vector<unsigned int> m_VS;
     };
 
     typedef ModelBase *(*pfnCreateModel_t)(MODELBASE_CONSTRUCTOR_DEF);

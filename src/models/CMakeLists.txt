@@ -9,6 +9,11 @@ add_library(
     csimModelVDC SHARED
     "${CMAKE_CURRENT_SOURCE_DIR}/VDC.cc"
 )
+add_library(
+    csimModelPN SHARED
+    "${CMAKE_CURRENT_SOURCE_DIR}/PN.cc"
+)
 
 target_link_libraries(csimModelResistor csim)
 target_link_libraries(csimModelVDC csim)
+target_link_libraries(csimModelPN csim)

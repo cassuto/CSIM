@@ -18,6 +18,7 @@ namespace csim
      *  |          0    ,-.    1         |
      *  +--------------(---)-------------+
      *                  `-'
+     *                  12V
      */
     TEST(circuit_R_VS_divider, tstLinearCircuit)
     {
@@ -93,6 +94,7 @@ namespace csim
      *   |          0    ,-.    1                       |
      *   +--------------(---)---------------------------+
      *                   `-'
+     *                   12V
      */
     TEST(circuit_R_VS_network, tstLinearCircuit)
     {

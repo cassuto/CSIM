@@ -1,16 +1,16 @@
-#ifndef RESISTOR_H_
-#define RESISTOR_H_
+#ifndef PN_H_
+#define PN_H_
 
 #include "csim/model/ModelBase.h"
 
 namespace csimModel
 {
 
-    class Resistor : public ModelBase
+    class PN : public ModelBase
     {
     public:
-        Resistor(MODELBASE_CONSTRUCTOR_DEF);
-        virtual ~Resistor();
+        PN(MODELBASE_CONSTRUCTOR_DEF);
+        virtual ~PN();
 
     public:
         virtual int configure();
@@ -22,9 +22,16 @@ namespace csimModel
         virtual int iterateTR();
 
     private:
-        double m_G;
+        double vlimit(double Ud);
+
+    private:
+        double m_Is, m_N, m_Isr, m_Nr, m_Temp, m_Ibv, m_Bv;
+        bool m_Bv_set;
+        double m_Ut;
+        double m_Uth;
+        double m_Ud_1;
     };
 
 }
 
-#endif // RESISTOR_H_
+#endif // PN_H_

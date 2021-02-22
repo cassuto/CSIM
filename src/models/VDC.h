@@ -17,6 +17,8 @@ namespace csimModel
         virtual int prepareDC();
         virtual int prepareAC();
         virtual int prepareTR();
+        virtual int iterateDC();
+        virtual int iterateAC();
         virtual int iterateTR();
     };
 

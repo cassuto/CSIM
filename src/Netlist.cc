@@ -68,7 +68,7 @@ namespace csim
         if (props.hasProperty(property))
             props.setProperty(property, value);
         else
-            return CSIM_NO_SUCH_PROPERTY;
+            return CERR_NO_SUCH_PROPERTY;
 
         return 0;
     }
@@ -164,7 +164,7 @@ namespace csim
         }
 
         /*
-         * Allocate inner node indexes
+         * Assign index for inner nodes of models
          */
         for (auto &mif : m_models)
         {
@@ -175,7 +175,20 @@ namespace csim
             }
         }
 
-        /* Set node index for each terminal */
+        /*
+         * Assign index to voltage sources
+         */
+        unsigned int vsIndex = 0;
+        for (auto &mif : m_models)
+        {
+            for (unsigned int i = 0; i < mif.model->getNumVS(); ++i)
+            {
+                mif.model->setVS(i, vsIndex++);
+            }
+        }
+        assert(vsIndex == m_numVS);
+
+        /* Assign the index to the node of each terminal */
         for (auto &mif : m_models)
         {
             for (unsigned int i = 0; i < mif.model->getNumTerml(); ++i)

@@ -40,8 +40,10 @@ namespace csim
         const Complex &getZ(unsigned int row) const;
 
         void setA(unsigned int row, unsigned int col, const Complex &val);
+        void addA(unsigned int row, unsigned int col, const Complex &delta);
         void setX(unsigned int row, const Complex &val);
         void setZ(unsigned int row, const Complex &val);
+        void addZ(unsigned int row, const Complex &delta);
 
         inline Netlist *netlist() const
         {
@@ -57,7 +59,7 @@ namespace csim
     private:
         void createMatrix(unsigned int numNodes, unsigned int numVS);
         int initMNA();
-        int solveMNA();
+        int solveMNA(int analysis);
         bool converged();
 
     private:

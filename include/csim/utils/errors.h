@@ -43,7 +43,10 @@
 /** There are some terminals floating */
 #define CERR_FLOATING_TERMINALS (-9)
 /** No such property */
-#define CSIM_NO_SUCH_PROPERTY (-10)
+#define CERR_NO_SUCH_PROPERTY (-10)
+
+/** Unknown */
+#define CERR_UNKNOWN (-65536)
 
 /* }}gen */
 

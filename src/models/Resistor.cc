@@ -74,9 +74,17 @@ namespace csimModel
         return prepareDC();
     }
 
+    int Resistor::iterateDC()
+    {
+        return prepareDC();
+    }
+    int Resistor::iterateAC()
+    {
+        return prepareDC();
+    }
     int Resistor::iterateTR()
     {
-        return 0;
+        return prepareDC();
     }
 
 }

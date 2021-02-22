@@ -79,4 +79,9 @@ namespace csimModel
         m_imag /= rval;
         return (*this);
     }
+
+    MComplex MComplex::operator-()
+    {
+        return MComplex(-m_real, -m_imag);
+    }
 }

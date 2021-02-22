@@ -43,6 +43,8 @@ namespace csimModel
         MComplex operator/(double rval);
         MComplex operator/=(double rval);
 
+        MComplex operator-();
+
     private:
         double m_real, m_imag;
     };

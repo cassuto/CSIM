@@ -61,7 +61,7 @@ namespace csim
         ASSERT_EQ(CERR_SUCCEEDED, ret);
 
         /* DC analysis */
-        ret = circuit->analyseDC();
+        ret = circuit->analyse(Circuit::analyseDC);
         EXPECT_EQ(CERR_SUCCEEDED, ret);
 
         /* Check voltages */
@@ -200,7 +200,7 @@ namespace csim
         EXPECT_EQ(nds[2], nds[3]);
 
         /* DC analysis */
-        ret = circuit->analyseDC();
+        ret = circuit->analyse(Circuit::analyseDC);
         EXPECT_EQ(CERR_SUCCEEDED, ret);
 
         /* Check voltages */

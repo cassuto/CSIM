@@ -22,7 +22,8 @@ namespace csimModel
 
     Resistor::Resistor(MODELBASE_CONSTRUCTOR_DEF)
         : ModelBase(MODELBASE_CONSTRUCTOR_VAR),
-          m_G(0.0)
+          m_G(0.0),
+          m_cutThrough(false)
     {
         property().addProperty("R", Variant(Variant::VariantDouble).setDouble(1.0), true);
     }
@@ -37,20 +38,33 @@ namespace csimModel
         if (R == 0.0)
         {
             resizeModel(2, 0, 1);
+            m_cutThrough = true;
         }
         else
         {
             resizeModel(2, 0, 0);
             m_G = 1.0 / R;
+            m_cutThrough = false;
         }
         return 0;
     }
 
     int Resistor::prepareDC()
     {
-        double R = property().getProperty("R").getDouble();
+        return 0;
+    }
+    int Resistor::prepareAC()
+    {
+        return prepareDC();
+    }
+    int Resistor::prepareTR()
+    {
+        return prepareDC();
+    }
 
-        if (R == 0.0)
+    int Resistor::iterateDC()
+    {
+        if (m_cutThrough)
         {
             unsigned int k = getVS(0);
             setB(getNode(0), k, +1.0);
@@ -65,26 +79,13 @@ namespace csimModel
         }
         return 0;
     }
-    int Resistor::prepareAC()
-    {
-        return prepareDC();
-    }
-    int Resistor::prepareTR()
-    {
-        return prepareDC();
-    }
-
-    int Resistor::iterateDC()
-    {
-        return prepareDC();
-    }
     int Resistor::iterateAC()
     {
-        return prepareDC();
+        return iterateDC();
     }
     int Resistor::iterateTR()
     {
-        return prepareDC();
+        return iterateDC();
     }
 
 }

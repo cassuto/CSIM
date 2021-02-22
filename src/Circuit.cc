@@ -23,7 +23,6 @@
 #include "csim/internal/LinearSolver.h"
 #include "csim/internal/Netlist.h"
 #include "csim/internal/Circuit.h"
-#include <iostream>
 
 namespace csim
 {
@@ -116,35 +115,10 @@ namespace csim
         m_z[row] += delta;
     }
 
-    int Circuit::analyseDC()
+    int Circuit::analyse(AnalysisType type)
     {
-        UPDATE_RC(initMNA());
-        for (auto &mif : m_netlist->models())
-        {
-            UPDATE_RC(mif.model->prepareDC());
-        }
-
-        return solveMNA(0);
-    }
-
-    int Circuit::analyseAC()
-    {
-        UPDATE_RC(initMNA());
-        for (auto &mif : m_netlist->models())
-        {
-            UPDATE_RC(mif.model->prepareAC());
-        }
-        return solveMNA(1);
-    }
-
-    int Circuit::startTR()
-    {
-        UPDATE_RC(initMNA());
-        for (auto &mif : m_netlist->models())
-        {
-            UPDATE_RC(mif.model->prepareTR());
-        }
-        return solveMNA(2);
+        UPDATE_RC(initMNA(type));
+        return solveMNA(type);
     }
 
     Complex Circuit::getNodeVolt(unsigned int node)
@@ -153,13 +127,35 @@ namespace csim
         return m_x[node];
     }
 
-    int Circuit::initMNA()
+    int Circuit::initMNA(AnalysisType analysis)
     {
         createMatrix(m_netlist->getNumNodes(), m_netlist->getNumVS());
+        switch (analysis)
+        {
+        case analyseDC:
+            for (auto &mif : m_netlist->models())
+            {
+                UPDATE_RC(mif.model->prepareDC());
+            }
+
+            break;
+        case analyseAC:
+            for (auto &mif : m_netlist->models())
+            {
+                UPDATE_RC(mif.model->prepareAC());
+            }
+            break;
+        case analyseTransient:
+            for (auto &mif : m_netlist->models())
+            {
+                UPDATE_RC(mif.model->prepareTR());
+            }
+            break;
+        }
         return 0;
     }
 
-    int Circuit::solveMNA(int analysis)
+    int Circuit::solveMNA(AnalysisType analysis)
     {
         int ret;
         int iteration = 0;
@@ -170,19 +166,19 @@ namespace csim
 
             switch (analysis)
             {
-            case 0:
+            case analyseDC:
                 for (auto &mif : m_netlist->models())
                 {
                     UPDATE_RC(mif.model->iterateDC());
                 }
                 break;
-            case 1:
+            case analyseAC:
                 for (auto &mif : m_netlist->models())
                 {
                     UPDATE_RC(mif.model->iterateAC());
                 }
                 break;
-            case 2:
+            case analyseTransient:
                 for (auto &mif : m_netlist->models())
                 {
                     UPDATE_RC(mif.model->iterateTR());
@@ -191,31 +187,8 @@ namespace csim
             default:
                 assert(0);
             }
-            
-            /*std::cout << "A=\n";
-            for (int i = 0; i < m_matrixRows; ++i)
-            {
-                for (int j = 0; j < m_matrixRows; ++j)
-                {
-                    std::cout << m_A[i * m_matrixRows + j].real() << " ";
-                }
-                std::cout << "\n";
-            }
-            std::cout << "z=\n";
-            for (int i = 0; i < m_matrixRows; ++i)
-            {
-                std::cout << m_z[i].real() << "\n";
-            }
-            std::cout << "---\n";*/
 
             ret = m_linearSolver->solve(m_A, m_matrixRows, m_x, m_z);
-
-            /*std::cout << "x=\n";
-            for (int i = 0; i < m_matrixRows; ++i)
-            {
-                std::cout << m_x[i].real() << "\n";
-            }
-            std::cout << "===\n";*/
 
             if (CSIM_OK(ret))
             {

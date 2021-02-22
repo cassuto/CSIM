@@ -38,35 +38,35 @@ namespace csimModel
 
     int VDC::prepareDC()
     {
+        return 0;
+    }
+    int VDC::prepareAC()
+    {
+        return 0;
+    }
+    int VDC::prepareTR()
+    {
+        return 0;
+    }
+
+    int VDC::iterateDC()
+    {
         double V = property().getProperty("V").getDouble();
 
-        unsigned int k =getVS(0);
+        unsigned int k = getVS(0);
         setB(getNode(0), k, +1.0);
         setB(getNode(1), k, -1.0);
         setC(k, getNode(0), 1.0), setC(k, getNode(1), -1.0);
         setE(k, V);
         return 0;
     }
-    int VDC::prepareAC()
-    {
-        return prepareDC();
-    }
-    int VDC::prepareTR()
-    {
-        return prepareDC();
-    }
-
-    int VDC::iterateDC()
-    {
-        return prepareDC();
-    }
     int VDC::iterateAC()
     {
-        return prepareDC();
+        return iterateDC();
     }
     int VDC::iterateTR()
     {
-        return prepareDC();
+        return iterateDC();
     }
 
 }

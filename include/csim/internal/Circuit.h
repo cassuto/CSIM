@@ -50,16 +50,21 @@ namespace csim
             return m_netlist;
         }
 
-        int analyseDC();
-        int analyseAC();
-        int startTR();
+        enum AnalysisType
+        {
+            analyseDC = 0,
+            analyseAC,
+            analyseTransient
+        };
+        
+        int analyse(AnalysisType type);
 
         Complex getNodeVolt(unsigned int node);
 
     private:
         void createMatrix(unsigned int numNodes, unsigned int numVS);
-        int initMNA();
-        int solveMNA(int analysis);
+        int initMNA(AnalysisType analysis);
+        int solveMNA(AnalysisType analysis);
         bool converged();
 
     private:

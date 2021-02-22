@@ -23,6 +23,7 @@ namespace csimModel
 
     private:
         double m_G;
+        bool m_cutThrough;
     };
 
 }

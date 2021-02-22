@@ -9,7 +9,7 @@
 
 namespace csim
 {
-    TEST(circuit_PN_R, tstNonlinearCircuit)
+    TEST(circuit_PN_R, tstDCNonlinearCircuit)
     {
         int ret = 0;
         ModelEntry *e_R = ModelLoader::load(resistorLibrary);
@@ -85,7 +85,7 @@ namespace csim
         Complex volt = circuit->getNodeVolt(n1) - circuit->getNodeVolt(n_gnd);
         std::cout<<"Vd1 = "<<volt<<std::endl;
         /* This value may change slightly when the PN-junction model is adjusted */
-        EXPECT_LT(std::abs(Complex(-9.20838, 0) - volt), 1e-1);
+        EXPECT_LT(std::abs(Complex(-9.20838, 0) - volt), epsilon_nonlinear);
 
         delete circuit;
         delete e_R;

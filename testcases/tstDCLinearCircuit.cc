@@ -20,7 +20,7 @@ namespace csim
      *                  `-'
      *                  12V
      */
-    TEST(circuit_R_VS_divider, tstLinearCircuit)
+    TEST(circuit_R_VS_divider, tstDCLinearCircuit)
     {
         int ret = 0;
         ModelEntry *e_R = ModelLoader::load(resistorLibrary);
@@ -72,7 +72,7 @@ namespace csim
         EXPECT_EQ(CERR_SUCCEEDED, ret);
 
         Complex volt = circuit->getNodeVolt(n1) - circuit->getNodeVolt(n_gnd);
-        EXPECT_LT(std::abs(Complex(4.0, 0) - volt), epsilon);
+        EXPECT_LT(std::abs(Complex(4.0, 0) - volt), epsilon_linear);
 
         delete circuit;
         delete e_R;
@@ -96,7 +96,7 @@ namespace csim
      *                   `-'
      *                   12V
      */
-    TEST(circuit_R_VS_network, tstLinearCircuit)
+    TEST(circuit_R_VS_network, tstDCLinearCircuit)
     {
         int ret = 0;
         ModelEntry *e_R = ModelLoader::load(resistorLibrary);
@@ -213,17 +213,17 @@ namespace csim
         ret = circuit->netlist()->getTermlNode("R1", 1, &n1);
         EXPECT_EQ(CERR_SUCCEEDED, ret);
         volt = circuit->getNodeVolt(n1) - circuit->getNodeVolt(n_gnd);
-        EXPECT_LT(std::abs(Complex(9.85567, 0) - volt), epsilon);
+        EXPECT_LT(std::abs(Complex(9.85567, 0) - volt), epsilon_linear);
 
         ret = circuit->netlist()->getTermlNode("R2", 1, &n1);
         EXPECT_EQ(CERR_SUCCEEDED, ret);
         volt = circuit->getNodeVolt(n1) - circuit->getNodeVolt(n_gnd);
-        EXPECT_LT(std::abs(Complex(5.56701, 0) - volt), epsilon);
+        EXPECT_LT(std::abs(Complex(5.56701, 0) - volt), epsilon_linear);
 
         ret = circuit->netlist()->getTermlNode("R3", 1, &n1);
         EXPECT_EQ(CERR_SUCCEEDED, ret);
         volt = circuit->getNodeVolt(n1) - circuit->getNodeVolt(n_gnd);
-        EXPECT_LT(std::abs(Complex(2.47423, 0) - volt), epsilon);
+        EXPECT_LT(std::abs(Complex(2.47423, 0) - volt), epsilon_linear);
 
         delete circuit;
         delete e_R;

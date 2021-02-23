@@ -13,7 +13,12 @@ add_library(
     csimModelPN SHARED
     "${CMAKE_CURRENT_SOURCE_DIR}/PN.cc"
 )
+add_library(
+    csimModelCapacitor SHARED
+    "${CMAKE_CURRENT_SOURCE_DIR}/Capacitor.cc"
+)
 
 target_link_libraries(csimModelResistor csim)
 target_link_libraries(csimModelVDC csim)
 target_link_libraries(csimModelPN csim)
+target_link_libraries(csimModelCapacitor csim)

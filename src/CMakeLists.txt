@@ -11,6 +11,10 @@ set(SRCS
     "${CMAKE_CURRENT_SOURCE_DIR}/models/loader/Loader.cc"
     "${CMAKE_CURRENT_SOURCE_DIR}/solver/LinearSolver.cc"
     "${CMAKE_CURRENT_SOURCE_DIR}/solver/LinearSolverGauss.cc"
+    "${CMAKE_CURRENT_SOURCE_DIR}/analyzer/Analyzers.cc"
+    "${CMAKE_CURRENT_SOURCE_DIR}/analyzer/AnalyzerDC.cc"
+    "${CMAKE_CURRENT_SOURCE_DIR}/analyzer/AnalyzerAC.cc"
+    "${CMAKE_CURRENT_SOURCE_DIR}/analyzer/AnalyzerTran.cc"
     "${CMAKE_CURRENT_SOURCE_DIR}/Circuit.cc"
     "${CMAKE_CURRENT_SOURCE_DIR}/Netlist.cc"
 )

@@ -22,6 +22,7 @@
 #include "csim/model/ModelBase.h"
 #include "csim/internal/LinearSolver.h"
 #include "csim/internal/Netlist.h"
+#include "csim/internal/Analyzers.h"
 #include "csim/internal/Circuit.h"
 
 namespace csim
@@ -115,47 +116,35 @@ namespace csim
         m_z[row] += delta;
     }
 
-    int Circuit::analyse(AnalysisType type)
-    {
-        UPDATE_RC(initMNA(type));
-        return solveMNA(type);
-    }
-
-    Complex Circuit::getNodeVolt(unsigned int node)
+    Complex Circuit::getNodeVolt(unsigned int node) const
     {
         assert(node < m_netlist->getNumNodes());
         return m_x[node];
     }
 
-    int Circuit::initMNA(AnalysisType analysis)
+    Complex Circuit::getBranchCurrent(unsigned int vs) const
+    {
+        assert(vs < m_netlist->getNumVS());
+        return m_x[m_netlist->getNumNodes() + vs];
+    }
+
+    const Complex *Circuit::getNodeVoltVector() const
+    {
+        return m_x;
+    }
+    const Complex *Circuit::getBranchCurrentVector() const
+    {
+        return m_x + m_netlist->getNumNodes();
+    }
+
+    int Circuit::initMNA(AnalyzerBase *analyzer)
     {
         createMatrix(m_netlist->getNumNodes(), m_netlist->getNumVS());
-        switch (analysis)
-        {
-        case analyseDC:
-            for (auto &mif : m_netlist->models())
-            {
-                UPDATE_RC(mif.model->prepareDC());
-            }
-
-            break;
-        case analyseAC:
-            for (auto &mif : m_netlist->models())
-            {
-                UPDATE_RC(mif.model->prepareAC());
-            }
-            break;
-        case analyseTransient:
-            for (auto &mif : m_netlist->models())
-            {
-                UPDATE_RC(mif.model->prepareTR());
-            }
-            break;
-        }
+        analyzer->prepareMNA();
         return 0;
     }
 
-    int Circuit::solveMNA(AnalysisType analysis)
+    int Circuit::solveMNA(AnalyzerBase *analyzer)
     {
         int ret;
         int iteration = 0;
@@ -164,29 +153,7 @@ namespace csim
             memset(m_A, 0, sizeof(*m_A) * m_matrixRows * m_matrixRows);
             memset(m_z, 0, sizeof(*m_z) * m_matrixRows);
 
-            switch (analysis)
-            {
-            case analyseDC:
-                for (auto &mif : m_netlist->models())
-                {
-                    UPDATE_RC(mif.model->iterateDC());
-                }
-                break;
-            case analyseAC:
-                for (auto &mif : m_netlist->models())
-                {
-                    UPDATE_RC(mif.model->iterateAC());
-                }
-                break;
-            case analyseTransient:
-                for (auto &mif : m_netlist->models())
-                {
-                    UPDATE_RC(mif.model->iterateTR());
-                }
-                break;
-            default:
-                assert(0);
-            }
+            UPDATE_RC(analyzer->iterateMNA());
 
             ret = m_linearSolver->solve(m_A, m_matrixRows, m_x, m_z);
 
@@ -253,5 +220,4 @@ namespace csim
         }
         return true;
     }
-
 }

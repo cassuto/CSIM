@@ -1,6 +1,7 @@
 #include "gtest/gtest.h"
 #include "constants.h"
 #include "csim/utils/errors.h"
+#include "csim/internal/Analyzers.h"
 #include "csim/internal/Circuit.h"
 #include "csim/internal/Netlist.h"
 #include "csim/internal/ModelLoader.h"
@@ -61,17 +62,26 @@ namespace csim
         ASSERT_EQ(CERR_SUCCEEDED, ret);
 
         /* DC analysis */
-        ret = circuit->analyse(Circuit::analyseDC);
+        AnalyzerBase *analyzer = Analyzers::createInstance("DC", circuit);
+        ASSERT_NE(nullptr, analyzer);
+        ret = analyzer->analyze();
         EXPECT_EQ(CERR_SUCCEEDED, ret);
 
-        /* Check voltages */
+        /* Get nodes */
         unsigned int n_gnd, n1;
         ret = circuit->netlist()->getTermlNode("R1", 1, &n1);
         EXPECT_EQ(CERR_SUCCEEDED, ret);
         ret = circuit->netlist()->getTermlNode("R2", 1, &n_gnd);
         EXPECT_EQ(CERR_SUCCEEDED, ret);
 
+        /* Check status of Circuit object */
         Complex volt = circuit->getNodeVolt(n1) - circuit->getNodeVolt(n_gnd);
+        EXPECT_LT(std::abs(Complex(4.0, 0) - volt), epsilon_linear);
+
+        /* Check solution vector of DC analyzer */
+        EXPECT_GE(1, analyzer->getNumSteps());
+        const Complex *Vn = analyzer->getNodeVoltVector(1);
+        volt = Vn[n1] - Vn[n_gnd];
         EXPECT_LT(std::abs(Complex(4.0, 0) - volt), epsilon_linear);
 
         delete circuit;
@@ -200,10 +210,16 @@ namespace csim
         EXPECT_EQ(nds[2], nds[3]);
 
         /* DC analysis */
-        ret = circuit->analyse(Circuit::analyseDC);
+        AnalyzerBase *analyzer = Analyzers::createInstance("DC", circuit);
+        ASSERT_NE(nullptr, analyzer);
+        ret = analyzer->analyze();
         EXPECT_EQ(CERR_SUCCEEDED, ret);
 
-        /* Check voltages */
+        /* Check solution vector of DC analyzer */
+        
+        EXPECT_GE(1, analyzer->getNumSteps());
+        const Complex *Vn = analyzer->getNodeVoltVector(1);
+
         unsigned int n_gnd, n1;
         ret = circuit->netlist()->getTermlNode("V1", 1, &n_gnd);
         EXPECT_EQ(CERR_SUCCEEDED, ret);
@@ -212,17 +228,17 @@ namespace csim
 
         ret = circuit->netlist()->getTermlNode("R1", 1, &n1);
         EXPECT_EQ(CERR_SUCCEEDED, ret);
-        volt = circuit->getNodeVolt(n1) - circuit->getNodeVolt(n_gnd);
+        volt = Vn[n1] - Vn[n_gnd];
         EXPECT_LT(std::abs(Complex(9.85567, 0) - volt), epsilon_linear);
 
         ret = circuit->netlist()->getTermlNode("R2", 1, &n1);
         EXPECT_EQ(CERR_SUCCEEDED, ret);
-        volt = circuit->getNodeVolt(n1) - circuit->getNodeVolt(n_gnd);
+        volt = Vn[n1] - Vn[n_gnd];
         EXPECT_LT(std::abs(Complex(5.56701, 0) - volt), epsilon_linear);
 
         ret = circuit->netlist()->getTermlNode("R3", 1, &n1);
         EXPECT_EQ(CERR_SUCCEEDED, ret);
-        volt = circuit->getNodeVolt(n1) - circuit->getNodeVolt(n_gnd);
+        volt = Vn[n1] - Vn[n_gnd];
         EXPECT_LT(std::abs(Complex(2.47423, 0) - volt), epsilon_linear);
 
         delete circuit;

@@ -1,16 +1,16 @@
-#ifndef MODEL_VDC_H_
-#define MODEL_VDC_H_
+#ifndef INDUCTOR_H_
+#define INDUCTOR_H_
 
 #include "csim/model/ModelBase.h"
 
 namespace csimModel
 {
 
-    class VDC : public ModelBase
+    class Inductor : public ModelBase
     {
     public:
-        VDC(MODELBASE_CONSTRUCTOR_DEF);
-        virtual ~VDC();
+        Inductor(MODELBASE_CONSTRUCTOR_DEF);
+        virtual ~Inductor();
 
     public:
         virtual int configure();
@@ -20,8 +20,11 @@ namespace csimModel
         virtual int iterateDC();
         virtual int iterateAC(double omega);
         virtual int iterateTR();
+
+    private:
+        double m_kZimag;
     };
 
 }
 
-#endif // MODEL_VDC_H_
+#endif // INDUCTOR_H_

@@ -1,0 +1,8 @@
+#ifndef CSIM_CONSTANTS_H_
+#define CSIM_CONSTANTS_H_
+
+#ifndef M_PI
+#define M_PI (3.1415926535897932384626433832795029)
+#endif
+
+#endif // CSIM_CONSTANTS_H_

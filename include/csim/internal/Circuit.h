@@ -27,6 +27,7 @@ namespace csim
 
     class LinearSolver;
     class Netlist;
+    class AnalyzerBase;
 
     class Circuit
     {
@@ -50,21 +51,16 @@ namespace csim
             return m_netlist;
         }
 
-        enum AnalysisType
-        {
-            analyseDC = 0,
-            analyseAC,
-            analyseTransient
-        };
-        
-        int analyse(AnalysisType type);
+        int initMNA(AnalyzerBase *analyzer);
+        int solveMNA(AnalyzerBase *analyzer);
 
-        Complex getNodeVolt(unsigned int node);
+        Complex getNodeVolt(unsigned int node) const;
+        Complex getBranchCurrent(unsigned int vs) const;
+        const Complex *getNodeVoltVector() const;
+        const Complex *getBranchCurrentVector() const;
 
     private:
         void createMatrix(unsigned int numNodes, unsigned int numVS);
-        int initMNA(AnalysisType analysis);
-        int solveMNA(AnalysisType analysis);
         bool converged();
 
     private:

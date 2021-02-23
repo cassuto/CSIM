@@ -79,7 +79,7 @@ namespace csimModel
         }
         return 0;
     }
-    int Resistor::iterateAC()
+    int Resistor::iterateAC(double omega)
     {
         return iterateDC();
     }

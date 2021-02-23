@@ -60,7 +60,7 @@ namespace csimModel
         setE(k, V);
         return 0;
     }
-    int VDC::iterateAC()
+    int VDC::iterateAC(double omega)
     {
         return iterateDC();
     }

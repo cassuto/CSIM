@@ -1,16 +1,16 @@
-#ifndef MODEL_VDC_H_
-#define MODEL_VDC_H_
+#ifndef CAPACITOR_H_
+#define CAPACITOR_H_
 
 #include "csim/model/ModelBase.h"
 
 namespace csimModel
 {
 
-    class VDC : public ModelBase
+    class Capacitor : public ModelBase
     {
     public:
-        VDC(MODELBASE_CONSTRUCTOR_DEF);
-        virtual ~VDC();
+        Capacitor(MODELBASE_CONSTRUCTOR_DEF);
+        virtual ~Capacitor();
 
     public:
         virtual int configure();
@@ -20,8 +20,11 @@ namespace csimModel
         virtual int iterateDC();
         virtual int iterateAC(double omega);
         virtual int iterateTR();
+
+    private:
+        double m_kZimag;
     };
 
 }
 
-#endif // MODEL_VDC_H_
+#endif // CAPACITOR_H_

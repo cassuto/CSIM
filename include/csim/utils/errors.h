@@ -44,6 +44,8 @@
 #define CERR_FLOATING_TERMINALS (-9)
 /** No such property */
 #define CERR_NO_SUCH_PROPERTY (-10)
+/** Invalid range */
+#define CERR_INVALD_RANGE (-11)
 
 /** Unknown */
 #define CERR_UNKNOWN (-65536)

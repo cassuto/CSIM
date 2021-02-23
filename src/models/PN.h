@@ -18,7 +18,7 @@ namespace csimModel
         virtual int prepareAC();
         virtual int prepareTR();
         virtual int iterateDC();
-        virtual int iterateAC();
+        virtual int iterateAC(double omega);
         virtual int iterateTR();
 
     private:

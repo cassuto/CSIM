@@ -1,5 +1,7 @@
-#ifndef CONSTANTS_H_
-#define CONSTANTS_H_
+#ifndef MODEL_CONSTANTS_H_
+#define MODEL_CONSTANTS_H_
+
+#include "csim/utils/constants.h"
 
 namespace csimModel
 {
@@ -11,6 +13,7 @@ namespace csimModel
     static const double kBoltzmann = 1.380650524e-23;
     /** Square root of 2 */
     static const double sqrt_2 = 1.4142135623730950488016887242096981;
+
 }
 
-#endif // CONSTANTS_H_
+#endif // MODEL_CONSTANTS_H_

@@ -149,7 +149,7 @@ namespace csimModel
 
         return 0;
     }
-    int PN::iterateAC()
+    int PN::iterateAC(double omega)
     {
         return 0;
     }
@@ -183,7 +183,7 @@ namespace csimModel
         }
 
         /* This code comes from SPICE3F5. Authors: 1985 Thomas L. Quarles, 2000 Alan Gillespie. */
-        if (Ud_0 > m_Uth && fabs(Ud_0 - Ud_1) > 2 * m_Ut)
+        if (Ud_0 > m_Uth && std::abs(Ud_0 - Ud_1) > 2 * m_Ut)
         {
             if (Ud_1 > 0)
             {
@@ -232,4 +232,4 @@ const ModelDescriptor descriptor = {
     /* id */
     "PN",
     /* description */
-    "Generic PN"};
+    "Generic PN-junction"};

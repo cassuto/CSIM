@@ -167,8 +167,8 @@ namespace csim
                 /* save vector x and z */
                 memcpy(m_x_1, m_x, sizeof(*m_x) * m_matrixRows);
                 memcpy(m_z_1, m_z, sizeof(*m_z) * m_matrixRows);
-                iteration++;
             }
+            iteration++;
         } while (iteration < m_maxIterations);
 
         if (iteration >= m_maxIterations)

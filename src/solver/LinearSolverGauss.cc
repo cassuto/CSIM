@@ -17,6 +17,8 @@
 
 #include <cassert>
 #include <cstring>
+#include <iostream>
+#include "csim/utils/errors.h"
 #include "csim/internal/LinearSolver.h"
 
 namespace csim
@@ -98,6 +100,10 @@ namespace csim
                 f -= m_bufA[i * n + c] * x[c];
             }
             x[i] = f / m_bufA[i * n + i];
+            if (!std::isfinite(x[i].real()) || !std::isfinite(x[i].imag()))
+            {
+                return CERR_SINGULAR_MATRIX;
+            }
         }
 
         return 0;

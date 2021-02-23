@@ -22,7 +22,9 @@ static const double epsilon_nonlinear = 1e-1;
 static const char *csimLibrary = DLIB_PREFIX "csim" DLIB_SUFFIX;
 static const char *resistorLibrary = DLIB_PREFIX "csimModelResistor" DLIB_SUFFIX;
 static const char *VDCLibrary = DLIB_PREFIX "csimModelVDC" DLIB_SUFFIX;
+static const char *VACLibrary = DLIB_PREFIX "csimModelVAC" DLIB_SUFFIX;
 static const char *PNLibrary = DLIB_PREFIX "csimModelPN" DLIB_SUFFIX;
 static const char *CapacitorLibrary = DLIB_PREFIX "csimModelCapacitor" DLIB_SUFFIX;
+static const char *InductorLibrary = DLIB_PREFIX "csimModelInductor" DLIB_SUFFIX;
 
 #endif // CONSTANTS_H_

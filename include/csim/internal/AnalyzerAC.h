@@ -25,6 +25,7 @@ namespace csim
         ~AnalyzerAC();
 
         virtual int analyze();
+        virtual double getPosition(unsigned int step);
 
         virtual int prepareMNA();
         virtual int iterateMNA();

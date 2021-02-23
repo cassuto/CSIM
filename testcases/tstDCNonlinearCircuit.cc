@@ -86,7 +86,7 @@ namespace csim
         ret = circuit->netlist()->getTermlNode("R1", 1, &n1);
         EXPECT_EQ(CERR_SUCCEEDED, ret);
 
-        EXPECT_GE(1, analyzer->getNumSteps());
+        EXPECT_GE(analyzer->getNumSteps(), 1);
         const Complex *Vn = analyzer->getNodeVoltVector(1);
         
         Complex volt = Vn[n1] - Vn[n_gnd];

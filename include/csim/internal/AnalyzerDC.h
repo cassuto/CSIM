@@ -26,6 +26,7 @@ namespace csim
 
         virtual int analyze();
         virtual unsigned int getNumSteps();
+        virtual double getPosition(unsigned int step);
         virtual const Complex *getNodeVoltVector(unsigned int step);
         virtual const Complex *getBranchCurrentVector(unsigned int step);
 

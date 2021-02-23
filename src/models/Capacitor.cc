@@ -34,9 +34,7 @@ namespace csimModel
 
     int Capacitor::configure()
     {
-        double C = property().getProperty("C").getDouble();
-        m_kZimag = 2.0 * M_PI * C;
-
+        m_kZimag = property().getProperty("C").getDouble();
         resizeModel(2, 0, 0);
         return 0;
     }
@@ -58,6 +56,7 @@ namespace csimModel
     {
         return 0;
     }
+
     int Capacitor::iterateAC(double omega)
     {
         MComplex z = MComplex(0, m_kZimag * omega);
@@ -65,6 +64,7 @@ namespace csimModel
         setY(getNode(1), getNode(0), -z), setY(getNode(1), getNode(1), z);
         return 0;
     }
+
     int Capacitor::iterateTR()
     {
         return 0;

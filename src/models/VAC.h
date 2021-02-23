@@ -1,16 +1,16 @@
-#ifndef INDUCTOR_H_
-#define INDUCTOR_H_
+#ifndef MODEL_VAC_H_
+#define MODEL_VAC_H_
 
 #include "csim/model/ModelBase.h"
 
 namespace csimModel
 {
 
-    class Inductor : public ModelBase
+    class VAC : public ModelBase
     {
     public:
-        Inductor(MODELBASE_CONSTRUCTOR_DEF);
-        virtual ~Inductor();
+        VAC(MODELBASE_CONSTRUCTOR_DEF);
+        virtual ~VAC();
 
     public:
         virtual int configure();
@@ -22,10 +22,9 @@ namespace csimModel
         virtual int iterateTR();
 
     private:
-        double m_kZimag;
-        bool m_cutThrough;
+        MComplex m_E;
     };
 
 }
 
-#endif // INDUCTOR_H_
+#endif // MODEL_VAC_H_

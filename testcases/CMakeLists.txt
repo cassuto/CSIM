@@ -16,6 +16,10 @@ set(TEST_SRCS
     "${CMAKE_CURRENT_SOURCE_DIR}/tstLinearSolverGauss.cc"
     "${CMAKE_CURRENT_SOURCE_DIR}/tstDCLinearCircuit.cc"
     "${CMAKE_CURRENT_SOURCE_DIR}/tstDCNonlinearCircuit.cc"
+    "${CMAKE_CURRENT_SOURCE_DIR}/tstCapacitorDC.cc"
+    "${CMAKE_CURRENT_SOURCE_DIR}/tstInductorDC.cc"
+    "${CMAKE_CURRENT_SOURCE_DIR}/tstVACInDC.cc"
+    "${CMAKE_CURRENT_SOURCE_DIR}/tstACLinearCircuit.cc"
 )
 
 add_executable(tstall ${TEST_SRCS})

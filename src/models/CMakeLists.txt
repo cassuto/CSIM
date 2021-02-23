@@ -10,6 +10,10 @@ add_library(
     "${CMAKE_CURRENT_SOURCE_DIR}/VDC.cc"
 )
 add_library(
+    csimModelVAC SHARED
+    "${CMAKE_CURRENT_SOURCE_DIR}/VAC.cc"
+)
+add_library(
     csimModelPN SHARED
     "${CMAKE_CURRENT_SOURCE_DIR}/PN.cc"
 )
@@ -17,8 +21,14 @@ add_library(
     csimModelCapacitor SHARED
     "${CMAKE_CURRENT_SOURCE_DIR}/Capacitor.cc"
 )
+add_library(
+    csimModelInductor SHARED
+    "${CMAKE_CURRENT_SOURCE_DIR}/Inductor.cc"
+)
 
 target_link_libraries(csimModelResistor csim)
 target_link_libraries(csimModelVDC csim)
+target_link_libraries(csimModelVAC csim)
 target_link_libraries(csimModelPN csim)
 target_link_libraries(csimModelCapacitor csim)
+target_link_libraries(csimModelInductor csim)

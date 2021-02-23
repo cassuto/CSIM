@@ -39,6 +39,11 @@ namespace csim
         return 0;
     }
 
+    double AnalyzerTran::getPosition(unsigned int step)
+    {
+        return 0.0;
+    }
+
     int AnalyzerTran::prepareMNA()
     {
         for (auto &mif : circuit()->netlist()->models())

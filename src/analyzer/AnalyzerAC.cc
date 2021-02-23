@@ -15,6 +15,7 @@
  *  Lesser General Public License for more details.                        
  */
 
+#include <algorithm>
 #include "csim/model/ModelBase.h"
 #include "csim/utils/errors.h"
 #include "csim/utils/constants.h"
@@ -30,9 +31,9 @@ namespace csim
           m_currentPos(0.0),
           m_currentOmega(0.0)
     {
-        property().addProperty("start", csimModel::Variant(csimModel::Variant::VariantDouble).setDouble(50.0), true);
-        property().addProperty("stop", csimModel::Variant(csimModel::Variant::VariantDouble).setDouble(1000.0), true);
-        property().addProperty("step", csimModel::Variant(csimModel::Variant::VariantDouble).setDouble(0.1), true);
+        property().addProperty("fstart", csimModel::Variant(csimModel::Variant::VariantDouble).setDouble(50.0), true);
+        property().addProperty("fstop", csimModel::Variant(csimModel::Variant::VariantDouble).setDouble(1000.0), true);
+        property().addProperty("fstep", csimModel::Variant(csimModel::Variant::VariantDouble).setDouble(0.1), true);
     }
     AnalyzerAC::~AnalyzerAC()
     {
@@ -42,21 +43,21 @@ namespace csim
     {
         UPDATE_RC(circuit()->initMNA(this));
 
-        double start = property().getProperty("start").getDouble();
-        double end = property().getProperty("start").getDouble();
-        double step = property().getProperty("step").getDouble();
+        double fstart = property().getProperty("fstart").getDouble();
+        double fstop = property().getProperty("fstop").getDouble();
+        double fstep = property().getProperty("fstep").getDouble();
 
-        if (start < end)
+        if (fstop < fstart)
         {
-            return -CERR_INVALD_RANGE;
+            return CERR_INVALD_RANGE;
         }
-        m_steps = (end - start) / step;
+        int numSteps = std::max(1.0, (fstop - fstart) / fstep);
 
-        createVectors(circuit()->netlist()->getNumNodes(), circuit()->netlist()->getNumVS(), m_steps);
+        createVectors(circuit()->netlist()->getNumNodes(), circuit()->netlist()->getNumVS(), numSteps);
 
-        for (unsigned int i = 0; i < m_steps; ++i)
+        for (unsigned int i = 0; i < numSteps; ++i)
         {
-            m_currentPos = start + m_steps * i;
+            m_currentPos = fstart + fstep * i;
             m_currentOmega = 2 * M_PI * m_currentPos;
 
             UPDATE_RC(circuit()->solveMNA(this));
@@ -66,6 +67,13 @@ namespace csim
             setBranchCurrentVector(i, circuit()->getBranchCurrentVector());
         }
         return 0;
+    }
+
+    double AnalyzerAC::getPosition(unsigned int step)
+    {
+        double fstart = property().getProperty("fstart").getDouble();
+        double fstep = property().getProperty("fstep").getDouble();
+        return fstart + fstep * step;
     }
 
     int AnalyzerAC::prepareMNA()

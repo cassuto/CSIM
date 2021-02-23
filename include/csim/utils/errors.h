@@ -46,6 +46,8 @@
 #define CERR_NO_SUCH_PROPERTY (-10)
 /** Invalid range */
 #define CERR_INVALD_RANGE (-11)
+/** Singular Matrix */
+#define CERR_SINGULAR_MATRIX (-12)
 
 /** Unknown */
 #define CERR_UNKNOWN (-65536)

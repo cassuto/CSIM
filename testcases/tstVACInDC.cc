@@ -13,28 +13,25 @@ namespace csim
     /*
      * Circuit diagram
      * 
-     *          R1               R2
-     *     0 .______. 1    0 .______. 1
-     *  +---+|______|+------+|______|+---+
-     *  |      20ohm           10ohm     |
-     *  |                V1              |
-     *  |          0    ,-.    1         |
-     *  +--------------(---)-------------+
-     *  |               `-'              |
-     *  |               12V              |
-     *  |                                |
-     *  |          0    C1     1         |
-     *  +---------------||---------------+
+     *          R1               R2             V2
+     *     0 .______. 1    0 .______. 1    0   ,-.    1
+     *  +---+|______|+------+|______|+--------(---)--------+
+     *  |      20ohm           10ohm           `-'         |
+     *  |                       V1              AC         |
+     *  |                  0    ,-.    1                   |
+     *  +----------------------(---)-----------------------+
+     *                          `-'
+     *                         DC=12V
      */
-    TEST(circuit_C, tstCapacitorDC)
+    TEST(circuit_VAC, tstVACInDC)
     {
         int ret = 0;
         ModelEntry *e_R = ModelLoader::load(resistorLibrary);
         ASSERT_NE(nullptr, e_R);
         ModelEntry *e_VDC = ModelLoader::load(VDCLibrary);
         ASSERT_NE(nullptr, e_VDC);
-        ModelEntry *e_CAP = ModelLoader::load(CapacitorLibrary);
-        ASSERT_NE(nullptr, e_CAP);
+        ModelEntry *e_VAC = ModelLoader::load(VACLibrary);
+        ASSERT_NE(nullptr, e_VAC);
         
         Circuit *circuit = new Circuit();
 
@@ -45,7 +42,7 @@ namespace csim
         ASSERT_EQ(CERR_SUCCEEDED, ret);
         ret = circuit->netlist()->addComponent("V1", e_VDC);
         ASSERT_EQ(CERR_SUCCEEDED, ret);
-        ret = circuit->netlist()->addComponent("C1", e_CAP);
+        ret = circuit->netlist()->addComponent("V2", e_VAC);
         ASSERT_EQ(CERR_SUCCEEDED, ret);
 
         /* Configure */
@@ -64,11 +61,9 @@ namespace csim
         ASSERT_EQ(CERR_SUCCEEDED, ret);
         ret = circuit->netlist()->wire("R1", 1, "R2", 0);
         ASSERT_EQ(CERR_SUCCEEDED, ret);
-        ret = circuit->netlist()->wire("R2", 1, "V1", 1);
+        ret = circuit->netlist()->wire("R2", 1, "V2", 0);
         ASSERT_EQ(CERR_SUCCEEDED, ret);
-        ret = circuit->netlist()->wire("C1", 0, "V1", 0);
-        ASSERT_EQ(CERR_SUCCEEDED, ret);
-        ret = circuit->netlist()->wire("C1", 1, "V1", 1);
+        ret = circuit->netlist()->wire("V2", 1, "V1", 1);
         ASSERT_EQ(CERR_SUCCEEDED, ret);
 
         ret = circuit->netlist()->generateNodes();
@@ -96,7 +91,7 @@ namespace csim
         delete circuit;
         delete e_R;
         delete e_VDC;
-        delete e_CAP;
+        delete e_VAC;
     }
 
 } // namespace

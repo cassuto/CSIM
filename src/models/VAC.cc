@@ -1,5 +1,5 @@
 /**
- * @file Ideal DC Voltage Source Model
+ * @file Ideal AC Voltage Source Model
  */
 
 /*
@@ -15,63 +15,70 @@
  *  Lesser General Public License for more details.                        
  */
 
-#include "VDC.h"
+#include <cmath>
+#include "VAC.h"
 
 namespace csimModel
 {
 
-    VDC::VDC(MODELBASE_CONSTRUCTOR_DEF)
+    VAC::VAC(MODELBASE_CONSTRUCTOR_DEF)
         : ModelBase(MODELBASE_CONSTRUCTOR_VAR)
     {
-        property().addProperty("V", Variant(Variant::VariantDouble).setDouble(5.0), true);
+        property().addProperty("Vp", Variant(Variant::VariantDouble).setDouble(5.0), true);
+        property().addProperty("freq", Variant(Variant::VariantDouble).setDouble(50.0), true);
+        property().addProperty("phase", Variant(Variant::VariantDouble).setDouble(0.0), true);
     }
 
-    VDC::~VDC()
+    VAC::~VAC()
     {
     }
 
-    int VDC::configure()
+    int VAC::configure()
     {
+        double Vrms = property().getProperty("Vp").getDouble();
+        double phase = property().getProperty("phase").getDouble();
+
+        phase = M_PI * phase / 180.0;
+        m_E = MComplex(Vrms * std::cos(phase), Vrms * std::sin(phase));
+
         resizeModel(2, 0, 1);
         return 0;
     }
 
-    int VDC::prepareDC()
+    int VAC::prepareDC()
     {
         return 0;
     }
-    int VDC::prepareAC()
+    int VAC::prepareAC()
     {
         return 0;
     }
-    int VDC::prepareTR()
+    int VAC::prepareTR()
     {
         return 0;
     }
 
-    int VDC::iterateDC()
-    {
-        double V = property().getProperty("V").getDouble();
-
-        unsigned int k = getVS(0);
-        setB(getNode(0), k, +1.0);
-        setB(getNode(1), k, -1.0);
-        setC(k, getNode(0), 1.0), setC(k, getNode(1), -1.0);
-        setE(k, V);
-        return 0;
-    }
-
-    int VDC::iterateAC(double omega)
+    int VAC::iterateDC()
     {
         unsigned int k = getVS(0);
         setB(getNode(0), k, +1.0);
         setB(getNode(1), k, -1.0);
         setC(k, getNode(0), 1.0), setC(k, getNode(1), -1.0);
-        setE(k, 0.0); /* Remove any DC voltage */
+        setE(k, 0.0);
         return 0;
     }
 
-    int VDC::iterateTR()
+    int VAC::iterateAC(double omega)
+    {
+        unsigned int k = getVS(0);
+        setB(getNode(0), k, +1.0);
+        setB(getNode(1), k, -1.0);
+        setC(k, getNode(0), 1.0), setC(k, getNode(1), -1.0);
+        setE(k, m_E);
+        return 0;
+    }
+
+    int VAC::iterateTR()
     {
         return iterateDC();
     }
@@ -80,7 +87,7 @@ namespace csimModel
 
 extern "C" csimModel::ModelBase *createModel(MODELBASE_CONSTRUCTOR_DEF)
 {
-    return new csimModel::VDC(MODELBASE_CONSTRUCTOR_VAR);
+    return new csimModel::VAC(MODELBASE_CONSTRUCTOR_VAR);
 }
 
 extern "C" void deleteModel(csimModel::ModelBase *model)
@@ -90,6 +97,6 @@ extern "C" void deleteModel(csimModel::ModelBase *model)
 
 const ModelDescriptor descriptor = {
     /* id */
-    "VDC",
+    "VAC",
     /* description */
-    "Generic ideal DC Voltage Source"};
+    "Generic ideal AC Voltage Source"};

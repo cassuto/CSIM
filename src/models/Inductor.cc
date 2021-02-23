@@ -23,9 +23,10 @@ namespace csimModel
 
     Inductor::Inductor(MODELBASE_CONSTRUCTOR_DEF)
         : ModelBase(MODELBASE_CONSTRUCTOR_VAR),
-          m_kZimag(0.0)
+          m_kZimag(0.0),
+          m_cutThrough(false)
     {
-        property().addProperty("C", Variant(Variant::VariantDouble).setDouble(1e-5), false);
+        property().addProperty("L", Variant(Variant::VariantDouble).setDouble(1e-5), false);
     }
 
     Inductor::~Inductor()
@@ -34,10 +35,19 @@ namespace csimModel
 
     int Inductor::configure()
     {
-        double C = property().getProperty("C").getDouble();
-        m_kZimag = 2.0 * M_PI * C;
+        double L = property().getProperty("L").getDouble();
 
-        resizeModel(2, 0, 0);
+        if (L == 0.0)
+        {
+            m_cutThrough = true;
+        }
+        else
+        {
+            m_kZimag = L;
+            m_cutThrough = false;
+        }
+
+        resizeModel(2, 0, 1);
         return 0;
     }
 
@@ -56,13 +66,34 @@ namespace csimModel
 
     int Inductor::iterateDC()
     {
+        unsigned int k = getVS(0);
+        setB(getNode(0), k, +1.0);
+        setB(getNode(1), k, -1.0);
+        setC(k, getNode(0), 1.0), setC(k, getNode(1), -1.0);
+        setE(k, 0.0);
         return 0;
     }
+
     int Inductor::iterateAC(double omega)
     {
-        MComplex z = MComplex(0, m_kZimag * omega);
-        setY(getNode(0), getNode(0), z), setY(getNode(0), getNode(1), -z);
-        setY(getNode(1), getNode(0), -z), setY(getNode(1), getNode(1), z);
+        unsigned int k = getVS(0);
+        setB(getNode(0), k, +1.0);
+        setB(getNode(1), k, -1.0);
+
+        if (m_cutThrough)
+        {
+            setC(k, getNode(0), 1.0), setC(k, getNode(1), -1.0);
+            setE(k, 0.0);
+        }
+        else
+        {
+            setD(k, k, 1.0);
+            setE(k, 0.0);
+
+            MComplex z = MComplex(0, -1.0 / (m_kZimag * omega));
+            setY(getNode(0), getNode(0), z), setY(getNode(0), getNode(1), -z);
+            setY(getNode(1), getNode(0), -z), setY(getNode(1), getNode(1), z);
+        }
         return 0;
     }
     int Inductor::iterateTR()
@@ -83,6 +114,6 @@ extern "C" void deleteModel(csimModel::ModelBase *model)
 
 const ModelDescriptor descriptor = {
     /* id */
-    "CAP",
+    "INDUCTOR",
     /* description */
-    "Generic  Inductor"};
+    "Generic Inductor"};

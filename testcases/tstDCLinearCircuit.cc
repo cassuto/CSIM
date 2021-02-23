@@ -79,7 +79,7 @@ namespace csim
         EXPECT_LT(std::abs(Complex(4.0, 0) - volt), epsilon_linear);
 
         /* Check solution vector of DC analyzer */
-        EXPECT_GE(1, analyzer->getNumSteps());
+        EXPECT_GE(analyzer->getNumSteps(), 1);
         const Complex *Vn = analyzer->getNodeVoltVector(1);
         volt = Vn[n1] - Vn[n_gnd];
         EXPECT_LT(std::abs(Complex(4.0, 0) - volt), epsilon_linear);
@@ -217,7 +217,7 @@ namespace csim
 
         /* Check solution vector of DC analyzer */
         
-        EXPECT_GE(1, analyzer->getNumSteps());
+        EXPECT_GE(analyzer->getNumSteps(), 1);
         const Complex *Vn = analyzer->getNodeVoltVector(1);
 
         unsigned int n_gnd, n1;

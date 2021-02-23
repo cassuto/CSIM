@@ -43,6 +43,10 @@ namespace csim
     {
         return 1;
     }
+    double AnalyzerDC::getPosition(unsigned int step)
+    {
+        return 0.0;
+    }
     const Complex *AnalyzerDC::getNodeVoltVector(unsigned int step)
     {
         return circuit()->getNodeVoltVector();

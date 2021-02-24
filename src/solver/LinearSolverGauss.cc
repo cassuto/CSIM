@@ -19,7 +19,7 @@
 #include <cstring>
 #include <iostream>
 #include "csim/utils/errors.h"
-#include "csim/internal/LinearSolver.h"
+#include "LinearSolverGauss.h"
 
 namespace csim
 {

@@ -59,6 +59,9 @@ namespace csim
         const Complex *getNodeVoltVector() const;
         const Complex *getBranchCurrentVector() const;
 
+        std::string getCorrectorName() const;
+        std::string getPredictorName() const;
+
     private:
         void createMatrix(unsigned int numNodes, unsigned int numVS);
         bool converged();

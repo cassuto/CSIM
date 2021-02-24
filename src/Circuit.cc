@@ -137,6 +137,15 @@ namespace csim
         return m_x + m_netlist->getNumNodes();
     }
 
+    std::string Circuit::getCorrectorName() const
+    {
+        return "euler";
+    }
+    std::string Circuit::getPredictorName() const
+    {
+        return "gear";
+    }
+
     int Circuit::initMNA(AnalyzerBase *analyzer)
     {
         createMatrix(m_netlist->getNumNodes(), m_netlist->getNumVS());
@@ -182,19 +191,21 @@ namespace csim
         /*
          * Check infinity norm || x - x_1 || and norm || z - z_1 ||
          */
-
         for (unsigned int i = 0; i < m_netlist->getNumNodes(); i++)
         {
+            double minX = std::min(std::abs(m_x[i]), std::abs(m_x_1[i]));
+            double minZ = std::min(std::abs(m_z[i]), std::abs(m_z_1[i]));
+
             /* U */
             double Veps = std::abs(m_x[i] - m_x_1[i]);
-            if (Veps > m_VepsMax + m_VepsrMax * std::abs(m_x[i]))
+            if (Veps > m_VepsMax + m_VepsrMax * minX)
             {
                 return false;
             }
 
             /* I */
             double Ieps = std::abs(m_z[i] - m_z_1[i]);
-            if (Ieps > m_IepsMax + m_IepsrMax * std::abs(m_z[i]))
+            if (Ieps > m_IepsMax + m_IepsrMax * minZ)
             {
                 return false;
             }
@@ -204,16 +215,19 @@ namespace csim
         unsigned int upperb = m_netlist->getNumNodes() + m_netlist->getNumVS();
         for (unsigned int i = lowerb; i < upperb; i++)
         {
+            double minX = std::min(std::abs(m_x[i]), std::abs(m_x_1[i]));
+            double minZ = std::min(std::abs(m_z[i]), std::abs(m_z_1[i]));
+
             /* J */
             double Ieps = std::abs(m_x[i] - m_x_1[i]);
-            if (Ieps > m_IepsMax + m_IepsrMax * std::abs(m_x[i]))
+            if (Ieps > m_IepsMax + m_IepsrMax * minX)
             {
                 return false;
             }
 
             /* E */
             double Veps = std::abs(m_z[i] - m_z_1[i]);
-            if (Veps > m_VepsMax + m_VepsrMax * std::abs(m_z[i]))
+            if (Veps > m_VepsMax + m_VepsrMax * minZ)
             {
                 return false;
             }

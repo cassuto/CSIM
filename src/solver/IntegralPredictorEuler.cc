@@ -1,3 +1,7 @@
+/**
+ * @file Complex type restricted to model SDK
+ */
+
 /*
  *  FastCSIM Copyright (C) 2021 cassuto                                    
  *  This project is free edition; you can redistribute it and/or           
@@ -11,24 +15,25 @@
  *  Lesser General Public License for more details.                        
  */
 
-#ifndef CSIM_LINEARSOLVER_H_
-#define CSIM_LINEARSOLVER_H_
-
-#include "csim/internal/Complex.h"
+#include <cassert>
+#include <cstring>
+#include <iostream>
+#include "csim/utils/errors.h"
+#include "IntegralPredictorEuler.h"
 
 namespace csim
 {
-    class LinearSolver
+    void IntegralPredictorEuler::setOrder(unsigned int order)
     {
-    public:
-        LinearSolver() {}
-        virtual ~LinearSolver() {}
+        assert(order == 1);
+    }
 
-        virtual int solve(const Complex *A, int n, Complex *x, const Complex *B) = 0;
+    double IntegralPredictorEuler::predict(const IntegralHistory *x, IntegralHistory *steps)
+    {
+        /* The previous difference */
+        double f = (x->getX(1) - x->getX(2)) / steps->getX(1);
+        steps->pushX(getStep());
+        return x->getX(1) + getStep() * f;
+    }
 
-    public:
-        static LinearSolver *createInstance(const char *algorithm);
-    };
 }
-
-#endif // CSIM_LINEARSOLVER_H_

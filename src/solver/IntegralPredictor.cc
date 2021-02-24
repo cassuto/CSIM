@@ -1,3 +1,7 @@
+/**
+ * @file Numberic integral solver
+ */
+
 /*
  *  FastCSIM Copyright (C) 2021 cassuto                                    
  *  This project is free edition; you can redistribute it and/or           
@@ -11,24 +15,28 @@
  *  Lesser General Public License for more details.                        
  */
 
-#ifndef CSIM_LINEARSOLVER_H_
-#define CSIM_LINEARSOLVER_H_
-
-#include "csim/internal/Complex.h"
+#include <cassert>
+#include "IntegralPredictorEuler.h"
+#include "csim/internal/IntegralPredictor.h"
 
 namespace csim
 {
-    class LinearSolver
+
+    /**
+     * @brief Create instance of integral predictor by its algorithm name
+     * @param algorithm Name of algorithm
+     * @retval nullptr if failed
+     * @retval Pointer to the integral predictor.
+     */
+    IntegralPredictor *IntegralPredictor::createInstance(const std::string &algorithm)
     {
-    public:
-        LinearSolver() {}
-        virtual ~LinearSolver() {}
-
-        virtual int solve(const Complex *A, int n, Complex *x, const Complex *B) = 0;
-
-    public:
-        static LinearSolver *createInstance(const char *algorithm);
-    };
+        if (0 == algorithm.compare("euler"))
+        {
+            return new IntegralPredictorEuler();
+        }
+        else
+        {
+            return nullptr;
+        }
+    }
 }
-
-#endif // CSIM_LINEARSOLVER_H_

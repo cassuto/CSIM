@@ -18,6 +18,12 @@
 #include "csim/model/Types.h"
 #include "csim/model/PropertyBag.h"
 
+namespace csim
+{
+    class IntegralCorrector;
+    class IntegralHistory;
+}
+
 namespace csimModel
 {
 
@@ -63,7 +69,9 @@ namespace csimModel
         MComplex getJ(unsigned int row) const;
 
     protected:
-        void resizeModel(int numTermls, int numInnerNodes, int numVS);
+        void resizeModel(unsigned int numTermls, unsigned int numInnerNodes, unsigned int numVS);
+        void resizeIntegrator(unsigned int numIntegrators);
+        double integrate(unsigned int nint, double x, double k, double *c0, double *c1);
 
         /* MNA matrices */
         void setY(unsigned int row, unsigned int col, const MComplex &val);
@@ -81,6 +89,9 @@ namespace csimModel
         std::vector<unsigned int> m_termls;
         std::vector<unsigned int> m_innerNodes;
         std::vector<unsigned int> m_VS;
+        csim::IntegralCorrector *m_integrator;
+        csim::IntegralHistory *m_historyX, *m_historyY;
+        unsigned int m_numIntegrators;
     };
 
     typedef ModelBase *(*pfnCreateModel_t)(MODELBASE_CONSTRUCTOR_DEF);

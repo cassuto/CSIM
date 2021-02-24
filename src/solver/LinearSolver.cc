@@ -1,5 +1,5 @@
 /**
- * @file Complex type restricted to model SDK
+ * @file Linear equations solver
  */
 
 /*
@@ -16,6 +16,7 @@
  */
 
 #include <cstring>
+#include "LinearSolverGauss.h"
 #include "csim/internal/LinearSolver.h"
 
 namespace csim

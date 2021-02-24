@@ -4,6 +4,7 @@
 #include "csim/utils/constants.h"
 #include "csim/internal/Analyzers.h"
 #include "csim/internal/Circuit.h"
+#include "csim/internal/Dataset.h"
 #include "csim/internal/Netlist.h"
 #include "csim/internal/ModelLoader.h"
 #include <algorithm>
@@ -85,30 +86,35 @@ namespace csim
         /* AC analysis */
         AnalyzerBase *analyzer = Analyzers::createInstance("AC", circuit);
         ASSERT_NE(nullptr, analyzer);
-        const double fstart = 1.0 / (2 * M_PI * std::sqrt(L*C));
+        const double fstart = 1.0 / (2 * M_PI * std::sqrt(L * C));
         analyzer->property().setProperty("fstart", csimModel::Variant(csimModel::Variant::VariantDouble).setDouble(fstart));
         analyzer->property().setProperty("fstop", csimModel::Variant(csimModel::Variant::VariantDouble).setDouble(800));
         analyzer->property().setProperty("fstep", csimModel::Variant(csimModel::Variant::VariantDouble).setDouble(1.0));
 
-        ret = analyzer->analyze();
-        EXPECT_EQ(CERR_SUCCEEDED, ret);
-
-        /* Get nodes */
         unsigned int n_gnd, n1;
         ret = circuit->netlist()->getTermlNode("R1", 0, &n1);
         EXPECT_EQ(CERR_SUCCEEDED, ret);
         ret = circuit->netlist()->getTermlNode("V1", 1, &n_gnd);
         EXPECT_EQ(CERR_SUCCEEDED, ret);
+        analyzer->addInterestNode(n_gnd);
+        analyzer->addInterestNode(n1);
+
+        Dataset dset;
+        ret = analyzer->analyze(&dset);
+        EXPECT_EQ(CERR_SUCCEEDED, ret);
 
         /* Check solution vector of DC analyzer */
-        
-        EXPECT_GE(analyzer->getNumSteps(), 1);
+        const Variable &F = dset.getIndependentVar("frequency");
+        EXPECT_NEAR(F.at(0).real(), fstart, epsilon_linear);
+        const Variable &Vgnd = dset.getDependentVar("voltage", analyzer->makeVarName("V", n_gnd));
+        const Variable &Vn1 = dset.getDependentVar("voltage", analyzer->makeVarName("V", n1));
+        Complex volt = Vn1.at(0) - Vgnd.at(0);
+        double mag = std::abs(volt);
+        double phase = 180.0 * std::arg(volt) / M_PI;
+        EXPECT_NEAR(mag, 1.0, epsilon_linear);
+        EXPECT_NEAR(phase, 0.0, epsilon_linear);
 
-        const Complex *Vn = analyzer->getNodeVoltVector(0);
-        Complex volt = Vn[n1] - Vn[n_gnd];
-        EXPECT_NEAR(std::abs(volt), 1.0, epsilon_linear);
-        EXPECT_NEAR(180 * std::arg(volt) / M_PI, 0.0, epsilon_linear);
-        
+        delete analyzer;
         delete circuit;
         delete e_R;
         delete e_L;

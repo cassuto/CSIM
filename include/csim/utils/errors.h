@@ -48,6 +48,8 @@
 #define CERR_INVALD_RANGE (-11)
 /** Singular Matrix */
 #define CERR_SINGULAR_MATRIX (-12)
+/** No target to analyze */
+#define CERR_NO_TARGET_TO_ANALYZE (-13)
 
 /** Unknown */
 #define CERR_UNKNOWN (-65536)

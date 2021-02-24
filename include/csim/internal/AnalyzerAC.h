@@ -24,9 +24,8 @@ namespace csim
         AnalyzerAC(Circuit *circuit);
         ~AnalyzerAC();
 
-        virtual int analyze();
-        virtual double getPosition(unsigned int step);
-
+        virtual int analyze(Dataset *dataset);
+        
         virtual int prepareMNA();
         virtual int iterateMNA();
 

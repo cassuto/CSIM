@@ -4,6 +4,7 @@
 #include "csim/internal/Analyzers.h"
 #include "csim/internal/Circuit.h"
 #include "csim/internal/Netlist.h"
+#include "csim/internal/Dataset.h"
 #include "csim/internal/ModelLoader.h"
 #include <algorithm>
 #include <cstring>
@@ -75,10 +76,11 @@ namespace csim
         /* DC analysis */
         AnalyzerBase *analyzer = Analyzers::createInstance("DC", circuit);
         ASSERT_NE(nullptr, analyzer);
-        ret = analyzer->analyze();
+        Dataset dset;
+        ret = analyzer->analyze(&dset);
         EXPECT_EQ(CERR_SUCCEEDED, ret);
 
-        /* Check solution vector of DC analyzer */
+        /* Check solution of Circuit object */
 
         unsigned int n_gnd, n1;
         ret = circuit->netlist()->getTermlNode("V1", 0, &n_gnd);
@@ -86,14 +88,12 @@ namespace csim
         ret = circuit->netlist()->getTermlNode("R1", 1, &n1);
         EXPECT_EQ(CERR_SUCCEEDED, ret);
 
-        EXPECT_GE(analyzer->getNumSteps(), 1);
-        const Complex *Vn = analyzer->getNodeVoltVector(1);
-        
-        Complex volt = Vn[n1] - Vn[n_gnd];
+        Complex volt = circuit->getNodeVolt(n1) - circuit->getNodeVolt(n_gnd);
         std::cout<<"Vd1 = "<<volt<<std::endl;
         /* This value may change slightly when the PN-junction model is adjusted */
         EXPECT_LT(std::abs(Complex(-9.20838, 0) - volt), epsilon_nonlinear);
 
+        delete analyzer;
         delete circuit;
         delete e_R;
         delete e_VDC;

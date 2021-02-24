@@ -3,8 +3,8 @@
  */
 
 /*
- *  FastCSIM Copyright (C) 2021 cassuto
- *  This project is free edition; you can redistribute it and/or
+ *  FastCSIM Copyright (C) 2021 cassuto                                    
+ *  This project is free edition; you can redistribute it and/or           
  *  modify it under the terms of the GNU Lesser General Public             
  *  License(GPL) as published by the Free Software Foundation; either      
  *  version 2.1 of the License, or (at your option) any later version.     
@@ -32,16 +32,11 @@ namespace csim
     {
     }
 
-    int AnalyzerTran::analyze()
+    int AnalyzerTran::analyze(Dataset *dataset)
     {
         UPDATE_RC(circuit()->initMNA(this));
         UPDATE_RC(circuit()->solveMNA(this));
         return 0;
-    }
-
-    double AnalyzerTran::getPosition(unsigned int step)
-    {
-        return 0.0;
     }
 
     int AnalyzerTran::prepareMNA()

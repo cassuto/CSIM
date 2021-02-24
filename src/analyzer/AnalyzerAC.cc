@@ -3,8 +3,8 @@
  */
 
 /*
- *  FastCSIM Copyright (C) 2021 cassuto
- *  This project is free edition; you can redistribute it and/or
+ *  FastCSIM Copyright (C) 2021 cassuto                                    
+ *  This project is free edition; you can redistribute it and/or           
  *  modify it under the terms of the GNU Lesser General Public             
  *  License(GPL) as published by the Free Software Foundation; either      
  *  version 2.1 of the License, or (at your option) any later version.     
@@ -21,6 +21,7 @@
 #include "csim/utils/constants.h"
 #include "csim/internal/Netlist.h"
 #include "csim/internal/Circuit.h"
+#include "csim/internal/Dataset.h"
 #include "csim/internal/AnalyzerAC.h"
 
 namespace csim
@@ -39,10 +40,30 @@ namespace csim
     {
     }
 
-    int AnalyzerAC::analyze()
+    int AnalyzerAC::analyze(Dataset *dataset)
     {
-        UPDATE_RC(circuit()->initMNA(this));
+        /*
+         * Format data set
+         */
+        dataset->clear();
+        dataset->setName("AC analysis");
+        Variable &dfreq = dataset->addIndependentVar("frequency");
+        unsigned int N =getNumInterestNodes(), M = getNumInterestBranches();
+        std::vector<Variable *> dvolt(N), dcurrent(M);
+        for (unsigned int i = 0; i < N; ++i)
+        {
+            std::string varName = makeVarName("V", getInterestNode(i));
+            dvolt[i] = &dataset->addDependentVar("voltage", varName);
+        }
+        for (unsigned int i = 0; i < M; ++i)
+        {
+            std::string varName = makeVarName("I", getInterestBranch(i));
+            dcurrent[i] = &dataset->addDependentVar("current", varName);
+        }
 
+        /*
+         * See the sweep range
+         */
         double fstart = property().getProperty("fstart").getDouble();
         double fstop = property().getProperty("fstop").getDouble();
         double fstep = property().getProperty("fstep").getDouble();
@@ -53,7 +74,10 @@ namespace csim
         }
         int numSteps = std::max(1.0, (fstop - fstart) / fstep);
 
-        createVectors(circuit()->netlist()->getNumNodes(), circuit()->netlist()->getNumVS(), numSteps);
+        /*
+         * Solve MNA
+         */
+        UPDATE_RC(circuit()->initMNA(this));
 
         for (unsigned int i = 0; i < numSteps; ++i)
         {
@@ -63,17 +87,18 @@ namespace csim
             UPDATE_RC(circuit()->solveMNA(this));
 
             /* Save the result */
-            setNodeVoltVector(i, circuit()->getNodeVoltVector());
-            setBranchCurrentVector(i, circuit()->getBranchCurrentVector());
+            for (unsigned int i = 0; i < N; ++i)
+            {
+                dvolt[i]->addValue(circuit()->getNodeVolt(getInterestNode(i)));
+            }
+            for (unsigned int i = 0; i < M; ++i)
+            {
+                dcurrent[i]->addValue(circuit()->getBranchCurrent(getInterestBranch(i)));
+            }
+
+            dfreq.addValue(m_currentPos);
         }
         return 0;
-    }
-
-    double AnalyzerAC::getPosition(unsigned int step)
-    {
-        double fstart = property().getProperty("fstart").getDouble();
-        double fstep = property().getProperty("fstep").getDouble();
-        return fstart + fstep * step;
     }
 
     int AnalyzerAC::prepareMNA()

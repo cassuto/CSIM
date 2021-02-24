@@ -3,8 +3,8 @@
  */
 
 /*
- *  FastCSIM Copyright (C) 2021 cassuto
- *  This project is free edition; you can redistribute it and/or
+ *  FastCSIM Copyright (C) 2021 cassuto                                    
+ *  This project is free edition; you can redistribute it and/or           
  *  modify it under the terms of the GNU Lesser General Public             
  *  License(GPL) as published by the Free Software Foundation; either      
  *  version 2.1 of the License, or (at your option) any later version.     
@@ -26,52 +26,19 @@ namespace csim
 {
 
     AnalyzerBase::AnalyzerBase(Circuit *circuit)
-        : m_numNodes(0),
-          m_numVS(0),
-          m_steps(0),
-          m_nodeVolt(nullptr),
-          m_branchCurrent(nullptr),
-          m_circuit(circuit)
+        : m_circuit(circuit)
     {
     }
 
     AnalyzerBase::~AnalyzerBase()
     {
-        delete[] m_nodeVolt;
-        delete[] m_branchCurrent;
     }
 
-    void AnalyzerBase::createVectors(unsigned int numNodes, unsigned int numVS, unsigned int numSteps)
+    std::string AnalyzerBase::makeVarName(const char *name, unsigned int node)
     {
-        m_steps = numSteps;
-        m_numNodes = numNodes;
-        m_numVS = numVS;
-        m_nodeVolt = new Complex[numSteps * numNodes];
-        m_branchCurrent = new Complex[numSteps * numVS];
-    }
-
-    unsigned int AnalyzerBase::getNumSteps()
-    {
-        return m_steps;
-    }
-    const Complex *AnalyzerBase::getNodeVoltVector(unsigned int step)
-    {
-        assert(step < getNumSteps());
-        return &m_nodeVolt[step * m_numNodes];
-    }
-    const Complex *AnalyzerBase::getBranchCurrentVector(unsigned int step)
-    {
-        assert(step < getNumSteps());
-        return &m_branchCurrent[step * m_numVS];
-    }
-
-    void AnalyzerBase::setNodeVoltVector(unsigned int step, const Complex *values)
-    {
-        memcpy(&m_nodeVolt[step * m_numNodes], values, sizeof(Complex) * m_numNodes);
-    }
-    void AnalyzerBase::setBranchCurrentVector(unsigned int step, const Complex *values)
-    {
-        memcpy(&m_branchCurrent[step * m_numVS], values, sizeof(Complex) * m_numVS);
+        char buf[32];
+        std::snprintf(buf, sizeof(buf), "%u", node);
+        return (std::string(name) + "(" + buf) + ")";
     }
 
     AnalyzerBase *Analyzers::createInstance(const char *name, Circuit *circuit)

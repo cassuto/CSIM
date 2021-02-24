@@ -3,6 +3,7 @@
 #include "csim/utils/errors.h"
 #include "csim/internal/Analyzers.h"
 #include "csim/internal/Circuit.h"
+#include "csim/internal/Dataset.h"
 #include "csim/internal/Netlist.h"
 #include "csim/internal/ModelLoader.h"
 #include <algorithm>
@@ -64,7 +65,8 @@ namespace csim
         /* DC analysis */
         AnalyzerBase *analyzer = Analyzers::createInstance("DC", circuit);
         ASSERT_NE(nullptr, analyzer);
-        ret = analyzer->analyze();
+        Dataset dset;
+        ret = analyzer->analyze(&dset);
         EXPECT_EQ(CERR_SUCCEEDED, ret);
 
         /* Get nodes */
@@ -76,12 +78,6 @@ namespace csim
 
         /* Check status of Circuit object */
         Complex volt = circuit->getNodeVolt(n1) - circuit->getNodeVolt(n_gnd);
-        EXPECT_LT(std::abs(Complex(4.0, 0) - volt), epsilon_linear);
-
-        /* Check solution vector of DC analyzer */
-        EXPECT_GE(analyzer->getNumSteps(), 1);
-        const Complex *Vn = analyzer->getNodeVoltVector(1);
-        volt = Vn[n1] - Vn[n_gnd];
         EXPECT_LT(std::abs(Complex(4.0, 0) - volt), epsilon_linear);
 
         delete circuit;
@@ -212,35 +208,41 @@ namespace csim
         /* DC analysis */
         AnalyzerBase *analyzer = Analyzers::createInstance("DC", circuit);
         ASSERT_NE(nullptr, analyzer);
-        ret = analyzer->analyze();
-        EXPECT_EQ(CERR_SUCCEEDED, ret);
 
-        /* Check solution vector of DC analyzer */
-        
-        EXPECT_GE(analyzer->getNumSteps(), 1);
-        const Complex *Vn = analyzer->getNodeVoltVector(1);
-
-        unsigned int n_gnd, n1;
+        unsigned int n_gnd, n[3];
         ret = circuit->netlist()->getTermlNode("V1", 1, &n_gnd);
         EXPECT_EQ(CERR_SUCCEEDED, ret);
-
-        Complex volt;
-
-        ret = circuit->netlist()->getTermlNode("R1", 1, &n1);
+        analyzer->addInterestNode(n_gnd);
+        ret = circuit->netlist()->getTermlNode("R1", 1, &n[0]);
         EXPECT_EQ(CERR_SUCCEEDED, ret);
-        volt = Vn[n1] - Vn[n_gnd];
+        analyzer->addInterestNode(n[0]);
+        ret = circuit->netlist()->getTermlNode("R2", 1, &n[1]);
+        EXPECT_EQ(CERR_SUCCEEDED, ret);
+        analyzer->addInterestNode(n[1]);
+        ret = circuit->netlist()->getTermlNode("R3", 1, &n[2]);
+        EXPECT_EQ(CERR_SUCCEEDED, ret);
+        analyzer->addInterestNode(n[2]);
+
+        Dataset dset;
+        ret = analyzer->analyze(&dset);
+        EXPECT_EQ(CERR_SUCCEEDED, ret);
+
+        /* Check solution of DC analysis */
+        Complex volt;
+        unsigned int step = 0;
+        volt = dset.getDependentVar("voltage", analyzer->makeVarName("V", n[0])).at(step) -
+               dset.getDependentVar("voltage", analyzer->makeVarName("V", n_gnd)).at(step);
         EXPECT_LT(std::abs(Complex(9.85567, 0) - volt), epsilon_linear);
 
-        ret = circuit->netlist()->getTermlNode("R2", 1, &n1);
-        EXPECT_EQ(CERR_SUCCEEDED, ret);
-        volt = Vn[n1] - Vn[n_gnd];
+        volt = dset.getDependentVar("voltage", analyzer->makeVarName("V", n[1])).at(step) -
+               dset.getDependentVar("voltage", analyzer->makeVarName("V", n_gnd)).at(step);
         EXPECT_LT(std::abs(Complex(5.56701, 0) - volt), epsilon_linear);
 
-        ret = circuit->netlist()->getTermlNode("R3", 1, &n1);
-        EXPECT_EQ(CERR_SUCCEEDED, ret);
-        volt = Vn[n1] - Vn[n_gnd];
+        volt = dset.getDependentVar("voltage", analyzer->makeVarName("V", n[2])).at(step) -
+               dset.getDependentVar("voltage", analyzer->makeVarName("V", n_gnd)).at(step);
         EXPECT_LT(std::abs(Complex(2.47423, 0) - volt), epsilon_linear);
 
+        delete analyzer;
         delete circuit;
         delete e_R;
         delete e_VDC;

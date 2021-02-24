@@ -24,11 +24,7 @@ namespace csim
         AnalyzerDC(Circuit *circuit);
         ~AnalyzerDC();
 
-        virtual int analyze();
-        virtual unsigned int getNumSteps();
-        virtual double getPosition(unsigned int step);
-        virtual const Complex *getNodeVoltVector(unsigned int step);
-        virtual const Complex *getBranchCurrentVector(unsigned int step);
+        virtual int analyze(Dataset *dataset);
 
         virtual int prepareMNA();
         virtual int iterateMNA();

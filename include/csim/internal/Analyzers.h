@@ -14,6 +14,7 @@
 #ifndef CSIM_ANALYZEES_H_
 #define CSIM_ANALYZEES_H_
 
+#include <vector>
 #include "csim/model/PropertyBag.h"
 #include "csim/internal/Complex.h"
 
@@ -21,6 +22,7 @@ namespace csim
 {
     class Circuit;
     class Netlist;
+    class Dataset;
 
     class AnalyzerBase
     {
@@ -28,17 +30,47 @@ namespace csim
         AnalyzerBase(Circuit *circuit);
         virtual ~AnalyzerBase();
 
-        virtual int analyze() = 0;
-        virtual unsigned int getNumSteps();
-        virtual double getPosition(unsigned int step) = 0;
-        virtual const Complex *getNodeVoltVector(unsigned int step);
-        virtual const Complex *getBranchCurrentVector(unsigned int step);
+        virtual int analyze(Dataset *dataset) = 0;
 
         /* Callbacks for MNA */
         virtual int prepareMNA() = 0;
         virtual int iterateMNA() = 0;
 
     public:
+        std::string makeVarName(const char *name, unsigned int node);
+
+        inline void addInterestNode(unsigned int node)
+        {
+            m_interestNodes.push_back(node);
+        }
+        inline void addInterestBranch(unsigned int vs)
+        {
+            m_interestNodes.push_back(vs);
+        }
+        inline unsigned int getNumInterestNodes() const
+        {
+            return m_interestNodes.size();
+        }
+        inline unsigned int getNumInterestBranches() const
+        {
+            return m_interestBranches.size();
+        }
+
+        inline unsigned int getInterestNode(unsigned int index) const
+        {
+            return m_interestNodes[index];
+        }
+
+        inline unsigned int getInterestBranch(unsigned int index) const
+        {
+            return m_interestBranches[index];
+        }
+        inline void clearInterests()
+        {
+            m_interestNodes.clear();
+            m_interestBranches.clear();
+        }
+
         inline csimModel::PropertyBag &property()
         {
             return m_property;
@@ -49,20 +81,11 @@ namespace csim
             return m_circuit;
         }
 
-    protected:
-        unsigned int m_numNodes;
-        unsigned int m_numVS;
-        unsigned int m_steps;
-        Complex *m_nodeVolt;
-        Complex *m_branchCurrent;
-
-        void createVectors(unsigned int numNodes, unsigned int numVS, unsigned int numSteps);
-        void setNodeVoltVector(unsigned int step, const Complex *values);
-        void setBranchCurrentVector(unsigned int step, const Complex *values);
-
     private:
         csimModel::PropertyBag m_property;
         Circuit *m_circuit;
+        std::vector<unsigned int> m_interestNodes;
+        std::vector<unsigned int> m_interestBranches;
     };
 
     class Analyzers

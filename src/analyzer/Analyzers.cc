@@ -41,6 +41,12 @@ namespace csim
         return (std::string(name) + "(" + buf) + ")";
     }
 
+    /**
+     * Create an analyzer by name
+     * @param name Name of deserved analyzer.
+     * @param circuit Pointer to the circuit to be analyzed.
+     * @treturn Pointer to the analyzer instance.
+     */
     AnalyzerBase *Analyzers::createInstance(const char *name, Circuit *circuit)
     {
         if (std::strcmp(name, "DC") == 0)

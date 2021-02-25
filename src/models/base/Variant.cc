@@ -62,49 +62,49 @@ namespace csimModel
      * Setters
      * Return this object 
      */
-    Variant &Variant::setU8(uint8_t u8)
+    Variant &Variant::setUint8(uint8_t u8)
     {
         assert(m_type == VariantUint8);
         m_dat.u8 = u8;
         return (*this);
     }
-    Variant &Variant::setU16(uint16_t u16)
+    Variant &Variant::setUint16(uint16_t u16)
     {
         assert(m_type == VariantUint16);
         m_dat.u16 = u16;
         return (*this);
     }
-    Variant &Variant::setU32(uint32_t u32)
+    Variant &Variant::setUint32(uint32_t u32)
     {
         assert(m_type == VariantUint32);
         m_dat.u32 = u32;
         return (*this);
     }
-    Variant &Variant::setU64(uint64_t u64)
+    Variant &Variant::setUint64(uint64_t u64)
     {
         assert(m_type == VariantUint64);
         m_dat.u64 = u64;
         return (*this);
     }
-    Variant &Variant::setI8(int8_t i8)
+    Variant &Variant::setInt8(int8_t i8)
     {
         assert(m_type == VariantInt8);
         m_dat.i8 = i8;
         return (*this);
     }
-    Variant &Variant::setI16(int16_t i16)
+    Variant &Variant::setInt16(int16_t i16)
     {
         assert(m_type == VariantInt16);
         m_dat.i16 = i16;
         return (*this);
     }
-    Variant &Variant::setI32(int32_t i32)
+    Variant &Variant::setInt32(int32_t i32)
     {
         assert(m_type == VariantInt32);
         m_dat.i32 = i32;
         return (*this);
     }
-    Variant &Variant::setI64(int64_t i64)
+    Variant &Variant::setInt64(int64_t i64)
     {
         assert(m_type == VariantInt64);
         m_dat.i64 = i64;
@@ -132,42 +132,42 @@ namespace csimModel
     /*
      * Getters
      */
-    uint8_t Variant::getU8() const
+    uint8_t Variant::getUint8() const
     {
         assert(m_type == VariantUint8);
         return m_dat.u8;
     }
-    uint16_t Variant::getU16() const
+    uint16_t Variant::getUint16() const
     {
         assert(m_type == VariantUint16);
         return m_dat.u16;
     }
-    uint32_t Variant::getU32() const
+    uint32_t Variant::getUint32() const
     {
         assert(m_type == VariantUint32);
         return m_dat.u32;
     }
-    uint64_t Variant::getU64() const
+    uint64_t Variant::getUint64() const
     {
         assert(m_type == VariantUint64);
         return m_dat.u64;
     }
-    int8_t Variant::getI8() const
+    int8_t Variant::getInt8() const
     {
         assert(m_type == VariantInt8);
         return m_dat.i8;
     }
-    int16_t Variant::getI16() const
+    int16_t Variant::getInt16() const
     {
         assert(m_type == VariantInt16);
         return m_dat.i16;
     }
-    int32_t Variant::getI32() const
+    int32_t Variant::getInt32() const
     {
         assert(m_type == VariantInt32);
         return m_dat.i32;
     }
-    int64_t Variant::getI64() const
+    int64_t Variant::getInt64() const
     {
         assert(m_type == VariantInt64);
         return m_dat.i64;

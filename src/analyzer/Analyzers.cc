@@ -17,9 +17,9 @@
 
 #include <cassert>
 #include <cstring>
-#include "csim/internal/AnalyzerDC.h"
-#include "csim/internal/AnalyzerAC.h"
-#include "csim/internal/AnalyzerTran.h"
+#include "AnalyzerDC.h"
+#include "AnalyzerAC.h"
+#include "AnalyzerTran.h"
 #include "csim/internal/Analyzers.h"
 
 namespace csim

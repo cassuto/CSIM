@@ -56,7 +56,6 @@ namespace csimModel
         unsigned int getInnerNode(unsigned int index) const;
         void setVS(unsigned int idx, unsigned int branch);
         unsigned int getVS(unsigned int idx) const;
-        unsigned int getNumIntegrators() const;
 
         /* MNA matrices */
         MComplex getY(unsigned int row, unsigned int col) const;
@@ -68,11 +67,14 @@ namespace csimModel
         MComplex getU(unsigned int row) const;
         MComplex getJ(unsigned int row) const;
 
+        unsigned int getNumIntegrators() const;
+        csim::IntegralHistory *getIntegratorX(unsigned int nint);
+        csim::IntegralHistory *getIntegratorY(unsigned int nint);
+
     protected:
         void resizeModel(unsigned int numTermls, unsigned int numInnerNodes, unsigned int numVS);
         void resizeIntegrator(unsigned int numIntegrators);
         double integrate(unsigned int nint, double x, double k, double *c0, double *c1);
-        void integratorNextStep();
 
         /* MNA matrices */
         void setY(unsigned int row, unsigned int col, const MComplex &val);

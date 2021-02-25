@@ -16,7 +16,6 @@
  */
 
 #include <cassert>
-#include <iostream>
 #include <cstring>
 #include "csim/utils/errors.h"
 #include "csim/internal/LinearSolver.h"

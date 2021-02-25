@@ -49,6 +49,7 @@ namespace csimModel
     }
     int Capacitor::prepareTR()
     {
+        resizeIntegrator(1);
         return 0;
     }
 
@@ -67,6 +68,15 @@ namespace csimModel
 
     int Capacitor::iterateTR()
     {
+        double volt = (getU(getNode(0)) - getU(getNode(1))).real();
+        double geq, Ieq;
+
+        integrate(0, volt, m_kZimag, &geq, &Ieq);
+
+        addY(getNode(0), getNode(0), geq), addY(getNode(0), getNode(1), -geq);
+        addY(getNode(1), getNode(0), -geq), addY(getNode(1), getNode(1), geq);
+        addI(getNode(0), -Ieq);
+        addI(getNode(1), Ieq);
         return 0;
     }
 }

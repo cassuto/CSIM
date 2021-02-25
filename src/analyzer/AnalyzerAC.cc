@@ -22,7 +22,7 @@
 #include "csim/internal/Netlist.h"
 #include "csim/internal/Circuit.h"
 #include "csim/internal/Dataset.h"
-#include "csim/internal/AnalyzerAC.h"
+#include "AnalyzerAC.h"
 
 namespace csim
 {
@@ -54,11 +54,13 @@ namespace csim
         {
             std::string varName = makeVarName("V", getInterestNode(i));
             dvolt[i] = &dataset->addDependentVar("voltage", varName);
+            dvolt[i]->addIndependVar(dfreq);
         }
         for (unsigned int i = 0; i < M; ++i)
         {
             std::string varName = makeVarName("I", getInterestBranch(i));
             dcurrent[i] = &dataset->addDependentVar("current", varName);
+            dcurrent[i]->addIndependVar(dfreq);
         }
 
         /*
@@ -81,7 +83,7 @@ namespace csim
 
         for (unsigned int i = 0; i < numSteps; ++i)
         {
-            m_currentPos = fstart + fstep * i;
+            m_currentPos = fstart +  fstep * i;
             m_currentOmega = 2 * M_PI * m_currentPos;
 
             UPDATE_RC(circuit()->solveMNA(this));

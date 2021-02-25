@@ -188,14 +188,14 @@ namespace csimModel
         return hY->get(0);
     }
 
-    void ModelBase::integratorNextStep()
+    csim::IntegralHistory *ModelBase::getIntegratorX(unsigned int nint)
     {
-        for (unsigned int i = 0; i < m_numIntegrators; ++i)
-        {
-            csim::IntegralHistory *hX = &m_historyX[i];
-            csim::IntegralHistory *hY = &m_historyY[i];
-            hX->push();
-            hY->push();
-        }
+        assert(nint < m_numIntegrators);
+        return &m_historyX[nint];
+    }
+    csim::IntegralHistory *ModelBase::getIntegratorY(unsigned int nint)
+    {
+        assert(nint < m_numIntegrators);
+        return &m_historyY[nint];
     }
 }

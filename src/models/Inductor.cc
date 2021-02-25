@@ -35,17 +35,8 @@ namespace csimModel
 
     int Inductor::configure()
     {
-        double L = property().getProperty("L").getDouble();
-
-        if (L == 0.0)
-        {
-            m_cutThrough = true;
-        }
-        else
-        {
-            m_kZimag = L;
-            m_cutThrough = false;
-        }
+        m_kZimag = property().getProperty("L").getDouble();
+        m_cutThrough = (m_kZimag == 0.0);
 
         resizeModel(2, 0, 1);
         return 0;
@@ -61,6 +52,7 @@ namespace csimModel
     }
     int Inductor::prepareTR()
     {
+        resizeIntegrator(1);
         return 0;
     }
 
@@ -98,6 +90,17 @@ namespace csimModel
     }
     int Inductor::iterateTR()
     {
+        double volt = (getU(getNode(0)) - getU(getNode(1))).real();
+        double req, Ueq;
+
+        integrate(0, volt, m_kZimag, &req, &Ueq);
+
+        unsigned int k = getVS(0);
+        setB(getNode(0), k, +1.0);
+        setB(getNode(1), k, -1.0);
+        setC(k, getNode(0), +1.0), setC(k, getNode(1), -1.0);
+        setD(k, k, -req);
+        setE(k, Ueq);
         return 0;
     }
 }

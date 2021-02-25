@@ -31,7 +31,7 @@ namespace csim
         unsigned int total_iters = 0;
         for (unsigned int i = 0; i < steps; ++i)
         {
-            double y_1;
+            double x_1;
             unsigned int iter = 0;
 
             do
@@ -45,12 +45,12 @@ namespace csim
 
                 if (iter)
                 {
-                    if (std::abs(Y.get(0) - y_1) < epsilon_nonlinear / 2.0)
+                    if (std::abs(X.get(0) - x_1) < epsilon_nonlinear / 2.0)
                     {
                         break;
                     }
                 }
-                y_1 = Y.get(0);
+                x_1 = X.get(0);
                 iter++;
             } while (iter < 100);
             total_iters += iter;

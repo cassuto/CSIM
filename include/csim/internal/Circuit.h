@@ -30,6 +30,7 @@ namespace csim
     class AnalyzerBase;
     class IntegralCorrector;
     class IntegralPredictor;
+    class IntegralHistory;
 
     class Circuit
     {
@@ -59,6 +60,16 @@ namespace csim
 
         int initMNA(AnalyzerBase *analyzer);
         int solveMNA(AnalyzerBase *analyzer);
+        int stepMNA(AnalyzerBase *analyzer);
+
+        inline double getIntegralTime() const
+        {
+            return m_tTime;
+        }
+        inline void setIntegralStep(double step)
+        {
+            m_tStep = step;
+        }
 
         Complex getNodeVolt(unsigned int node) const;
         Complex getBranchCurrent(unsigned int vs) const;
@@ -74,11 +85,15 @@ namespace csim
         Complex *m_A, *m_x, *m_x_1, *m_z, *m_z_1;
         LinearSolver *m_linearSolver;
         Netlist *m_netlist;
-        unsigned int m_maxIterations;
+        unsigned int m_maxIterations, maxIntegralIterations;
         double m_VepsMax, m_VepsrMax;
         double m_IepsMax, m_IepsrMax;
         IntegralPredictor *m_predictor;
         IntegralCorrector *m_corrector;
+        IntegralHistory *m_hsteps;
+        IntegralHistory *m_hPredictorX;
+        double m_tStep;
+        double m_tTime;
     };
 
 }

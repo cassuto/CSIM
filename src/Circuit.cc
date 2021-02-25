@@ -35,10 +35,15 @@ namespace csim
           m_A(nullptr), m_x(nullptr), m_x_1(nullptr), m_z(nullptr), m_z_1(nullptr),
           m_linearSolver(LinearSolver::createInstance("gauss")),
           m_maxIterations(1000),
+          maxIntegralIterations(100),
           m_VepsMax(0.0), m_VepsrMax(0.1),
           m_IepsMax(0.0), m_IepsrMax(0.1),
           m_predictor(IntegralPredictor::createInstance("euler")),
-          m_corrector(IntegralCorrector::createInstance("gear"))
+          m_corrector(IntegralCorrector::createInstance("gear")),
+          m_hsteps(new IntegralHistory()),
+          m_hPredictorX(nullptr),
+          m_tStep(1e-3),
+          m_tTime(0.0)
     {
         m_netlist = new Netlist(this);
     }
@@ -54,6 +59,7 @@ namespace csim
         delete m_netlist;
         delete m_predictor;
         delete m_corrector;
+        delete m_hsteps;
     }
 
     /**
@@ -146,6 +152,10 @@ namespace csim
     int Circuit::initMNA(AnalyzerBase *analyzer)
     {
         createMatrix(m_netlist->getNumNodes(), m_netlist->getNumVS());
+        m_hPredictorX = new IntegralHistory[m_matrixRows];
+        m_tTime = 0.0;
+        m_hsteps->setInitial(m_tStep);
+        m_corrector->setStep(m_tStep);
         analyzer->prepareMNA();
         return 0;
     }
@@ -230,5 +240,43 @@ namespace csim
             }
         }
         return true;
+    }
+
+    int Circuit::stepMNA(AnalyzerBase *analyzer)
+    {
+        /* Update step */
+        m_hsteps->set(0, m_tStep);
+        if (m_hsteps->get(1) != m_tStep)
+        {
+            m_corrector->setStep(m_tStep);
+        }
+
+        /* Run integral predictor */
+        for (unsigned int i = 0; i < m_matrixRows; ++i)
+        {
+            m_x[i] = m_predictor->predict(&m_hPredictorX[i], m_hsteps);
+        }
+
+        /* Run linear and non-linear iteration with integral corrector */
+        UPDATE_RC(solveMNA(analyzer));
+
+        /* Next step */
+        m_tTime += m_hsteps->get(0);
+        m_hsteps->push();
+        for (auto &mif : m_netlist->models())
+        {
+            unsigned int numIntegrators = mif.model->getNumIntegrators();
+            for (unsigned int i = 0; i < numIntegrators; ++i)
+            {
+                mif.model->getIntegratorX(i)->push();
+                mif.model->getIntegratorY(i)->push();
+            }
+        }
+        for (unsigned int i = 0; i < m_matrixRows; ++i)
+        {
+            m_hPredictorX[i].set(0, m_x[i].real());
+            m_hPredictorX[i].push();
+        }
+        return 0;
     }
 }

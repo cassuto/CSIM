@@ -22,6 +22,7 @@ set(TEST_SRCS
     "${CMAKE_CURRENT_SOURCE_DIR}/tstACLinearCircuit.cc"
     "${CMAKE_CURRENT_SOURCE_DIR}/tstIntegralCorrector"
     "${CMAKE_CURRENT_SOURCE_DIR}/tstIntegralPredictor"
+    "${CMAKE_CURRENT_SOURCE_DIR}/tstTransientAnalysis.cc"
 )
 
 add_executable(tstall ${TEST_SRCS})

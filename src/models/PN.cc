@@ -155,7 +155,7 @@ namespace csimModel
     }
     int PN::iterateTR()
     {
-        return 0;
+        return iterateDC();
     }
 
     /**

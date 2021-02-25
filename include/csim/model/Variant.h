@@ -45,26 +45,26 @@ namespace csimModel
 
         VariantType getType() const;
 
-        Variant &setU8(uint8_t u8);
-        Variant &setU16(uint16_t u16);
-        Variant &setU32(uint32_t u32);
-        Variant &setU64(uint64_t u64);
-        Variant &setI8(int8_t i8);
-        Variant &setI16(int16_t i16);
-        Variant &setI32(int32_t i32);
-        Variant &setI64(int64_t i64);
+        Variant &setUint8(uint8_t u8);
+        Variant &setUint16(uint16_t u16);
+        Variant &setUint32(uint32_t u32);
+        Variant &setUint64(uint64_t u64);
+        Variant &setInt8(int8_t i8);
+        Variant &setInt16(int16_t i16);
+        Variant &setInt32(int32_t i32);
+        Variant &setInt64(int64_t i64);
         Variant &setDouble(double d);
         Variant &setBoolean(bool b);
         Variant &setString(const char *str);
 
-        uint8_t getU8() const;
-        uint16_t getU16() const;
-        uint32_t getU32() const;
-        uint64_t getU64() const;
-        int8_t getI8() const;
-        int16_t getI16() const;
-        int32_t getI32() const;
-        int64_t getI64() const;
+        uint8_t getUint8() const;
+        uint16_t getUint16() const;
+        uint32_t getUint32() const;
+        uint64_t getUint64() const;
+        int8_t getInt8() const;
+        int16_t getInt16() const;
+        int32_t getInt32() const;
+        int64_t getInt64() const;
         double getDouble() const;
         bool getBoolean() const;
         const char *getString() const;

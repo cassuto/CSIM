@@ -20,7 +20,7 @@
 #include "csim/internal/Netlist.h"
 #include "csim/internal/Circuit.h"
 #include "csim/internal/Dataset.h"
-#include "csim/internal/AnalyzerDC.h"
+#include "AnalyzerDC.h"
 
 namespace csim
 {

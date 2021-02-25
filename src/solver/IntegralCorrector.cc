@@ -23,28 +23,33 @@ namespace csim
 {
 
     IntegralHistory::IntegralHistory()
-        : m_queueHead(0)
+        : m_queueHead(MaxNumHistoryNum - 1)
     {
         for (int i = 0; i < MaxNumHistoryNum; ++i)
-            pushX(0.0);
+            push(0.0);
         assert(m_queueHead == MaxNumHistoryNum - 1);
     }
 
-    double IntegralHistory::getX(unsigned int delay) const
+    double IntegralHistory::get(unsigned int delay) const
     {
         assert(delay < MaxNumHistoryNum);
-        return m_queue[(MaxNumHistoryNum + m_queueHead - 1 - delay) & MaxNumHistoryMask];
+        return m_queue[(MaxNumHistoryNum + m_queueHead - delay) & MaxNumHistoryMask];
     }
-    void IntegralHistory::pushX(double val)
+    void IntegralHistory::push(double val)
     {
-        m_queue[m_queueHead] = val;
         m_queueHead = (m_queueHead + 1) & MaxNumHistoryMask;
+        m_queue[m_queueHead] = val;
+    }
+    void IntegralHistory::set(unsigned int delay, double val)
+    {
+        assert(delay < MaxNumHistoryNum);
+        m_queue[(MaxNumHistoryNum + m_queueHead - delay) & MaxNumHistoryMask] = val;
     }
 
     void IntegralHistory::setInitial(double val)
     {
         for (int i = 0; i < MaxNumHistoryNum; ++i)
-            pushX(val);
+            push(val);
     }
 
     /**

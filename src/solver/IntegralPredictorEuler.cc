@@ -17,7 +17,6 @@
 
 #include <cassert>
 #include <cstring>
-#include <iostream>
 #include "csim/utils/errors.h"
 #include "IntegralPredictorEuler.h"
 
@@ -31,9 +30,9 @@ namespace csim
     double IntegralPredictorEuler::predict(const IntegralHistory *x, IntegralHistory *steps)
     {
         /* The previous difference */
-        double f = (x->getX(1) - x->getX(2)) / steps->getX(1);
-        steps->pushX(getStep());
-        return x->getX(1) + getStep() * f;
+        double f = (x->get(1) - x->get(2)) / steps->get(1);
+        steps->push(getStep());
+        return x->get(1) + getStep() * f;
     }
 
 }

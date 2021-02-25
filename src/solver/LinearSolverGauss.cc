@@ -17,7 +17,6 @@
 
 #include <cassert>
 #include <cstring>
-#include <iostream>
 #include "csim/utils/errors.h"
 #include "LinearSolverGauss.h"
 

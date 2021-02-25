@@ -24,8 +24,9 @@ namespace csim
     public:
         IntegralHistory();
 
-        double getX(unsigned int delay) const;
-        void pushX(double val);
+        double get(unsigned int delay) const;
+        void push(double val);
+        void set(unsigned int delay, double val);
         void setInitial(double val);
 
     public:

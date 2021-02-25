@@ -16,8 +16,8 @@
  */
 
 #include <cassert>
-#include <cstring>
 #include <iostream>
+#include <cstring>
 #include "csim/utils/errors.h"
 #include "csim/internal/LinearSolver.h"
 #include "IntegralCorrectorGear.h"
@@ -65,19 +65,24 @@ namespace csim
          * So the coefficient ai and bi can be obtained by solving the above equation.
          */
 
+        unsigned int rows = order + 1;
+
+        memset(m_A, 0, sizeof(*m_A) * rows * rows);
+        memset(m_b, 0, sizeof(*m_b) * rows);
+
         /* Generate A */
         for (unsigned int i = 1; i <= order; i++)
         {
-            m_A[i * MatrixRows] = i;
+            m_A[i * rows] = i;
             m_A[i] = 1;
         }
         for (unsigned int i = 1; i <= order - 1; i++)
         {
-            double t = -i;
-            for (unsigned int j = 1; j <= order; j++)
+            double t = -(long)i;
+            for (int j = 1; j <= order; j++)
             {
-                m_A[j * MatrixRows + (i + 1)] = t;
-                t *= -i;
+                m_A[j * rows + (i + 1)] = t;
+                t *= -(long)i;
             }
         }
         /* Generate b */
@@ -85,7 +90,7 @@ namespace csim
             m_b[i] = 1;
 
         /* Solve x */
-        int ret = m_linearSolver->solve(m_A, MatrixRows, m_x, m_b);
+        int ret = m_linearSolver->solve(m_A, rows, m_x, m_b);
         assert(CSIM_OK(ret));
         (void)ret;
 
@@ -113,8 +118,8 @@ namespace csim
         *c0 = k * m_coeffs[0];
         *c1 = 0.0;
         for (unsigned int i = 1; i <= getOrder(); i++)
-            *c1 += x->getX(i) * m_coeffs[i];
-        y->pushX(x->getX(0) * (*c0) + *c1);
+            *c1 += k * m_coeffs[i] * x->get(i);
+        y->set(0, x->get(0) * (*c0) + *c1);
     }
 
 }

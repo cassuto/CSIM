@@ -14,21 +14,28 @@
 #include <cassert>
 #include "csim/internal/Circuit.h"
 #include "csim/internal/Netlist.h"
+#include "csim/internal/IntegralCorrector.h"
 #include "csim/model/ModelBase.h"
 
 namespace csimModel
 {
 
     ModelBase::ModelBase(MODELBASE_CONSTRUCTOR_DEF)
-        : m_circuit(MODELBASE_CONSTRUCTOR_VAR)
+        : m_circuit(MODELBASE_CONSTRUCTOR_VAR),
+          m_integrator(nullptr),
+          m_historyX(nullptr), m_historyY(nullptr),
+          m_numIntegrators(0U)
     {
     }
 
     ModelBase::~ModelBase()
     {
+        delete m_integrator;
+        delete[] m_historyX;
+        delete[] m_historyY;
     }
 
-    void ModelBase::resizeModel(int numTermls, int numInnerNodes, int numVS)
+    void ModelBase::resizeModel(unsigned int numTermls, unsigned int numInnerNodes, unsigned int numVS)
     {
         m_termls.resize(numTermls);
         m_innerNodes.resize(numInnerNodes);
@@ -157,5 +164,26 @@ namespace csimModel
     {
         assert(row < m_circuit->netlist()->getNumVS());
         m_circuit->setZ(m_circuit->netlist()->getNumNodes() + row, val);
+    }
+
+    void ModelBase::resizeIntegrator(unsigned int numIntegrators)
+    {
+        delete m_integrator;
+        m_integrator = csim::IntegralCorrector::createInstance(m_circuit->getCorrectorName());
+        delete[] m_historyX;
+        delete[] m_historyY;
+        m_historyX = new csim::IntegralHistory[numIntegrators];
+        m_historyY = new csim::IntegralHistory[numIntegrators];
+        m_numIntegrators = numIntegrators;
+    }
+
+    double ModelBase::integrate(unsigned int nint, double x, double k, double *c0, double *c1)
+    {
+        assert(nint < m_numIntegrators);
+        csim::IntegralHistory *hX = &m_historyX[nint];
+        csim::IntegralHistory *hY = &m_historyY[nint];
+        hX->push(x);
+        m_integrator->integrate(hX, hY, k, c0, c1);
+        return hY->get(0);
     }
 }

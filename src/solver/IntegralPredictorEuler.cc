@@ -27,12 +27,11 @@ namespace csim
         assert(order == 1);
     }
 
-    double IntegralPredictorEuler::predict(const IntegralHistory *x, IntegralHistory *steps)
+    double IntegralPredictorEuler::predict(const IntegralHistory *x, const IntegralHistory *hsteps)
     {
         /* The previous difference */
-        double f = (x->get(1) - x->get(2)) / steps->get(1);
-        steps->push(getStep());
-        return x->get(1) + getStep() * f;
+        double f = (x->get(1) - x->get(2)) / hsteps->get(1);
+        return x->get(1) + hsteps->get(0) * f;
     }
 
 }

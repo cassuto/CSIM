@@ -28,6 +28,8 @@ namespace csim
     class LinearSolver;
     class Netlist;
     class AnalyzerBase;
+    class IntegralCorrector;
+    class IntegralPredictor;
 
     class Circuit
     {
@@ -50,6 +52,10 @@ namespace csim
         {
             return m_netlist;
         }
+        inline IntegralCorrector *corrector()
+        {
+            return m_corrector;
+        }
 
         int initMNA(AnalyzerBase *analyzer);
         int solveMNA(AnalyzerBase *analyzer);
@@ -58,9 +64,6 @@ namespace csim
         Complex getBranchCurrent(unsigned int vs) const;
         const Complex *getNodeVoltVector() const;
         const Complex *getBranchCurrentVector() const;
-
-        std::string getCorrectorName() const;
-        std::string getPredictorName() const;
 
     private:
         void createMatrix(unsigned int numNodes, unsigned int numVS);
@@ -74,6 +77,8 @@ namespace csim
         unsigned int m_maxIterations;
         double m_VepsMax, m_VepsrMax;
         double m_IepsMax, m_IepsrMax;
+        IntegralPredictor *m_predictor;
+        IntegralCorrector *m_corrector;
     };
 
 }

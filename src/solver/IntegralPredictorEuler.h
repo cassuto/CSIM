@@ -9,7 +9,7 @@ namespace csim
     {
     public:
         virtual void setOrder(unsigned int order);
-        virtual double predict(const IntegralHistory *x, IntegralHistory *steps) ;
+        virtual double predict(const IntegralHistory *x, const IntegralHistory *hsteps) ;
     };
 }
 

@@ -23,6 +23,8 @@
 #include "csim/internal/LinearSolver.h"
 #include "csim/internal/Netlist.h"
 #include "csim/internal/Analyzers.h"
+#include "csim/internal/IntegralPredictor.h"
+#include "csim/internal/IntegralCorrector.h"
 #include "csim/internal/Circuit.h"
 
 namespace csim
@@ -34,7 +36,9 @@ namespace csim
           m_linearSolver(LinearSolver::createInstance("gauss")),
           m_maxIterations(1000),
           m_VepsMax(0.0), m_VepsrMax(0.1),
-          m_IepsMax(0.0), m_IepsrMax(0.1)
+          m_IepsMax(0.0), m_IepsrMax(0.1),
+          m_predictor(IntegralPredictor::createInstance("euler")),
+          m_corrector(IntegralCorrector::createInstance("gear"))
     {
         m_netlist = new Netlist(this);
     }
@@ -48,6 +52,8 @@ namespace csim
         delete[] m_z_1;
         delete m_linearSolver;
         delete m_netlist;
+        delete m_predictor;
+        delete m_corrector;
     }
 
     /**
@@ -135,15 +141,6 @@ namespace csim
     const Complex *Circuit::getBranchCurrentVector() const
     {
         return m_x + m_netlist->getNumNodes();
-    }
-
-    std::string Circuit::getCorrectorName() const
-    {
-        return "euler";
-    }
-    std::string Circuit::getPredictorName() const
-    {
-        return "gear";
     }
 
     int Circuit::initMNA(AnalyzerBase *analyzer)

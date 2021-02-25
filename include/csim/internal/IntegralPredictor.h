@@ -24,14 +24,6 @@ namespace csim
         IntegralPredictor() {}
         virtual ~IntegralPredictor() {}
 
-        virtual void setStep(const double step)
-        {
-            m_step = step;
-        }
-        virtual double getStep() const
-        {
-            return m_step;
-        }
         virtual void setOrder(unsigned int order)
         {
             m_order = order;
@@ -40,13 +32,12 @@ namespace csim
         {
             return m_order;
         }
-        virtual double predict(const IntegralHistory *x, IntegralHistory *steps) = 0;
+        virtual double predict(const IntegralHistory *x, const IntegralHistory *hsteps) = 0;
 
     public:
         static IntegralPredictor *createInstance(const std::string &algorithm);
 
     protected:
-        double m_step;
         unsigned int m_order;
     };
 }

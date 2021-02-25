@@ -1,47 +1,18 @@
 #include "gtest/gtest.h"
 #include "constants.h"
 #include "csim/utils/errors.h"
+#include "csim/internal/IntegralPredictor.h"
 #include "csim/internal/IntegralCorrector.h"
 #include "tstIntegralCorrectorData.h"
 #include <algorithm>
 
 namespace csim
 {
-    TEST(history, tstIntegralCorrector)
+    TEST(integral_RC, tstIntegralPredictor)
     {
-        IntegralHistory history;
-        history.setInitial(5.0);
-        for (unsigned int i = 0; i < IntegralHistory::MaxNumHistoryNum; ++i)
-        {
-            EXPECT_EQ(history.get(i), 5.0);
-        }
-
-        history.set(2, 2.0);
-        EXPECT_EQ(history.get(2), 2.0);
-        history.set(3, 0.0);
-        history.push();
-        EXPECT_EQ(history.get(3), 2.0);
-
-        unsigned int N = std::max(IntegralHistory::MaxNumHistoryNum / 2 - 1, IntegralHistory::MaxNumHistoryNum);
-        for (unsigned int iter = 0; iter < IntegralHistory::MaxNumHistoryNum * 3; ++iter)
-        {
-            for (unsigned int i = 0; i < N; ++i)
-            {
-                history.set(0, i);
-                if (i != N - 1)
-                    history.push();
-            }
-            for (unsigned int i = 0; i < N; ++i)
-            {
-                EXPECT_DOUBLE_EQ(history.get(i), N - 1 - i);
-            }
-        }
-    }
-
-    TEST(integral_RC, tstIntegralCorrector)
-    {
+        IntegralPredictor *predictor = IntegralPredictor::createInstance("euler");
         IntegralCorrector *corrector = IntegralCorrector::createInstance("gear");
-        IntegralHistory X, Y;
+        IntegralHistory X, Y, hsteps;
         const double step = 1e-3;
         const double Vcc = 5.0;
         const double C = 4.7e-6;
@@ -52,6 +23,7 @@ namespace csim
 
         corrector->setOrder(4);
         corrector->setStep(step);
+        hsteps.setInitial(step);
 
         const unsigned int steps = 1.0 / step; /* 1s */
         unsigned int d = 0;
@@ -64,6 +36,10 @@ namespace csim
 
             do
             {
+                hsteps.set(0, step);
+                double pred = predictor->predict(&X, &hsteps);
+                X.set(0, pred);
+
                 corrector->integrate(&X, &Y, C, &geq, &Ieq);
                 X.set(0, (Vcc * gR - Ieq) / (geq + gR));
 
@@ -83,9 +59,11 @@ namespace csim
             EXPECT_NEAR(X.get(0), tstIntegralCorrectorRC[d++], epsilon_nonlinear);
 
             X.push();
+            hsteps.push();
         }
         std::cout << "total iterations = " << total_iters << std::endl;
         delete corrector;
+        delete predictor;
     }
 
 } // namespace

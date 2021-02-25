@@ -20,7 +20,6 @@
 
 namespace csim
 {
-    class IntegralCorrector;
     class IntegralHistory;
 }
 
@@ -57,6 +56,7 @@ namespace csimModel
         unsigned int getInnerNode(unsigned int index) const;
         void setVS(unsigned int idx, unsigned int branch);
         unsigned int getVS(unsigned int idx) const;
+        unsigned int getNumIntegrators() const;
 
         /* MNA matrices */
         MComplex getY(unsigned int row, unsigned int col) const;
@@ -72,6 +72,7 @@ namespace csimModel
         void resizeModel(unsigned int numTermls, unsigned int numInnerNodes, unsigned int numVS);
         void resizeIntegrator(unsigned int numIntegrators);
         double integrate(unsigned int nint, double x, double k, double *c0, double *c1);
+        void integratorNextStep();
 
         /* MNA matrices */
         void setY(unsigned int row, unsigned int col, const MComplex &val);
@@ -89,7 +90,6 @@ namespace csimModel
         std::vector<unsigned int> m_termls;
         std::vector<unsigned int> m_innerNodes;
         std::vector<unsigned int> m_VS;
-        csim::IntegralCorrector *m_integrator;
         csim::IntegralHistory *m_historyX, *m_historyY;
         unsigned int m_numIntegrators;
     };

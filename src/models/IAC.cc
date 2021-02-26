@@ -1,94 +1,85 @@
 /**
- * @file Ideal AC Voltage Source Model
+ * @file Ideal AC Current Source Model
  */
 
 /*
  *  FastCSIM Copyright (C) 2021 cassuto                                    
- *  This project is free edition; you can redistribute it and/or           
+ *  This project is free edition{} you can redistribute it and/or          
  *  modify it under the terms of the GNU Lesser General Public             
- *  License(GPL) as published by the Free Software Foundation; either      
+ *  License(GPL) as published by the Free Software Foundation{} either     
  *  version 2.1 of the License, or (at your option) any later version.     
  *                                                                         
  *  This project is distributed in the hope that it will be useful,        
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of         
+ *  but WITHOUT ANY WARRANTY{} without even the implied warranty of        
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU      
  *  Lesser General Public License for more details.                        
  */
 
 #include <cmath>
 #include "constants.h"
-#include "VAC.h"
+#include "IAC.h"
 
 namespace csimModel
 {
 
-    VAC::VAC(MODELBASE_CONSTRUCTOR_DEF)
+    IAC::IAC(MODELBASE_CONSTRUCTOR_DEF)
         : ModelBase(MODELBASE_CONSTRUCTOR_VAR),
-          m_Vp(0.0),
+          m_Ip(0.0),
           m_omega(0.0),
           m_phase(0.0)
     {
-        property().addProperty("Vp", Variant(Variant::VariantDouble).setDouble(5.0), true);
+        property().addProperty("Ip", Variant(Variant::VariantDouble).setDouble(0.2), true);
         property().addProperty("freq", Variant(Variant::VariantDouble).setDouble(50.0), true);
         property().addProperty("phase", Variant(Variant::VariantDouble).setDouble(0.0), true);
     }
 
-    VAC::~VAC()
+    IAC::~IAC()
     {
     }
 
-    int VAC::configure()
+    int IAC::configure()
     {
-        m_Vp = property().getProperty("Vp").getDouble();
+        resizeModel(2, 0, 0);
+        m_Ip = property().getProperty("Ip").getDouble();
         m_omega = M_PI * property().getProperty("freq").getDouble() / 180.0;
         m_phase = M_PI * property().getProperty("phase").getDouble() / 180.0;
 
-        m_E = MComplex(m_Vp * std::cos(m_phase), m_Vp * std::sin(m_phase));
-
-        resizeModel(2, 0, 1);
+        m_I = MComplex(m_Ip * std::cos(m_phase), m_Ip * std::sin(m_phase));
         return 0;
     }
 
-    int VAC::prepareDC()
+    int IAC::prepareDC()
     {
         return 0;
     }
-    int VAC::prepareAC()
+    int IAC::prepareAC()
     {
         return 0;
     }
-    int VAC::prepareTR()
+    int IAC::prepareTR()
     {
         return 0;
     }
 
-    int VAC::iterateDC()
+    int IAC::iterateDC()
     {
-        unsigned int k = getVS(0);
-        setB(getNode(0), k, +1.0);
-        setB(getNode(1), k, -1.0);
-        setC(k, getNode(0), 1.0), setC(k, getNode(1), -1.0);
-        setE(k, 0.0);
+        addI(getNode(0), -m_Ip);
+        addI(getNode(1), m_Ip);
         return 0;
     }
 
-    int VAC::iterateAC(double omega)
+    int IAC::iterateAC(double omega)
     {
-        unsigned int k = getVS(0);
-        setB(getNode(0), k, +1.0);
-        setB(getNode(1), k, -1.0);
-        setC(k, getNode(0), 1.0), setC(k, getNode(1), -1.0);
-        setE(k, m_E);
+        addI(getNode(0), -m_I);
+        addI(getNode(1), m_I);
         return 0;
     }
 
-    int VAC::iterateTR(double tTime)
+    int IAC::iterateTR(double tTime)
     {
-        unsigned int k = getVS(0);
-        setB(getNode(0), k, +1.0);
-        setB(getNode(1), k, -1.0);
-        setC(k, getNode(0), 1.0), setC(k, getNode(1), -1.0);
-        setE(k, m_Vp * std::sin(m_omega * tTime + m_phase));
+        double I = m_Ip * std::sin(m_omega * tTime + m_phase);
+        addI(getNode(0), -I);
+        addI(getNode(1), I);
         return 0;
     }
 
@@ -96,7 +87,7 @@ namespace csimModel
 
 extern "C" csimModel::ModelBase *createModel(MODELBASE_CONSTRUCTOR_DEF)
 {
-    return new csimModel::VAC(MODELBASE_CONSTRUCTOR_VAR);
+    return new csimModel::IAC(MODELBASE_CONSTRUCTOR_VAR);
 }
 
 extern "C" void deleteModel(csimModel::ModelBase *model)
@@ -106,6 +97,6 @@ extern "C" void deleteModel(csimModel::ModelBase *model)
 
 const ModelDescriptor descriptor = {
     /* id */
-    "VAC",
+    "IAC",
     /* description */
-    "Generic ideal AC Voltage Source"};
+    "Generic ideal AC Current Source"};

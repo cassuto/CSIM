@@ -64,11 +64,11 @@ namespace csim
 
         UPDATE_RC(circuit()->initMNA(this));
 
-        double t = 0.0;
+        double tTime = 0.0;
         do
         {
             UPDATE_RC(circuit()->stepMNA(this));
-            t = circuit()->getIntegralTime();
+            tTime = circuit()->getIntegralTime();
 
             /* Save the result */
             for (unsigned int i = 0; i < N; ++i)
@@ -79,8 +79,8 @@ namespace csim
             {
                 dcurrent[i]->addValue(circuit()->getBranchCurrent(getInterestBranch(i)));
             }
-            dtime.addValue(t);
-        } while (t < tstop);
+            dtime.addValue(tTime);
+        } while (tTime < tstop);
 
         return 0;
     }
@@ -98,7 +98,7 @@ namespace csim
     {
         for (auto &mif : circuit()->netlist()->models())
         {
-            UPDATE_RC(mif.model->iterateTR());
+            UPDATE_RC(mif.model->iterateTR(circuit()->getIntegralTime()));
         }
         return 0;
     }

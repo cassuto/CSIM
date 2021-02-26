@@ -22,9 +22,12 @@ namespace csimModel
 {
 
     VAC::VAC(MODELBASE_CONSTRUCTOR_DEF)
-        : ModelBase(MODELBASE_CONSTRUCTOR_VAR)
+        : ModelBase(MODELBASE_CONSTRUCTOR_VAR),
+          m_Vpp(0.0),
+          m_omega(0.0),
+          m_phase(0.0)
     {
-        property().addProperty("Vp", Variant(Variant::VariantDouble).setDouble(5.0), true);
+        property().addProperty("Vpp", Variant(Variant::VariantDouble).setDouble(5.0), true);
         property().addProperty("freq", Variant(Variant::VariantDouble).setDouble(50.0), true);
         property().addProperty("phase", Variant(Variant::VariantDouble).setDouble(0.0), true);
     }
@@ -35,11 +38,11 @@ namespace csimModel
 
     int VAC::configure()
     {
-        double Vrms = property().getProperty("Vp").getDouble();
-        double phase = property().getProperty("phase").getDouble();
+        m_Vpp = property().getProperty("Vpp").getDouble();
+        m_omega = M_PI * property().getProperty("freq").getDouble() / 180.0;
+        m_phase = M_PI * property().getProperty("phase").getDouble() / 180.0;
 
-        phase = M_PI * phase / 180.0;
-        m_E = MComplex(Vrms * std::cos(phase), Vrms * std::sin(phase));
+        m_E = MComplex(m_Vpp * std::cos(m_phase), m_Vpp * std::sin(m_phase));
 
         resizeModel(2, 0, 1);
         return 0;
@@ -78,9 +81,14 @@ namespace csimModel
         return 0;
     }
 
-    int VAC::iterateTR()
+    int VAC::iterateTR(double tTime)
     {
-        return iterateDC();
+        unsigned int k = getVS(0);
+        setB(getNode(0), k, +1.0);
+        setB(getNode(1), k, -1.0);
+        setC(k, getNode(0), 1.0), setC(k, getNode(1), -1.0);
+        setE(k, m_Vpp * std::sin(m_omega * tTime + m_phase));
+        return 0;
     }
 
 }

@@ -66,7 +66,7 @@ namespace csimModel
         return 0;
     }
 
-    int Capacitor::iterateTR()
+    int Capacitor::iterateTR(double tTime)
     {
         double volt = (getU(getNode(0)) - getU(getNode(1))).real();
         double geq, Ieq;

@@ -88,7 +88,7 @@ namespace csimModel
         }
         return 0;
     }
-    int Inductor::iterateTR()
+    int Inductor::iterateTR(double tTime)
     {
         double volt = (getU(getNode(0)) - getU(getNode(1))).real();
         double req, Ueq;

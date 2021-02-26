@@ -38,6 +38,7 @@ namespace csimModel
         property().addProperty("Ibv", Variant(Variant::VariantDouble).setDouble(1e-3), false);
         property().addProperty("Bv", Variant(Variant::VariantDouble).setDouble(40.0), false);
         property().addProperty("Bv_set", Variant(Variant::VariantBoolean).setBoolean(true), false);
+        property().addProperty("Area", Variant(Variant::VariantDouble).setDouble(1.0), false);
     }
 
     PN::~PN()
@@ -54,6 +55,11 @@ namespace csimModel
         m_Ibv = property().getProperty("Ibv").getDouble();
         m_Bv = property().getProperty("Bv").getDouble();
         m_Bv_set = property().getProperty("Bv_set").getBoolean();
+        double area = property().getProperty("Area").getDouble();
+
+        /* Apply the ratio of junction area to the reference junction area */
+        m_Is *= area;
+        m_Isr *= area;
 
         /* Temperature voltage equivalent */
         m_Ut = kBoltzmann * (m_Temp - kKelvin) / qElement;
@@ -153,7 +159,7 @@ namespace csimModel
     {
         return 0;
     }
-    int PN::iterateTR()
+    int PN::iterateTR(double tTime)
     {
         return iterateDC();
     }

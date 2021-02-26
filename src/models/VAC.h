@@ -19,10 +19,13 @@ namespace csimModel
         virtual int prepareTR();
         virtual int iterateDC();
         virtual int iterateAC(double omega);
-        virtual int iterateTR();
+        virtual int iterateTR(double tTime);
 
     private:
         MComplex m_E;
+        double m_Vpp;
+        double m_omega;
+        double m_phase;
     };
 
 }

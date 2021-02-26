@@ -42,7 +42,7 @@ namespace csimModel
         virtual int prepareTR() = 0;
         virtual int iterateDC() = 0;
         virtual int iterateAC(double omega) = 0;
-        virtual int iterateTR() = 0;
+        virtual int iterateTR(double tTime) = 0;
 
     public:
         PropertyBag &property();

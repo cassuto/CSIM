@@ -71,7 +71,7 @@ namespace csimModel
         return 0;
     }
 
-    int VDC::iterateTR()
+    int VDC::iterateTR(double tTime)
     {
         return iterateDC();
     }

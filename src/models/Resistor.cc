@@ -83,7 +83,7 @@ namespace csimModel
     {
         return iterateDC();
     }
-    int Resistor::iterateTR()
+    int Resistor::iterateTR(double tTime)
     {
         return iterateDC();
     }

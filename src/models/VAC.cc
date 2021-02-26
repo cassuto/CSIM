@@ -65,30 +65,30 @@ namespace csimModel
     int VAC::iterateDC()
     {
         unsigned int k = getVS(0);
-        setB(getNode(0), k, +1.0);
-        setB(getNode(1), k, -1.0);
-        setC(k, getNode(0), 1.0), setC(k, getNode(1), -1.0);
-        setE(k, 0.0);
+        addB(getNode(0), k, +1.0);
+        addB(getNode(1), k, -1.0);
+        addC(k, getNode(0), 1.0), addC(k, getNode(1), -1.0);
+        addE(k, 0.0);
         return 0;
     }
 
     int VAC::iterateAC(double omega)
     {
         unsigned int k = getVS(0);
-        setB(getNode(0), k, +1.0);
-        setB(getNode(1), k, -1.0);
-        setC(k, getNode(0), 1.0), setC(k, getNode(1), -1.0);
-        setE(k, m_E);
+        addB(getNode(0), k, +1.0);
+        addB(getNode(1), k, -1.0);
+        addC(k, getNode(0), 1.0), addC(k, getNode(1), -1.0);
+        addE(k, m_E);
         return 0;
     }
 
     int VAC::iterateTR(double tTime)
     {
         unsigned int k = getVS(0);
-        setB(getNode(0), k, +1.0);
-        setB(getNode(1), k, -1.0);
-        setC(k, getNode(0), 1.0), setC(k, getNode(1), -1.0);
-        setE(k, m_Vp * std::sin(m_omega * tTime + m_phase));
+        addB(getNode(0), k, +1.0);
+        addB(getNode(1), k, -1.0);
+        addC(k, getNode(0), 1.0), addC(k, getNode(1), -1.0);
+        addE(k, m_Vp * std::sin(m_omega * tTime + m_phase));
         return 0;
     }
 

@@ -61,8 +61,8 @@ namespace csimModel
     int Capacitor::iterateAC(double omega)
     {
         MComplex z = MComplex(0, m_kZimag * omega);
-        setY(getNode(0), getNode(0), z), setY(getNode(0), getNode(1), -z);
-        setY(getNode(1), getNode(0), -z), setY(getNode(1), getNode(1), z);
+        addY(getNode(0), getNode(0), z), addY(getNode(0), getNode(1), -z);
+        addY(getNode(1), getNode(0), -z), addY(getNode(1), getNode(1), z);
         return 0;
     }
 
@@ -95,4 +95,4 @@ const ModelDescriptor descriptor = {
     /* id */
     "CAP",
     /* description */
-    "Generic  capacitor"};
+    "Generic Capacitor"};

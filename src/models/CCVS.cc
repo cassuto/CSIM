@@ -1,5 +1,5 @@
 /**
- * @file Ideal DC Voltage Source Model
+ * @file Ideal Current Controlled Voltage Source Model
  */
 
 /*
@@ -15,63 +15,63 @@
  *  Lesser General Public License for more details.                        
  */
 
-#include "VDC.h"
+#include "CCVS.h"
 
 namespace csimModel
 {
-
-    VDC::VDC(MODELBASE_CONSTRUCTOR_DEF)
-        : ModelBase(MODELBASE_CONSTRUCTOR_VAR)
+    CCVS::CCVS(MODELBASE_CONSTRUCTOR_DEF)
+        : ModelBase(MODELBASE_CONSTRUCTOR_VAR),
+          m_r(0.0)
     {
-        property().addProperty("V", Variant(Variant::VariantDouble).setDouble(5.0), true);
+        property().addProperty("r", Variant(Variant::VariantDouble).setDouble(1.0), true);
     }
 
-    VDC::~VDC()
+    CCVS::~CCVS()
     {
     }
 
-    int VDC::configure()
+    int CCVS::configure()
     {
-        resizeModel(2, 0, 1);
+        m_r = property().getProperty("r").getDouble();
+        resizeModel(4, 0, 2);
         return 0;
     }
 
-    int VDC::prepareDC()
+    int CCVS::prepareDC()
     {
         return 0;
     }
-    int VDC::prepareAC()
+    int CCVS::prepareAC()
     {
         return 0;
     }
-    int VDC::prepareTR()
+    int CCVS::prepareTR()
     {
         return 0;
     }
 
-    int VDC::iterateDC()
+    int CCVS::iterateDC()
     {
-        double V = property().getProperty("V").getDouble();
-
-        unsigned int k = getVS(0);
-        addB(getNode(0), k, +1.0);
-        addB(getNode(1), k, -1.0);
-        addC(k, getNode(0), 1.0), addC(k, getNode(1), -1.0);
-        addE(k, V);
+        unsigned int k = getVS(0), c = getVS(1);
+        addB(getNode(S_NODE), k, +1.0);
+        addB(getNode(T_NODE), k, -1.0);
+        addB(getNode(P_NODE), c, +1.0);
+        addB(getNode(Q_NODE), c, -1.0);
+        addC(k, getNode(S_NODE), 1.0), addC(k, getNode(T_NODE), -1.0);
+        addC(c, getNode(P_NODE), 1.0), addC(c, getNode(Q_NODE), -1.0);
+        addD(k, c, -m_r);
+        addD(c, c, 0.0);
+        addE(k, 0.0);
+        addE(c, 0.0);
         return 0;
     }
 
-    int VDC::iterateAC(double omega)
+    int CCVS::iterateAC(double omega)
     {
-        unsigned int k = getVS(0);
-        addB(getNode(0), k, +1.0);
-        addB(getNode(1), k, -1.0);
-        addC(k, getNode(0), 1.0), addC(k, getNode(1), -1.0);
-        addE(k, 0.0); /* Remove any DC offset */
-        return 0;
+        return iterateDC();
     }
 
-    int VDC::iterateTR(double tTime)
+    int CCVS::iterateTR(double tTime)
     {
         return iterateDC();
     }
@@ -80,7 +80,7 @@ namespace csimModel
 
 extern "C" csimModel::ModelBase *createModel(MODELBASE_CONSTRUCTOR_DEF)
 {
-    return new csimModel::VDC(MODELBASE_CONSTRUCTOR_VAR);
+    return new csimModel::CCVS(MODELBASE_CONSTRUCTOR_VAR);
 }
 
 extern "C" void deleteModel(csimModel::ModelBase *model)
@@ -90,6 +90,6 @@ extern "C" void deleteModel(csimModel::ModelBase *model)
 
 const ModelDescriptor descriptor = {
     /* id */
-    "VDC",
+    "CCVS",
     /* description */
-    "Generic ideal DC Voltage Source"};
+    "Generic Ideal Current Controlled Voltage Source Source"};

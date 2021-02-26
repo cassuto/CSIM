@@ -43,10 +43,8 @@ namespace csim
         const Complex &getX(unsigned int row) const;
         const Complex &getZ(unsigned int row) const;
 
-        void setA(unsigned int row, unsigned int col, const Complex &val);
         void addA(unsigned int row, unsigned int col, const Complex &delta);
-        void setX(unsigned int row, const Complex &val);
-        void setZ(unsigned int row, const Complex &val);
+        void addX(unsigned int row, const Complex &delta);
         void addZ(unsigned int row, const Complex &delta);
 
         inline Netlist *netlist() const

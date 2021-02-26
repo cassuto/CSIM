@@ -77,14 +77,12 @@ namespace csimModel
         double integrate(unsigned int nint, double x, double k, double *c0, double *c1);
 
         /* MNA matrices */
-        void setY(unsigned int row, unsigned int col, const MComplex &val);
         void addY(unsigned int row, unsigned int col, const MComplex &delta);
-        void setB(unsigned int row, unsigned int col, const MComplex &val);
-        void setC(unsigned int row, unsigned int col, const MComplex &val);
-        void setD(unsigned int row, unsigned int col, const MComplex &val);
-        void setI(unsigned int row, const MComplex &val);
+        void addB(unsigned int row, unsigned int col, const MComplex &delta);
+        void addC(unsigned int row, unsigned int col, const MComplex &delta);
+        void addD(unsigned int row, unsigned int col, const MComplex &delta);
         void addI(unsigned int row, const MComplex &delta);
-        void setE(unsigned int row, const MComplex &val);
+        void addE(unsigned int row, const MComplex &delta);
 
     private:
         csim::Circuit *m_circuit;

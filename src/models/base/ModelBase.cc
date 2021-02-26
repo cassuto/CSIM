@@ -125,43 +125,35 @@ namespace csimModel
         return m_circuit->getX(m_circuit->netlist()->getNumNodes() + row).toMComplex();
     }
 
-    void ModelBase::setY(unsigned int row, unsigned int col, const MComplex &val)
-    {
-        assert(row < m_circuit->netlist()->getNumNodes() && col < m_circuit->netlist()->getNumNodes());
-        m_circuit->setA(row, col, val);
-    }
     void ModelBase::addY(unsigned int row, unsigned int col, const MComplex &delta)
     {
-        setY(row, col, getY(row, col) + delta);
+        assert(row < m_circuit->netlist()->getNumNodes() && col < m_circuit->netlist()->getNumNodes());
+        m_circuit->addA(row, col, delta);
     }
-    void ModelBase::setB(unsigned int row, unsigned int col, const MComplex &val)
+    void ModelBase::addB(unsigned int row, unsigned int col, const MComplex &delta)
     {
         assert(row < m_circuit->netlist()->getNumNodes() && col < m_circuit->netlist()->getNumVS());
-        m_circuit->setA(row, m_circuit->netlist()->getNumNodes() + col, val);
+        m_circuit->addA(row, m_circuit->netlist()->getNumNodes() + col,delta);
     }
-    void ModelBase::setC(unsigned int row, unsigned int col, const MComplex &val)
+    void ModelBase::addC(unsigned int row, unsigned int col, const MComplex &delta)
     {
         assert(row < m_circuit->netlist()->getNumVS() && col < m_circuit->netlist()->getNumNodes());
-        m_circuit->setA(m_circuit->netlist()->getNumNodes() + row, col, val);
+        m_circuit->addA(m_circuit->netlist()->getNumNodes() + row, col, delta);
     }
-    void ModelBase::setD(unsigned int row, unsigned int col, const MComplex &val)
+    void ModelBase::addD(unsigned int row, unsigned int col, const MComplex &delta)
     {
         assert(row < m_circuit->netlist()->getNumVS() && col < m_circuit->netlist()->getNumVS());
-        m_circuit->setA(m_circuit->netlist()->getNumNodes() + row, m_circuit->netlist()->getNumNodes() + col, val);
-    }
-    void ModelBase::setI(unsigned int row, const MComplex &val)
-    {
-        assert(row < m_circuit->netlist()->getNumNodes());
-        m_circuit->setZ(row, val);
+        m_circuit->addA(m_circuit->netlist()->getNumNodes() + row, m_circuit->netlist()->getNumNodes() + col, delta);
     }
     void ModelBase::addI(unsigned int row, const MComplex &delta)
     {
-        setI(row, getI(row) + delta);
+        assert(row < m_circuit->netlist()->getNumNodes());
+        m_circuit->addZ(row, delta);
     }
-    void ModelBase::setE(unsigned int row, const MComplex &val)
+    void ModelBase::addE(unsigned int row, const MComplex &delta)
     {
         assert(row < m_circuit->netlist()->getNumVS());
-        m_circuit->setZ(m_circuit->netlist()->getNumNodes() + row, val);
+        m_circuit->addZ(m_circuit->netlist()->getNumNodes() + row, delta);
     }
 
     unsigned int ModelBase::getNumIntegrators() const

@@ -28,7 +28,8 @@ namespace csim
         : m_numNodes(0),
           m_numVS(0),
           m_numTermls(0),
-          m_circuit(circuit)
+          m_circuit(circuit),
+          m_hasGround(false)
     {
     }
 
@@ -95,6 +96,7 @@ namespace csim
         m_models.clear();
         m_numNodes = m_numVS = m_numTermls = 0;
         m_ufset.clear();
+        m_hasGround = false;
     }
 
     int Netlist::prepare()
@@ -113,10 +115,10 @@ namespace csim
         }
 
         /* Init union-find set */
-        m_ufset.resize(m_numTermls);
-        m_ufsetRanks.resize(m_numTermls);
-        m_ufsetCount.resize(m_numTermls);
-        for (unsigned int i = 0; i < m_numTermls; ++i)
+        m_ufset.resize(m_numTermls + 1);
+        m_ufsetRanks.resize(m_numTermls + 1);
+        m_ufsetCount.resize(m_numTermls + 1);
+        for (unsigned int i = 0; i < m_numTermls + 1; ++i)
         {
             m_ufset[i] = i;
             m_ufsetRanks[i] = 0;
@@ -144,12 +146,26 @@ namespace csim
         return 0;
     }
 
+    int Netlist::ground(const char *ref, unsigned int terml)
+    {
+        if (m_modelIndex.find(ref) == m_modelIndex.end())
+            return CER_NO_SUCH_COMPONENT_REFERENCE;
+        const ModelInfo &mif = m_models[m_modelIndex.at(ref)];
+        if (terml >= mif.model->getNumTerml())
+            return CERR_INVALID_TERML_INDEX;
+
+        m_hasGround = true;
+        ufsetMerge(terml + mif.termlIndexOffset, m_numTermls);
+        return 0;
+    }
+
     int Netlist::generateNodes()
     {
         assert(m_ufset.size());
         m_numNodes = 0;
 
-        for (unsigned int i = 0; i < m_numTermls; ++i)
+        unsigned int N = m_hasGround ? m_numTermls + 1 : m_numTermls;
+        for (unsigned int i = 0; i < N; ++i)
         {
             if (m_ufset[i] == i)
             {
@@ -207,6 +223,16 @@ namespace csim
         }
 
         return 0;
+    }
+
+    bool Netlist::hasGroundNode()
+    {
+        return m_hasGround;
+    }
+    unsigned int Netlist::getGroundNode()
+    {
+        assert(hasGroundNode());
+        return m_ufsetRanks[ufsetGetRoot(m_numTermls)];
     }
 
     unsigned int Netlist::ufsetGetRoot(unsigned int v)

@@ -67,10 +67,10 @@ namespace csimModel
         if (m_cutThrough)
         {
             unsigned int k = getVS(0);
-            setB(getNode(0), k, +1.0);
-            setB(getNode(1), k, -1.0);
-            setC(k, getNode(0), 1.0), setC(k, getNode(1), -1.0);
-            setE(k, 0.0);
+            addB(getNode(0), k, +1.0);
+            addB(getNode(1), k, -1.0);
+            addC(k, getNode(0), 1.0), addC(k, getNode(1), -1.0);
+            addE(k, 0.0);
         }
         else
         {

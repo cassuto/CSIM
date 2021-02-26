@@ -60,6 +60,7 @@ namespace csimModel
 
     int IDC::iterateAC(double omega)
     {
+        /* Remove any DC offset */
         return 0;
     }
 

@@ -22,6 +22,22 @@ add_library(
     "${CMAKE_CURRENT_SOURCE_DIR}/IAC.cc"
 )
 add_library(
+    csimModelVCVS SHARED
+    "${CMAKE_CURRENT_SOURCE_DIR}/VCVS.cc"
+)
+add_library(
+    csimModelCCVS SHARED
+    "${CMAKE_CURRENT_SOURCE_DIR}/CCVS.cc"
+)
+add_library(
+    csimModelVCCS SHARED
+    "${CMAKE_CURRENT_SOURCE_DIR}/VCCS.cc"
+)
+add_library(
+    csimModelCCCS SHARED
+    "${CMAKE_CURRENT_SOURCE_DIR}/CCCS.cc"
+)
+add_library(
     csimModelPN SHARED
     "${CMAKE_CURRENT_SOURCE_DIR}/PN.cc"
 )
@@ -39,6 +55,10 @@ target_link_libraries(csimModelVDC csim)
 target_link_libraries(csimModelVAC csim)
 target_link_libraries(csimModelIDC csim)
 target_link_libraries(csimModelIAC csim)
+target_link_libraries(csimModelVCVS csim)
+target_link_libraries(csimModelCCVS csim)
+target_link_libraries(csimModelVCCS csim)
+target_link_libraries(csimModelCCCS csim)
 target_link_libraries(csimModelPN csim)
 target_link_libraries(csimModelCapacitor csim)
 target_link_libraries(csimModelInductor csim)

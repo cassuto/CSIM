@@ -102,25 +102,15 @@ namespace csim
         return m_z[row];
     }
 
-    void Circuit::setA(unsigned int row, unsigned int col, const Complex &val)
-    {
-        assert(row < m_matrixRows && col < m_matrixRows);
-        m_A[row * m_matrixRows + col] = val;
-    }
     void Circuit::addA(unsigned int row, unsigned int col, const Complex &delta)
     {
         assert(row < m_matrixRows && col < m_matrixRows);
         m_A[row * m_matrixRows + col] += delta;
     }
-    void Circuit::setX(unsigned int row, const Complex &val)
+    void Circuit::addX(unsigned int row, const Complex &delta)
     {
         assert(row < m_matrixRows);
-        m_x[row] = val;
-    }
-    void Circuit::setZ(unsigned int row, const Complex &val)
-    {
-        assert(row < m_matrixRows);
-        m_z[row] = val;
+        m_x[row] += delta;
     }
     void Circuit::addZ(unsigned int row, const Complex &delta)
     {
@@ -162,7 +152,6 @@ namespace csim
 
     int Circuit::solveMNA(AnalyzerBase *analyzer)
     {
-        int ret;
         int iteration = 0;
         do
         {
@@ -171,19 +160,23 @@ namespace csim
 
             UPDATE_RC(analyzer->iterateMNA());
 
-            ret = m_linearSolver->solve(m_A, m_matrixRows, m_x, m_z);
-
-            if (CSIM_OK(ret))
+            if (m_netlist->hasGroundNode())
             {
-                if (iteration)
-                {
-                    if (converged())
-                        break;
-                }
-                /* save vector x and z */
-                memcpy(m_x_1, m_x, sizeof(*m_x) * m_matrixRows);
-                memcpy(m_z_1, m_z, sizeof(*m_z) * m_matrixRows);
+                unsigned int ngnd = m_netlist->getGroundNode();
+                m_A[ngnd * m_matrixRows + ngnd] = 0.0;
             }
+
+            UPDATE_RC(m_linearSolver->solve(m_A, m_matrixRows, m_x, m_z));
+
+            if (iteration)
+            {
+                if (converged())
+                    break;
+            }
+            /* save vector x and z */
+            memcpy(m_x_1, m_x, sizeof(*m_x) * m_matrixRows);
+            memcpy(m_z_1, m_z, sizeof(*m_z) * m_matrixRows);
+
             iteration++;
         } while (iteration < m_maxIterations);
 

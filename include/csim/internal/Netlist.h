@@ -40,7 +40,10 @@ namespace csim
         void clear();
         int prepare();
         int wire(const char *ref_A, unsigned int terml_A, const char *ref_B, unsigned int terml_B);
+        int ground(const char *ref, unsigned int terml);
         int generateNodes();
+        bool hasGroundNode();
+        unsigned int getGroundNode();
 
         inline unsigned int getNumNodes() const
         {
@@ -76,8 +79,8 @@ namespace csim
         Circuit *m_circuit;
         std::map<std::string, unsigned int> m_modelIndex;
         std::vector<ModelInfo> m_models;
-
         std::vector<unsigned int> m_ufset, m_ufsetRanks, m_ufsetCount;
+        bool m_hasGround;
     };
 }
 

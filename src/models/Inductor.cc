@@ -59,32 +59,32 @@ namespace csimModel
     int Inductor::iterateDC()
     {
         unsigned int k = getVS(0);
-        setB(getNode(0), k, +1.0);
-        setB(getNode(1), k, -1.0);
-        setC(k, getNode(0), 1.0), setC(k, getNode(1), -1.0);
-        setE(k, 0.0);
+        addB(getNode(0), k, +1.0);
+        addB(getNode(1), k, -1.0);
+        addC(k, getNode(0), 1.0), addC(k, getNode(1), -1.0);
+        addE(k, 0.0);
         return 0;
     }
 
     int Inductor::iterateAC(double omega)
     {
         unsigned int k = getVS(0);
-        setB(getNode(0), k, +1.0);
-        setB(getNode(1), k, -1.0);
+        addB(getNode(0), k, +1.0);
+        addB(getNode(1), k, -1.0);
 
         if (m_cutThrough)
         {
-            setC(k, getNode(0), 1.0), setC(k, getNode(1), -1.0);
-            setE(k, 0.0);
+            addC(k, getNode(0), 1.0), addC(k, getNode(1), -1.0);
+            addE(k, 0.0);
         }
         else
         {
-            setD(k, k, 1.0);
-            setE(k, 0.0);
+            addD(k, k, 1.0);
+            addE(k, 0.0);
 
             MComplex z = MComplex(0, -1.0 / (m_kZimag * omega));
-            setY(getNode(0), getNode(0), z), setY(getNode(0), getNode(1), -z);
-            setY(getNode(1), getNode(0), -z), setY(getNode(1), getNode(1), z);
+            addY(getNode(0), getNode(0), z), addY(getNode(0), getNode(1), -z);
+            addY(getNode(1), getNode(0), -z), addY(getNode(1), getNode(1), z);
         }
         return 0;
     }
@@ -96,11 +96,11 @@ namespace csimModel
         integrate(0, volt, m_kZimag, &req, &Ueq);
 
         unsigned int k = getVS(0);
-        setB(getNode(0), k, +1.0);
-        setB(getNode(1), k, -1.0);
-        setC(k, getNode(0), +1.0), setC(k, getNode(1), -1.0);
-        setD(k, k, -req);
-        setE(k, Ueq);
+        addB(getNode(0), k, +1.0);
+        addB(getNode(1), k, -1.0);
+        addC(k, getNode(0), +1.0), addC(k, getNode(1), -1.0);
+        addD(k, k, -req);
+        addE(k, Ueq);
         return 0;
     }
 }

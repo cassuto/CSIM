@@ -15,6 +15,7 @@
  *  Lesser General Public License for more details.                        
  */
 
+#include <iostream>
 #include <algorithm>
 #include "Constants.h"
 #include "PN.h"
@@ -121,6 +122,10 @@ namespace csimModel
     int PN::iterateDC()
     {
         double Ud = (getU(getNode(0)) - getU(getNode(1))).real();
+        if (Ud < 0 && vlimit(Ud) > 0)
+        {
+            std::cout << "====" << Ud << " " << vlimit(Ud) << "\n";
+        }
         Ud = vlimit(Ud);
         m_Ud_1 = Ud;
 
@@ -204,7 +209,7 @@ namespace csimModel
         }
         else
         {
-            Ud_f = Ud_1;
+            Ud_f = Ud_0; /* Near zero+ */
             if (Ud_0 < 0)
             {
                 double arg = Ud_1 > 0 ? -1 - Ud_1 : 2 * Ud_1 - 1;

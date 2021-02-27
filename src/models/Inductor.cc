@@ -90,10 +90,10 @@ namespace csimModel
     }
     int Inductor::iterateTR(double tTime)
     {
-        double volt = (getU(getNode(0)) - getU(getNode(1))).real();
+        double I = getJ(getVS(0)).real();
         double req, Ueq;
 
-        integrate(0, volt, m_kZimag, &req, &Ueq);
+        integrate(0, I, m_kZimag, &req, &Ueq);
 
         unsigned int k = getVS(0);
         addB(getNode(0), k, +1.0);

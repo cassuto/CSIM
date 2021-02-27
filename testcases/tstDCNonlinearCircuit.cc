@@ -11,7 +11,7 @@
 
 namespace csim
 {
-    TEST(circuit_PN_R, tstDCNonlinearCircuit)
+    TEST(tstDCNonlinearCircuit, circuit_PN_R)
     {
         int ret = 0;
         ModelEntry *e_R = ModelLoader::load(resistorLibrary);
@@ -78,7 +78,7 @@ namespace csim
         ASSERT_NE(nullptr, analyzer);
         Dataset dset;
         ret = analyzer->analyze(&dset);
-        EXPECT_EQ(CERR_SUCCEEDED, ret);
+        ASSERT_EQ(CERR_SUCCEEDED, ret);
 
         /* Check solution of Circuit object */
 

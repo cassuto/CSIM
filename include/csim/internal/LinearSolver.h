@@ -24,7 +24,17 @@ namespace csim
         LinearSolver() {}
         virtual ~LinearSolver() {}
 
-        virtual int solve(const Complex *A, int n, Complex *x, const Complex *B) = 0;
+        /**
+         * Solve the linear equation Ax=B.
+         * Note that the original matrix A or B may be modified after the solving process.
+         * @param [in,out] A Pointer to the matrix A. NULL if you want to use the last passed value.
+         *          For algorithms such as LU decomposition, using the last values can improve performance.
+         * @param n Rows or columns of matrix A.
+         * @param [in,out] x Where to store the solution vevtor.
+         * @param [in,out] B Pointer to the matrix B.
+         * @return Status code.
+         */
+        virtual int solve(Complex *A, int n, Complex *x, Complex *B) = 0;
 
     public:
         static LinearSolver *createInstance(const char *algorithm);

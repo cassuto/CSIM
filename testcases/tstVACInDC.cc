@@ -24,7 +24,7 @@ namespace csim
      *                          `-'
      *                         DC=12V
      */
-    TEST(circuit_VAC, tstVACInDC)
+    TEST(tstVACInDC, circuit_VAC)
     {
         int ret = 0;
         ModelEntry *e_R = ModelLoader::load(resistorLibrary);
@@ -75,7 +75,7 @@ namespace csim
         ASSERT_NE(nullptr, analyzer);
         Dataset ds;
         ret = analyzer->analyze(&ds);
-        EXPECT_EQ(CERR_SUCCEEDED, ret);
+        ASSERT_EQ(CERR_SUCCEEDED, ret);
 
         /* Get nodes */
         unsigned int n_gnd, n1;

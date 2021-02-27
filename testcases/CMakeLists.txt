@@ -14,6 +14,7 @@ set(TEST_SRCS
     "${CMAKE_CURRENT_SOURCE_DIR}/tstLoader.cc"
     "${CMAKE_CURRENT_SOURCE_DIR}/tstLinearSolver.cc"
     "${CMAKE_CURRENT_SOURCE_DIR}/tstLinearSolverGauss.cc"
+    "${CMAKE_CURRENT_SOURCE_DIR}/tstLinearSolverLU.cc"
     "${CMAKE_CURRENT_SOURCE_DIR}/tstDCLinearCircuit.cc"
     "${CMAKE_CURRENT_SOURCE_DIR}/tstDCNonlinearCircuit.cc"
     "${CMAKE_CURRENT_SOURCE_DIR}/tstCapacitorDC.cc"

@@ -33,7 +33,7 @@ namespace csim
     Circuit::Circuit()
         : m_matrixRows(0),
           m_A(nullptr), m_x(nullptr), m_x_1(nullptr), m_z(nullptr), m_z_1(nullptr),
-          m_linearSolver(LinearSolver::createInstance("gauss")),
+          m_linearSolver(LinearSolver::createInstance("LU")),
           m_maxIterations(1000),
           maxIntegralIterations(100),
           m_VepsMax(0.0), m_VepsrMax(0.1),

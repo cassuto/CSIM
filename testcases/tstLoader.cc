@@ -6,7 +6,7 @@
 
 namespace csim
 {
-    TEST(loadResistor, tstLoader)
+    TEST(tstLoader, loadResistor)
     {
         ModelEntry *entry = ModelLoader::load(resistorLibrary);
         ASSERT_NE(nullptr, entry);
@@ -28,7 +28,7 @@ namespace csim
         delete entry;
     }
 
-    TEST(loadNonModel, tstLoader)
+    TEST(tstLoader, loadNonModel)
     {
         ModelEntry *entry = ModelLoader::load(csimLibrary);
         ASSERT_EQ(nullptr, entry);

@@ -1,5 +1,5 @@
 /**
- * @file Numberic integral solver
+ * @file Numberic integral corrector
  */
 
 /*

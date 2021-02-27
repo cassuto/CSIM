@@ -1,23 +1,25 @@
-#ifndef LINEARSOLVER_GAUSS_H_
-#define LINEARSOLVER_GAUSS_H_
+#ifndef LINEARSOLVER_LU_H_
+#define LINEARSOLVER_LU_H_
 
 #include "csim/internal/LinearSolver.h"
 
 namespace csim
 {
-    class LinearSolverGauss : public LinearSolver
+    class LinearSolverLU : public LinearSolver
     {
     public:
-        LinearSolverGauss();
-        virtual ~LinearSolverGauss();
+        LinearSolverLU();
+        virtual ~LinearSolverLU();
 
         virtual int solve(Complex *A, int n, Complex *x, Complex *B);
 
     private:
         Complex *m_bufRow, *m_bufA;
+        unsigned int *m_rowLoc;
+        double *m_privot;
         int m_bufRows;
         size_t m_lenRow;
     };
 }
 
-#endif // LINEARSOLVER_GAUSS_H_
+#endif // LINEARSOLVER_LU_H_

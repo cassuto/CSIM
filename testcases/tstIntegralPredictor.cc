@@ -8,7 +8,7 @@
 
 namespace csim
 {
-    TEST(integral_RC, tstIntegralPredictor)
+    TEST(tstIntegralPredictor, integral_RC)
     {
         IntegralPredictor *predictor = IntegralPredictor::createInstance("euler");
         IntegralCorrector *corrector = IntegralCorrector::createInstance("gear");

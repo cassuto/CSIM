@@ -1,5 +1,5 @@
 /**
- * @file Complex type restricted to model SDK
+ * @file Gauss elimination based solver
  */
 
 /*
@@ -17,6 +17,7 @@
 
 #include <cassert>
 #include <cstring>
+#include <algorithm>
 #include "csim/utils/errors.h"
 #include "LinearSolverGauss.h"
 
@@ -24,8 +25,9 @@ namespace csim
 {
     LinearSolverGauss::LinearSolverGauss()
         : m_bufRow(nullptr),
-          m_bufA(nullptr), m_bufB(nullptr),
-          m_bufRows(0)
+          m_bufA(nullptr),
+          m_bufRows(0),
+          m_lenRow(0)
     {
     }
 
@@ -33,10 +35,9 @@ namespace csim
     {
         delete[] m_bufRow;
         delete[] m_bufA;
-        delete[] m_bufB;
     }
 
-    int LinearSolverGauss::solve(const Complex *A, int n, Complex *x, const Complex *B)
+    int LinearSolverGauss::solve(Complex *A, int n, Complex *x, Complex *B)
     {
         if (m_bufRows != n)
         {
@@ -44,15 +45,14 @@ namespace csim
             m_lenRow = sizeof(Complex) * n;
             delete[] m_bufRow;
             delete[] m_bufA;
-            delete[] m_bufB;
             /* Memory to temporarily store matrix */
             m_bufRow = new Complex[m_bufRows];
             m_bufA = new Complex[m_bufRows * m_bufRows];
-            m_bufB = new Complex[m_bufRows];
         }
 
-        memcpy(m_bufA, A, sizeof(*A) * n * n);
-        memcpy(m_bufB, B, sizeof(*B) * n);
+        /* Copy the matrix only if it changes (!= nullptr) */
+        if (A)
+            memcpy(m_bufA, A, sizeof(*A) * n * n);
 
         for (int i = 0; i < n; i++)
         {
@@ -60,9 +60,9 @@ namespace csim
             double maxcolumn = 0.0;
             for (int r = i; r < n; r++)
             {
-                if (abs(m_bufA[r * n + i]) > maxcolumn)
+                if (std::abs(m_bufA[r * n + i]) > maxcolumn)
                 {
-                    maxcolumn = abs(m_bufA[r * n + i]);
+                    maxcolumn = std::abs(m_bufA[r * n + i]);
                     pivot = r;
                 }
             }
@@ -74,9 +74,9 @@ namespace csim
                 memcpy(&m_bufA[pivot * n], m_bufRow, m_lenRow);
 
                 /* B r[i] <-> r[prvot] */
-                Complex t = m_bufB[i];
-                m_bufB[i] = m_bufB[pivot];
-                m_bufB[pivot] = t;
+                Complex t = B[i];
+                B[i] = B[pivot];
+                B[pivot] = t;
             }
 
             /* Gaussian elimination */
@@ -87,18 +87,18 @@ namespace csim
                 {
                     m_bufA[r * n + c] -= f * m_bufA[i * n + c];
                 }
-                m_bufB[r] -= f * m_bufB[i];
+                B[r] -= f * B[i];
             }
         }
 
         for (int i = n - 1; i >= 0; i--)
         {
-            Complex f = m_bufB[i];
+            Complex f = 0.0;
             for (int c = i + 1; c < n; c++)
             {
-                f -= m_bufA[i * n + c] * x[c];
+                f += m_bufA[i * n + c] * x[c];
             }
-            x[i] = f / m_bufA[i * n + i];
+            x[i] = (B[i] - f) / m_bufA[i * n + i];
             if (!std::isfinite(x[i].real()) || !std::isfinite(x[i].imag()))
             {
                 return CERR_SINGULAR_MATRIX;

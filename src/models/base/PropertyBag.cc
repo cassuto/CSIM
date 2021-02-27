@@ -57,7 +57,7 @@ namespace csimModel
 
     /**
      * @brief Get the name of property at the current cursor.
-     * @param buff Where to store the text
+     * @param [out] buff Where to store the text
      * @param maxsize Maximum length that can be written to the buffer
      * @return Size of the actual text.
      */

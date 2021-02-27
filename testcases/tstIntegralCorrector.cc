@@ -7,7 +7,7 @@
 
 namespace csim
 {
-    TEST(history, tstIntegralCorrector)
+    TEST(tstIntegralCorrector, history)
     {
         IntegralHistory history;
         history.setInitial(5.0);
@@ -38,7 +38,7 @@ namespace csim
         }
     }
 
-    TEST(integral_RC, tstIntegralCorrector)
+    TEST(tstIntegralCorrector, integral_RC)
     {
         IntegralCorrector *corrector = IntegralCorrector::createInstance("gear");
         IntegralHistory X, Y;

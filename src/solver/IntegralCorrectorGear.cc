@@ -1,5 +1,5 @@
 /**
- * @file Complex type restricted to model SDK
+ * @file Implicit GEAR Integral Corrector
  */
 
 /*

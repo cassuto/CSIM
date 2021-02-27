@@ -11,6 +11,7 @@ set(SRCS
     "${CMAKE_CURRENT_SOURCE_DIR}/models/loader/Loader.cc"
     "${CMAKE_CURRENT_SOURCE_DIR}/solver/LinearSolver.cc"
     "${CMAKE_CURRENT_SOURCE_DIR}/solver/LinearSolverGauss.cc"
+    "${CMAKE_CURRENT_SOURCE_DIR}/solver/LinearSolverLU.cc"
     "${CMAKE_CURRENT_SOURCE_DIR}/solver/IntegralCorrector.cc"
     "${CMAKE_CURRENT_SOURCE_DIR}/solver/IntegralCorrectorGear.cc"
     "${CMAKE_CURRENT_SOURCE_DIR}/solver/IntegralPredictor.cc"

@@ -24,7 +24,7 @@ namespace csim
      *               `-'
      *               5V
      */
-    TEST(tr_RC, tstTransientAnalysis)
+    TEST(tstTransientAnalysis, tr_RC)
     {
         int ret = 0;
         ModelEntry *e_R = ModelLoader::load(resistorLibrary);
@@ -83,7 +83,7 @@ namespace csim
 
         Dataset dset;
         ret = analyzer->analyze(&dset);
-        EXPECT_EQ(CERR_SUCCEEDED, ret);
+        ASSERT_EQ(CERR_SUCCEEDED, ret);
 
         /* Check solution of transient analysis */
         unsigned int N = dset.getIndependentVar("time").getNumValues();
@@ -94,7 +94,7 @@ namespace csim
                            dset.getDependentVar("voltage", analyzer->makeVarName("V", n_gnd)).at(i);
 
             double expected = Vcc * (1-std::exp(-time/(R*C)));
-            EXPECT_NEAR(volt.real(), expected, epsilon_nonlinear);
+            ASSERT_NEAR(volt.real(), expected, epsilon_nonlinear);
         }
 
         delete analyzer;

@@ -12,7 +12,7 @@
 
 namespace csim
 {
-    TEST(circuit_CSDC, tstDCSources)
+    TEST(tstDCSources, circuit_CSDC)
     {
         int ret = 0;
         ModelEntry *e_R = ModelLoader::load(resistorLibrary);
@@ -27,7 +27,6 @@ namespace csim
         ASSERT_EQ(CERR_SUCCEEDED, ret);
         ret = circuit->netlist()->addComponent("R1", e_R);
         ASSERT_EQ(CERR_SUCCEEDED, ret);
-
 
         /* Configure */
         ret = circuit->netlist()->configComponent("I1", "I", csimModel::Variant(csimModel::Variant::VariantDouble).setDouble(1.0));
@@ -77,7 +76,7 @@ namespace csim
         delete e_IDC;
     }
 
-    TEST(circuit_simple, tstDCSources)
+    TEST(tstDCSources, circuit_simple)
     {
         int ret = 0;
         ModelEntry *e_R = ModelLoader::load(resistorLibrary);
@@ -137,15 +136,13 @@ namespace csim
 
         Dataset dset;
         ret = analyzer->analyze(&dset);
-        EXPECT_EQ(CERR_SUCCEEDED, ret);
+        ASSERT_EQ(CERR_SUCCEEDED, ret);
 
         /* Check solution vector of DC analyzer */
         const Variable &Vgnd = dset.getDependentVar("voltage", analyzer->makeVarName("V", n_gnd));
-        std::cout<<"n_gnd="<<n_gnd<<"\n";
         EXPECT_NEAR(Vgnd.at(0).real(), 0, epsilon_linear);
 
         const Variable &Vn = dset.getDependentVar("voltage", analyzer->makeVarName("V", n1));
-        std::cout << Vn.at(0) << std::endl;
         EXPECT_NEAR(Vn.at(0).real(), 20.0, epsilon_nonlinear);
 
         delete analyzer;
@@ -155,7 +152,7 @@ namespace csim
         delete e_CCCS;
     }
 
-    TEST(circuit_VS_CS_VCVS_CCVS_CCVS_CCCS_R, tstDCSources)
+    TEST(tstDCSources, circuit_VS_CS_VCVS_CCVS_CCVS_CCCS_R)
     {
         int ret = 0;
         ModelEntry *e_R = ModelLoader::load(resistorLibrary);
@@ -291,7 +288,7 @@ namespace csim
         AnalyzerBase *analyzer = Analyzers::createInstance("DC", circuit);
         ASSERT_NE(nullptr, analyzer);
 
-        const unsigned int N = 5;
+        const unsigned int N = 7;
         unsigned int n_gnd, n[N];
         ret = circuit->netlist()->getTermlNode("I1", 0, &n_gnd);
         EXPECT_EQ(CERR_SUCCEEDED, ret);
@@ -311,10 +308,16 @@ namespace csim
         ret = circuit->netlist()->getTermlNode("G1", 1, &n[4]);
         EXPECT_EQ(CERR_SUCCEEDED, ret);
         analyzer->addInterestNode(n[4]);
+        ret = circuit->netlist()->getTermlNode("E1", 0, &n[5]);
+        EXPECT_EQ(CERR_SUCCEEDED, ret);
+        analyzer->addInterestNode(n[5]);
+        ret = circuit->netlist()->getTermlNode("E1", 1, &n[6]);
+        EXPECT_EQ(CERR_SUCCEEDED, ret);
+        analyzer->addInterestNode(n[6]);
 
         Dataset dset;
         ret = analyzer->analyze(&dset);
-        EXPECT_EQ(CERR_SUCCEEDED, ret);
+        ASSERT_EQ(CERR_SUCCEEDED, ret);
 
         /* Check solution vector of DC analyzer */
         const Variable &Vgnd = dset.getDependentVar("voltage", analyzer->makeVarName("V", n_gnd));
@@ -325,10 +328,18 @@ namespace csim
             volt[i] = Vn.at(0) - Vgnd.at(0);
         }
 
+        static const double solutions[5] = {
+            10,
+            11,
+            1.93548,
+            1.93548,
+            58.0645,
+        };
         for (unsigned int i = 0; i < 5; ++i)
         {
-            std::cout << volt[i] << std::endl;
+            ASSERT_NEAR(volt[i].real(), solutions[i], epsilon_nonlinear);
         }
+        ASSERT_NEAR(volt[5].real() - volt[6].real(), 22.0, epsilon_nonlinear);
 
         delete analyzer;
         delete circuit;

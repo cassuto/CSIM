@@ -22,7 +22,7 @@ namespace csim
      *                  `-'
      *                  12V
      */
-    TEST(circuit_R_VS_divider, tstDCLinearCircuit)
+    TEST(tstDCLinearCircuit, circuit_R_VS_divider)
     {
         int ret = 0;
         ModelEntry *e_R = ModelLoader::load(resistorLibrary);
@@ -67,7 +67,7 @@ namespace csim
         ASSERT_NE(nullptr, analyzer);
         Dataset dset;
         ret = analyzer->analyze(&dset);
-        EXPECT_EQ(CERR_SUCCEEDED, ret);
+        ASSERT_EQ(CERR_SUCCEEDED, ret);
 
         /* Get nodes */
         unsigned int n_gnd, n1;
@@ -102,7 +102,7 @@ namespace csim
      *                   `-'
      *                   12V
      */
-    TEST(circuit_R_VS_network, tstDCLinearCircuit)
+    TEST(tstDCLinearCircuit, circuit_R_VS_network)
     {
         int ret = 0;
         ModelEntry *e_R = ModelLoader::load(resistorLibrary);
@@ -225,7 +225,7 @@ namespace csim
 
         Dataset dset;
         ret = analyzer->analyze(&dset);
-        EXPECT_EQ(CERR_SUCCEEDED, ret);
+        ASSERT_EQ(CERR_SUCCEEDED, ret);
 
         /* Check solution of DC analysis */
         Complex volt;

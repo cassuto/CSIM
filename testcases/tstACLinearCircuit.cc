@@ -31,7 +31,7 @@ namespace csim
      * Under f, the circuit presents pure resistance
      * and the phase of V and I is equal.
      */
-    TEST(circuit_LC, tstACLinearCircuit)
+    TEST(tstACLinearCircuit, circuit_LC)
     {
         int ret = 0;
         ModelEntry *e_R = ModelLoader::load(resistorLibrary);
@@ -101,7 +101,7 @@ namespace csim
 
         Dataset dset;
         ret = analyzer->analyze(&dset);
-        EXPECT_EQ(CERR_SUCCEEDED, ret);
+        ASSERT_EQ(CERR_SUCCEEDED, ret);
 
         /* Check solution vector of DC analyzer */
         const Variable &F = dset.getIndependentVar("frequency");

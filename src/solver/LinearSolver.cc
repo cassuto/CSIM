@@ -17,6 +17,7 @@
 
 #include <cstring>
 #include "LinearSolverGauss.h"
+#include "LinearSolverLU.h"
 #include "csim/internal/LinearSolver.h"
 
 namespace csim
@@ -32,6 +33,10 @@ namespace csim
         if (0 == strcmp(algorithm, "gauss"))
         {
             return new LinearSolverGauss();
+        }
+        else if (0 == strcmp(algorithm, "LU"))
+        {
+            return new LinearSolverLU();
         }
         else
         {

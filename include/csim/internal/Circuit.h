@@ -26,6 +26,7 @@ namespace csim
 {
 
     class LinearSolver;
+    class MNAOptimizer;
     class Netlist;
     class AnalyzerBase;
     class IntegralCorrector;
@@ -82,14 +83,17 @@ namespace csim
         unsigned int m_matrixRows;
         Complex *m_A, *m_x, *m_x_1, *m_z, *m_z_1;
         LinearSolver *m_linearSolver;
+        MNAOptimizer *m_MNAOptimizer;
         Netlist *m_netlist;
         unsigned int m_maxIterations, maxIntegralIterations;
         double m_VepsMax, m_VepsrMax;
         double m_IepsMax, m_IepsrMax;
+        double m_Gmin;
         IntegralPredictor *m_predictor;
         IntegralCorrector *m_corrector;
         IntegralHistory *m_hsteps;
         IntegralHistory *m_hPredictorX;
+        unsigned int m_tOrder;
         double m_tStep;
         double m_tTime;
     };

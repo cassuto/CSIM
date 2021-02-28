@@ -15,7 +15,6 @@
  *  Lesser General Public License for more details.                        
  */
 
-#include <iostream>
 #include <cassert>
 #include <cstring>
 #include <algorithm>
@@ -24,8 +23,6 @@
 
 namespace csim
 {
-    const double GMIN = 1e-12;
-
     LinearSolverLU::LinearSolverLU()
         : m_bufRow(nullptr),
           m_bufA(nullptr),
@@ -72,15 +69,15 @@ namespace csim
             for (unsigned int r = 0; r < n; r++)
             {
                 double maxPivot = 0.0;
-                for (unsigned int c = 0; c < n; c++) {
+                for (unsigned int c = 0; c < n; c++)
+                {
                     double t = std::abs(m_bufA[r * n + c]);
                     if (t > maxPivot)
                         maxPivot = t;
                 }
                 if (maxPivot <= 0.0)
                 {
-                    std::cout<<"---\n";
-                    maxPivot = GMIN; /* fix the singular matrix */
+                    return CERR_SINGULAR_MATRIX;
                 }
                 m_privot[r] = 1.0 / maxPivot;
                 m_rowLoc[r] = r;
@@ -116,11 +113,12 @@ namespace csim
                     }
                 }
 
-                /* Fix the singular matrix */
                 if (maxPivot <= 0.0)
                 {
-                    std::cout<<"-f--"<<c<<"\n";
-                    m_bufA[c * n + c] = GMIN;
+                    if (optimizer())
+                        UPDATE_RC(optimizer()->singularRow(m_bufA, c, n));
+                    else
+                        return CERR_SINGULAR_MATRIX;
                 }
 
                 /* Swap the matrix row if needed */
@@ -159,5 +157,4 @@ namespace csim
 
         return 0;
     }
-
 }

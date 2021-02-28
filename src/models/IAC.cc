@@ -41,7 +41,7 @@ namespace csimModel
     {
         resizeModel(2, 0, 0);
         m_Ip = property().getProperty("Ip").getDouble();
-        m_omega = M_PI * property().getProperty("freq").getDouble() / 180.0;
+        m_omega = 2 * M_PI * property().getProperty("freq").getDouble();
         m_phase = M_PI * property().getProperty("phase").getDouble() / 180.0;
 
         m_I = MComplex(m_Ip * std::cos(m_phase), m_Ip * std::sin(m_phase));

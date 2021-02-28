@@ -1,7 +1,3 @@
-/**
- * @file Linear equations solver
- */
-
 /*
  *  FastCSIM Copyright (C) 2021 cassuto                                    
  *  This project is free edition; you can redistribute it and/or           
@@ -15,33 +11,41 @@
  *  Lesser General Public License for more details.                        
  */
 
-#include <cstring>
-#include "csim/utils/errors.h"
-#include "LinearSolverGauss.h"
-#include "LinearSolverLU.h"
-#include "csim/internal/LinearSolver.h"
+#ifndef CSIM_MNAOPTIMIZER_H_
+#define CSIM_MNAOPTIMIZER_H_
+
+#include "csim/internal/Complex.h"
+#include "csim/internal/LinearSolverOptimizer.h"
 
 namespace csim
 {
-    /**
-     * @brief Create instance of Linear Solver by its algorithm name
-     * @param algorithm Name of algorithm
-     * @retval nullptr if failed
-     * @retval Pointer to the solver.
-     */
-    LinearSolver *LinearSolver::createInstance(const char *algorithm)
+    class Netlist;
+    class MNAOptimizer : public LinearSolverOptimizer
     {
-        if (0 == strcmp(algorithm, "gauss"))
+    public:
+        MNAOptimizer(Netlist *netlist);
+        void reset();
+        int singularRow(Complex *A, unsigned curRow, unsigned int nRows);
+
+        inline void enableGmin(bool enabled)
         {
-            return new LinearSolverGauss();
+            m_gminEnabled = enabled;
         }
-        else if (0 == strcmp(algorithm, "LU"))
+        inline bool getGminEnabled() const
         {
-            return new LinearSolverLU();
+            return m_gminEnabled;
         }
-        else
+        inline void setGmin(double g)
         {
-            return nullptr;
+            m_gmin = g;
         }
-    }
+
+    private:
+        Netlist *m_netlist;
+        bool m_gminEnabled;
+        double m_gmin;
+        unsigned int m_lastFixRow;
+    };
 }
+
+#endif // CSIM_LINEARSOLVEROPTIMIZER_H_

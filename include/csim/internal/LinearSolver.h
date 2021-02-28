@@ -14,6 +14,7 @@
 #ifndef CSIM_LINEARSOLVER_H_
 #define CSIM_LINEARSOLVER_H_
 
+#include "csim/internal/LinearSolverOptimizer.h"
 #include "csim/internal/Complex.h"
 
 namespace csim
@@ -21,7 +22,7 @@ namespace csim
     class LinearSolver
     {
     public:
-        LinearSolver() {}
+        LinearSolver() : m_optimizer(nullptr) {}
         virtual ~LinearSolver() {}
 
         /**
@@ -36,8 +37,21 @@ namespace csim
          */
         virtual int solve(Complex *A, int n, Complex *x, Complex *B) = 0;
 
+        inline void setOptimizer(LinearSolverOptimizer *optimizer)
+        {
+            m_optimizer = optimizer;
+        }
+        inline LinearSolverOptimizer *optimizer() const
+        {
+            return m_optimizer;
+        }
+
     public:
         static LinearSolver *createInstance(const char *algorithm);
+
+    protected:
+        bool m_enableGminOptimizer;
+        LinearSolverOptimizer *m_optimizer;
     };
 }
 

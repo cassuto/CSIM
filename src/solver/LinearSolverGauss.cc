@@ -79,6 +79,14 @@ namespace csim
                 B[pivot] = t;
             }
 
+            if (maxcolumn <= 0.0)
+            {
+                if (optimizer())
+                    UPDATE_RC(optimizer()->singularRow(m_bufA, i, n));
+                else
+                    return CERR_SINGULAR_MATRIX;
+            }
+
             /* Gaussian elimination */
             for (int r = i + 1; r < n; r++)
             {
@@ -99,10 +107,6 @@ namespace csim
                 f += m_bufA[i * n + c] * x[c];
             }
             x[i] = (B[i] - f) / m_bufA[i * n + i];
-            if (!std::isfinite(x[i].real()) || !std::isfinite(x[i].imag()))
-            {
-                return CERR_SINGULAR_MATRIX;
-            }
         }
 
         return 0;

@@ -21,6 +21,7 @@
 #include "csim/utils/errors.h"
 #include "csim/model/ModelBase.h"
 #include "csim/internal/LinearSolver.h"
+#include "csim/internal/MNAOptimizer.h"
 #include "csim/internal/Netlist.h"
 #include "csim/internal/Analyzers.h"
 #include "csim/internal/IntegralPredictor.h"
@@ -36,16 +37,21 @@ namespace csim
           m_linearSolver(LinearSolver::createInstance("LU")),
           m_maxIterations(1000),
           maxIntegralIterations(100),
-          m_VepsMax(0.0), m_VepsrMax(0.1),
-          m_IepsMax(0.0), m_IepsrMax(0.1),
+          m_VepsMax(1e-6), m_VepsrMax(0.001),
+          m_IepsMax(1e-12), m_IepsrMax(0.001),
+          m_Gmin(1e-12),
           m_predictor(IntegralPredictor::createInstance("euler")),
           m_corrector(IntegralCorrector::createInstance("gear")),
           m_hsteps(new IntegralHistory()),
           m_hPredictorX(nullptr),
+          m_tOrder(2),
           m_tStep(1e-3),
           m_tTime(0.0)
     {
         m_netlist = new Netlist(this);
+        m_MNAOptimizer = new MNAOptimizer(m_netlist);
+        m_MNAOptimizer->enableGmin(true);
+        m_linearSolver->setOptimizer(m_MNAOptimizer);
     }
 
     Circuit::~Circuit()
@@ -55,6 +61,7 @@ namespace csim
         delete[] m_x_1;
         delete[] m_z;
         delete[] m_z_1;
+        delete m_MNAOptimizer;
         delete m_linearSolver;
         delete m_netlist;
         delete m_predictor;
@@ -142,10 +149,13 @@ namespace csim
     int Circuit::initMNA(AnalyzerBase *analyzer)
     {
         createMatrix(m_netlist->getNumNodes(), m_netlist->getNumVS());
+        m_MNAOptimizer->setGmin(m_Gmin);
+        m_MNAOptimizer->reset();
         m_hPredictorX = new IntegralHistory[m_matrixRows];
         m_tTime = 0.0;
         m_hsteps->setInitial(m_tStep);
         m_corrector->setStep(m_tStep);
+        m_corrector->setOrder(m_tOrder);
         analyzer->prepareMNA();
         return 0;
     }

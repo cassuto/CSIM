@@ -1,7 +1,3 @@
-/**
- * @file Linear equations solver
- */
-
 /*
  *  FastCSIM Copyright (C) 2021 cassuto                                    
  *  This project is free edition; you can redistribute it and/or           
@@ -15,33 +11,19 @@
  *  Lesser General Public License for more details.                        
  */
 
-#include <cstring>
-#include "csim/utils/errors.h"
-#include "LinearSolverGauss.h"
-#include "LinearSolverLU.h"
-#include "csim/internal/LinearSolver.h"
+#ifndef CSIM_LINEARSOLVEROPTIMIZER_H_
+#define CSIM_LINEARSOLVEROPTIMIZER_H_
+
+#include "csim/internal/Complex.h"
 
 namespace csim
 {
-    /**
-     * @brief Create instance of Linear Solver by its algorithm name
-     * @param algorithm Name of algorithm
-     * @retval nullptr if failed
-     * @retval Pointer to the solver.
-     */
-    LinearSolver *LinearSolver::createInstance(const char *algorithm)
+    class LinearSolverOptimizer
     {
-        if (0 == strcmp(algorithm, "gauss"))
-        {
-            return new LinearSolverGauss();
-        }
-        else if (0 == strcmp(algorithm, "LU"))
-        {
-            return new LinearSolverLU();
-        }
-        else
-        {
-            return nullptr;
-        }
-    }
+    public:
+        virtual void reset() = 0;
+        virtual int singularRow(Complex *A, unsigned curRow, unsigned int nRows) = 0;
+    };
 }
+
+#endif // CSIM_LINEARSOLVEROPTIMIZER_H_

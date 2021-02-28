@@ -40,7 +40,7 @@ namespace csim
         delete[] m_privot;
     }
 
-    int LinearSolverLU::solve(Complex *A, int n, Complex *x, Complex *B)
+    int LinearSolverLU::solve(Complex *A, unsigned int n, Complex *x, Complex *B)
     {
         if (m_bufRows != n)
         {

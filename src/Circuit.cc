@@ -162,7 +162,7 @@ namespace csim
 
     int Circuit::solveMNA(AnalyzerBase *analyzer)
     {
-        int iteration = 0;
+        unsigned int iteration = 0;
         do
         {
             memset(m_A, 0, sizeof(*m_A) * m_matrixRows * m_matrixRows);
@@ -263,6 +263,8 @@ namespace csim
         /* Run linear and non-linear iteration with integral corrector */
         UPDATE_RC(solveMNA(analyzer));
 
+        adaptStep();
+
         /* Next step */
         m_tTime += m_hsteps->get(0);
         m_hsteps->push();
@@ -281,5 +283,10 @@ namespace csim
             m_hPredictorX[i].push();
         }
         return 0;
+    }
+
+    void Circuit::adaptStep()
+    {
+
     }
 }

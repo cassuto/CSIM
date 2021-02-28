@@ -76,10 +76,10 @@ namespace csim
                 }
                 x_1 = X.get(0);
                 iter++;
-            } while (iter < 100);
+            } while (iter < 100U);
             total_iters += iter;
 
-            EXPECT_LT(iter, 100);
+            EXPECT_LT(iter, 100U);
             EXPECT_NEAR(X.get(0), tstIntegralCorrectorRC[d++], epsilon_nonlinear);
 
             X.push();

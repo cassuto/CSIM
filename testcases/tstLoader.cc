@@ -10,8 +10,8 @@ namespace csim
     {
         ModelEntry *entry = ModelLoader::load(resistorLibrary);
         ASSERT_NE(nullptr, entry);
-        EXPECT_GT(strlen(entry->descriptor()->id), 0);
-        EXPECT_GT(strlen(entry->descriptor()->description), 0);
+        EXPECT_GT(strlen(entry->descriptor()->id), 0U);
+        EXPECT_GT(strlen(entry->descriptor()->description), 0U);
         
         Circuit *circuit = new Circuit();
         csimModel::ModelBase *model = entry->createInstance(circuit);
@@ -21,7 +21,7 @@ namespace csim
         int ret = model->configure();
 
         ASSERT_EQ(0, ret);
-        ASSERT_EQ(2, model->getNumTerml());
+        ASSERT_EQ(2U, model->getNumTerml());
 
         delete circuit;
         entry->deleteInstance(model);

@@ -62,6 +62,7 @@ namespace csim
             return m_order;
         }
         virtual void integrate(const IntegralHistory *x, IntegralHistory *y, double k, double *c0, double *c1) = 0;
+        virtual double getTruncErrorCoeff() = 0;
 
     public:
         static IntegralCorrector *createInstance(const std::string &algorithm);

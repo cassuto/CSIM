@@ -15,6 +15,7 @@ namespace csim
         virtual void setStep(double step);
         virtual void setOrder(unsigned int order);
         virtual void integrate(const IntegralHistory *x, IntegralHistory *y, double k, double *c0, double *c1);
+        virtual double getTruncErrorCoeff();
 
     public:
         static const unsigned int MaxOrder = IntegralHistory::MaxNumHistoryNum;
@@ -27,6 +28,7 @@ namespace csim
         static const unsigned int MatrixRows = MaxOrder + 1;
         double m_coeffs[MatrixRows + 1];
         Complex m_A[MatrixRows * MatrixRows], m_x[MatrixRows], m_b[MatrixRows];
+        double m_trucnErrorCoeff;
     };
 }
 

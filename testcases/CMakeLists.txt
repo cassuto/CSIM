@@ -26,6 +26,7 @@ set(TEST_SRCS
     "${CMAKE_CURRENT_SOURCE_DIR}/tstTransientAnalysis.cc"
     "${CMAKE_CURRENT_SOURCE_DIR}/tstDCSources.cc"
     "${CMAKE_CURRENT_SOURCE_DIR}/tstTransientNonlinearCircuit.cc"
+    "${CMAKE_CURRENT_SOURCE_DIR}/tstGearTruncationError.cc"
 )
 
 add_executable(tstall ${TEST_SRCS})

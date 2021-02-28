@@ -11,11 +11,11 @@ namespace csim
         LinearSolverGauss();
         virtual ~LinearSolverGauss();
 
-        virtual int solve(Complex *A, int n, Complex *x, Complex *B);
+        virtual int solve(Complex *A, unsigned int n, Complex *x, Complex *B);
 
     private:
         Complex *m_bufRow, *m_bufA;
-        int m_bufRows;
+        unsigned int m_bufRows;
         size_t m_lenRow;
     };
 }

@@ -78,6 +78,7 @@ namespace csim
     private:
         void createMatrix(unsigned int numNodes, unsigned int numVS);
         bool converged();
+        void adaptStep();
 
     private:
         unsigned int m_matrixRows;

@@ -160,7 +160,7 @@ namespace csim
         ASSERT_EQ(CERR_SUCCEEDED, ret);
 
         /* Test nodes */
-        EXPECT_EQ(5, circuit->netlist()->getNumNodes());
+        EXPECT_EQ(5U, circuit->netlist()->getNumNodes());
 
         unsigned int nds[5];
         ret = circuit->netlist()->getTermlNode("R1", 0, &nds[0]);

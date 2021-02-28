@@ -74,7 +74,7 @@ namespace csim
         {
             return CERR_INVALD_RANGE;
         }
-        int numSteps = std::max(1.0, (fstop - fstart) / fstep);
+        unsigned int numSteps = std::max(1.0, (fstop - fstart) / fstep);
 
         /*
          * Solve MNA

@@ -34,4 +34,9 @@ namespace csim
         return x->get(1) + hsteps->get(0) * f;
     }
 
+    double IntegralPredictorEuler::getTruncErrorCoeff()
+    {
+        return 0.5;
+    }
+
 }

@@ -3,11 +3,11 @@ project(fastcsim)
 
 option(enable_testcases "Build all of tests." ON)
 
-set(COMMON_WARNINGS					"-Wall -Wno-unused-function")
-
-set(CMAKE_CXX_FLAGS_DEBUG           "-g ${COMMON_WARNINGS}")
-set(CMAKE_CXX_FLAGS_RELEASE         "-O2 ${COMMON_WARNINGS}")
-set(CMAKE_CXX_FLAGS_PROFILE         "-O2 -pg ${COMMON_WARNINGS}")
+set(COMMON_WARNINGS					"-Wall -Wno-unused-function -Wno-unused-variable")
+set(CMAKE_CXX_FLAGS           		"${COMMON_WARNINGS}")
+set(CMAKE_CXX_FLAGS_DEBUG           "-g")
+set(CMAKE_CXX_FLAGS_RELEASE         "-O2")
+set(CMAKE_CXX_FLAGS_PROFILE         "-O2 -pg")
 
 set(CMAKE_MODULE_LINKER_FLAGS_PROFILE "-pg")
 set(CMAKE_SHARED_LINKER_FLAGS_PROFILE "-pg")

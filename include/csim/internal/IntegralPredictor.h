@@ -33,6 +33,7 @@ namespace csim
             return m_order;
         }
         virtual double predict(const IntegralHistory *x, const IntegralHistory *hsteps) = 0;
+        virtual double getTruncErrorCoeff() = 0;
 
     public:
         static IntegralPredictor *createInstance(const std::string &algorithm);

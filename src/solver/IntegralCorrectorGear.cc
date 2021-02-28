@@ -15,6 +15,7 @@
  *  Lesser General Public License for more details.                        
  */
 
+#include <iostream>
 #include <cassert>
 #include <cstring>
 #include "csim/utils/errors.h"
@@ -78,14 +79,14 @@ namespace csim
         for (unsigned int i = 1; i <= order - 1; i++)
         {
             double t = -(long)i;
-            for (int j = 1; j <= order; j++)
+            for (unsigned int j = 1; j <= order; j++)
             {
                 m_A[j * rows + (i + 1)] = t;
                 t *= -(long)i;
             }
         }
         /* Generate b */
-        for (int i = 0; i <= order; i++)
+        for (unsigned int i = 0; i <= order; i++)
             m_b[i] = 1;
 
         /* Solve x */
@@ -94,6 +95,22 @@ namespace csim
         (void)ret;
 
         genCoeffs();
+
+        /*
+         * Generate truncation error coefficient
+         */
+        m_trucnErrorCoeff = 0.0;
+        double f = 1;
+        for (int i = order + 1; i > 1; --i)
+            f *= i;
+        for (int i = -1; i < (int)order - 1; ++i)
+        {
+            double a = (i == -1 ? -1.0 : m_x[i + 1].real());
+            m_trucnErrorCoeff -= a * std::pow((int)order - 1 - i, order + 1);
+        }
+        m_trucnErrorCoeff /= f;
+        f /= order + 1;
+        m_trucnErrorCoeff -= m_x[0].real() * std::pow(order, order) / f;
     }
 
     void IntegralCorrectorGear::setStep(double step)
@@ -119,6 +136,11 @@ namespace csim
         for (unsigned int i = 1; i <= getOrder(); i++)
             *c1 += k * m_coeffs[i] * x->get(i);
         y->set(0, x->get(0) * (*c0) + *c1);
+    }
+
+    double IntegralCorrectorGear::getTruncErrorCoeff()
+    {
+        return m_trucnErrorCoeff;
     }
 
 }

@@ -25,7 +25,7 @@ namespace csim
     IntegralHistory::IntegralHistory()
         : m_queueHead(0)
     {
-        for (int i = 0; i < MaxNumHistoryNum; ++i)
+        for (unsigned int i = 0; i < MaxNumHistoryNum; ++i)
         {
             set(0, 0.0);
             push();
@@ -50,7 +50,7 @@ namespace csim
 
     void IntegralHistory::setInitial(double val)
     {
-        for (int i = 0; i < MaxNumHistoryNum; ++i)
+        for (unsigned int i = 0; i < MaxNumHistoryNum; ++i)
         {
             set(0, val);
             push();

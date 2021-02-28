@@ -35,7 +35,7 @@ namespace csim
          * @param [in,out] B Pointer to the matrix B.
          * @return Status code.
          */
-        virtual int solve(Complex *A, int n, Complex *x, Complex *B) = 0;
+        virtual int solve(Complex *A, unsigned int n, Complex *x, Complex *B) = 0;
 
         inline void setOptimizer(LinearSolverOptimizer *optimizer)
         {

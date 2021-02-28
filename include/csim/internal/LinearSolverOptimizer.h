@@ -21,6 +21,7 @@ namespace csim
     class LinearSolverOptimizer
     {
     public:
+        virtual ~LinearSolverOptimizer(){};
         virtual void reset() = 0;
         virtual int singularRow(Complex *A, unsigned curRow, unsigned int nRows) = 0;
     };

@@ -37,7 +37,7 @@ namespace csim
         delete[] m_bufA;
     }
 
-    int LinearSolverGauss::solve(Complex *A, int n, Complex *x, Complex *B)
+    int LinearSolverGauss::solve(Complex *A, unsigned int n, Complex *x, Complex *B)
     {
         if (m_bufRows != n)
         {
@@ -54,11 +54,11 @@ namespace csim
         if (A)
             memcpy(m_bufA, A, sizeof(*A) * n * n);
 
-        for (int i = 0; i < n; i++)
+        for (unsigned int i = 0; i < n; i++)
         {
-            int pivot = i;
+            unsigned int pivot = i;
             double maxcolumn = 0.0;
-            for (int r = i; r < n; r++)
+            for (unsigned int r = i; r < n; r++)
             {
                 if (std::abs(m_bufA[r * n + i]) > maxcolumn)
                 {
@@ -88,10 +88,10 @@ namespace csim
             }
 
             /* Gaussian elimination */
-            for (int r = i + 1; r < n; r++)
+            for (unsigned int r = i + 1; r < n; r++)
             {
                 Complex f = m_bufA[r * n + i] / m_bufA[i * n + i];
-                for (int c = i + 1; c < n; c++)
+                for (unsigned int c = i + 1; c < n; c++)
                 {
                     m_bufA[r * n + c] -= f * m_bufA[i * n + c];
                 }
@@ -99,10 +99,10 @@ namespace csim
             }
         }
 
-        for (int i = n - 1; i >= 0; i--)
+        for (long i = (long)n - 1; i >= 0; i--)
         {
             Complex f = 0.0;
-            for (int c = i + 1; c < n; c++)
+            for (unsigned int c = i + 1; c < n; c++)
             {
                 f += m_bufA[i * n + c] * x[c];
             }

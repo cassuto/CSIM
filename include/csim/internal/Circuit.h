@@ -15,6 +15,7 @@
 #define CSIM_CIRCUIT_H_
 
 #include <vector>
+#include <set>
 #include "csim/internal/Complex.h"
 
 namespace csimModel
@@ -48,6 +49,18 @@ namespace csim
         void addX(unsigned int row, const Complex &delta);
         void addZ(unsigned int row, const Complex &delta);
 
+        void registerIntegralU(unsigned int node);
+        void registerIntegralJ(unsigned int VS);
+
+        const std::vector<unsigned int> &getIntegralU() const
+        {
+            return m_integralU;
+        }
+        const std::vector<unsigned int> &getIntegralJ() const
+        {
+            return m_integralJ;
+        }
+
         inline Netlist *netlist() const
         {
             return m_netlist;
@@ -65,9 +78,9 @@ namespace csim
         {
             return m_tTime;
         }
-        inline void setIntegralStep(double step)
+        inline void setTmaxStep(double step)
         {
-            m_tStep = step;
+            m_tMaxStep = step;
         }
 
         Complex getNodeVolt(unsigned int node) const;
@@ -78,7 +91,7 @@ namespace csim
     private:
         void createMatrix(unsigned int numNodes, unsigned int numVS);
         bool converged();
-        void adaptStep();
+        double adaptStep();
 
     private:
         unsigned int m_matrixRows;
@@ -95,8 +108,12 @@ namespace csim
         IntegralHistory *m_hsteps;
         IntegralHistory *m_hPredictorX;
         unsigned int m_tOrder;
-        double m_tStep;
+        double m_tMaxStep, m_tMinStep;
+        double m_tEpsMax, m_tEpsrMax;
+        double m_tTOEF;
         double m_tTime;
+        std::set<unsigned int> m_setIntegralU, m_setIntegralJ;
+        std::vector<unsigned int> m_integralU, m_integralJ;
     };
 
 }

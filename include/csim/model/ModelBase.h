@@ -74,6 +74,8 @@ namespace csimModel
     protected:
         void resizeModel(unsigned int numTermls, unsigned int numInnerNodes, unsigned int numVS);
         void resizeIntegrator(unsigned int numIntegrators);
+        void registerIntegralU(unsigned int col);
+        void registerIntegralJ(unsigned int col);
         double integrate(unsigned int nint, double x, double k, double *c0, double *c1);
 
         /* MNA matrices */

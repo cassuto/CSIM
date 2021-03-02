@@ -60,7 +60,7 @@ namespace csim
 
         double tstop = property().getProperty("tstop").getDouble();
         double tstep = property().getProperty("tstep").getDouble();
-        circuit()->setIntegralStep(tstep);
+        circuit()->setTmaxStep(tstep);
 
         UPDATE_RC(circuit()->initMNA(this));
 

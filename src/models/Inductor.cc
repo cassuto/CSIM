@@ -53,6 +53,9 @@ namespace csimModel
     int Inductor::prepareTR()
     {
         resizeIntegrator(1);
+        registerIntegralU(getNode(0));
+        registerIntegralU(getNode(1));
+        registerIntegralJ(getVS(0));
         return 0;
     }
 

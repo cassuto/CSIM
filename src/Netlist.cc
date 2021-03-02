@@ -199,7 +199,8 @@ namespace csim
         {
             for (unsigned int i = 0; i < mif.model->getNumVS(); ++i)
             {
-                mif.model->setVS(i, vsIndex++);
+                mif.model->setVS(i, vsIndex);
+                vsIndex++;
             }
         }
         assert(vsIndex == m_numVS);

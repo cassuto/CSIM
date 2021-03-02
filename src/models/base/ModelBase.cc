@@ -133,7 +133,7 @@ namespace csimModel
     void ModelBase::addB(unsigned int row, unsigned int col, const MComplex &delta)
     {
         assert(row < m_circuit->netlist()->getNumNodes() && col < m_circuit->netlist()->getNumVS());
-        m_circuit->addA(row, m_circuit->netlist()->getNumNodes() + col,delta);
+        m_circuit->addA(row, m_circuit->netlist()->getNumNodes() + col, delta);
     }
     void ModelBase::addC(unsigned int row, unsigned int col, const MComplex &delta)
     {
@@ -168,6 +168,15 @@ namespace csimModel
         m_historyX = new csim::IntegralHistory[numIntegrators];
         m_historyY = new csim::IntegralHistory[numIntegrators];
         m_numIntegrators = numIntegrators;
+    }
+
+    void ModelBase::registerIntegralU(unsigned int col)
+    {
+        m_circuit->registerIntegralU(col);
+    }
+    void ModelBase::registerIntegralJ(unsigned int col)
+    {
+        m_circuit->registerIntegralJ(col);
     }
 
     double ModelBase::integrate(unsigned int nint, double x, double k, double *c0, double *c1)

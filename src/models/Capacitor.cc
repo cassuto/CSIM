@@ -50,6 +50,8 @@ namespace csimModel
     int Capacitor::prepareTR()
     {
         resizeIntegrator(1);
+        registerIntegralU(getNode(0));
+        registerIntegralU(getNode(1));
         return 0;
     }
 

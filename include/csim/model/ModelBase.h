@@ -43,6 +43,7 @@ namespace csimModel
         virtual int iterateDC() = 0;
         virtual int iterateAC(double omega) = 0;
         virtual int iterateTR(double tTime) = 0;
+        virtual void stepChangedTR(double tTime, double nstep);
 
     public:
         PropertyBag &property();

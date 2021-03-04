@@ -34,7 +34,8 @@ namespace csim
         static const unsigned int MaxNumHistoryNum = (1U << MaxNumHistoryShift);
         static const unsigned int MaxNumHistoryMask = MaxNumHistoryNum - 1;
 
-    private:
+        //private:
+    public:
         unsigned int m_queueHead;
         double m_queue[MaxNumHistoryNum];
     };
@@ -42,18 +43,10 @@ namespace csim
     class IntegralCorrector
     {
     public:
-        IntegralCorrector() {}
+        IntegralCorrector() : m_order(0) {}
         virtual ~IntegralCorrector() {}
 
-        virtual void setStep(double step)
-        {
-            m_step = step;
-        }
-        virtual double getStep() const
-        {
-            return m_step;
-        }
-        virtual void setOrder(unsigned int order)
+        virtual void setOrder(unsigned int order, const IntegralHistory *hsteps)
         {
             m_order = order;
         }
@@ -61,6 +54,7 @@ namespace csim
         {
             return m_order;
         }
+        virtual void setStep(const IntegralHistory *hsteps) {}
         virtual void integrate(const IntegralHistory *x, IntegralHistory *y, double k, double *c0, double *c1) = 0;
         virtual double getTruncErrorCoeff() = 0;
 
@@ -68,7 +62,6 @@ namespace csim
         static IntegralCorrector *createInstance(const std::string &algorithm);
 
     protected:
-        double m_step;
         unsigned int m_order;
     };
 

@@ -17,6 +17,7 @@
 
 #include <cassert>
 #include "IntegralPredictorEuler.h"
+#include "IntegralPredictorGear.h"
 #include "csim/internal/IntegralPredictor.h"
 
 namespace csim
@@ -33,6 +34,10 @@ namespace csim
         if (0 == algorithm.compare("euler"))
         {
             return new IntegralPredictorEuler();
+        }
+        else if (0 == algorithm.compare("gear"))
+        {
+            return new IntegralPredictorGear();
         }
         else
         {

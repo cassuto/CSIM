@@ -28,7 +28,7 @@ namespace csim
     AnalyzerTran::AnalyzerTran(Circuit *circuit)
         : AnalyzerBase(circuit)
     {
-        property().addProperty("tstop", csimModel::Variant(csimModel::Variant::VariantDouble).setDouble(1.0), true);
+        property().addProperty("tstop", csimModel::Variant(csimModel::Variant::VariantDouble).setDouble(.05), true);
         property().addProperty("tstep", csimModel::Variant(csimModel::Variant::VariantDouble).setDouble(1e-3), true);
     }
     AnalyzerTran::~AnalyzerTran()
@@ -68,7 +68,7 @@ namespace csim
         do
         {
             UPDATE_RC(circuit()->stepMNA(this));
-            tTime = circuit()->getIntegralTime();
+            tTime = circuit()->getDataPointTime();
 
             /* Save the result */
             for (unsigned int i = 0; i < N; ++i)
@@ -81,6 +81,10 @@ namespace csim
             }
             dtime.addValue(tTime);
         } while (tTime < tstop);
+
+#if defined(ENABLE_STAT)
+        circuit()->stat();
+#endif
 
         return 0;
     }

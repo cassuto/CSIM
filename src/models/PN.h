@@ -20,6 +20,7 @@ namespace csimModel
         virtual int iterateDC();
         virtual int iterateAC(double omega);
         virtual int iterateTR(double tTime);
+        virtual void stepChangedTR(double tTime, double nstep);
 
     private:
         double vlimit(double Ud);

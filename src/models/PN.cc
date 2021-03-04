@@ -222,6 +222,11 @@ namespace csimModel
             return Ud_f;
         }
     }
+
+    void PN::stepChangedTR(double tTime, double nstep)
+    {
+        m_Ud_1 = (getU(getNode(0)) - getU(getNode(1))).real();
+    }
 }
 
 extern "C" csimModel::ModelBase *createModel(MODELBASE_CONSTRUCTOR_DEF)

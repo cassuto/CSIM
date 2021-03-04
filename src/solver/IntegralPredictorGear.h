@@ -1,20 +1,20 @@
-#ifndef INTEGRALSOLVER_GEAR_H_
-#define INTEGRALSOLVER_GEAR_H_
+#ifndef PREDICTOR_GEAR_H_
+#define PREDICTOR_GEAR_H_
 
-#include "csim/internal/IntegralCorrector.h"
+#include <map>
+#include "csim/internal/IntegralPredictor.h"
 
 namespace csim
 {
     class LinearSolver;
-    class IntegralCorrectorGear : public IntegralCorrector
+    class IntegralPredictorGear : public IntegralPredictor
     {
     public:
-        IntegralCorrectorGear();
-        ~IntegralCorrectorGear();
-
-        virtual void setStep(const IntegralHistory *hsteps);
+        IntegralPredictorGear();
+        virtual ~IntegralPredictorGear();
         virtual void setOrder(unsigned int order, const IntegralHistory *hsteps);
-        virtual void integrate(const IntegralHistory *x, IntegralHistory *y, double k, double *c0, double *c1);
+        virtual void setStep(const IntegralHistory *hsteps);
+        virtual double predict(const IntegralHistory *x, const IntegralHistory *hsteps);
         virtual double getTruncErrorCoeff();
 
     public:
@@ -25,8 +25,7 @@ namespace csim
         static const unsigned int MatrixRows = MaxOrder + 1;
         double m_coeffs[MatrixRows + 1];
         Complex m_A[MatrixRows * MatrixRows], m_x[MatrixRows], m_b[MatrixRows];
-        double m_trucnErrorCoeff;
     };
 }
 
-#endif // INTEGRALSOLVER_GEAR_H_
+#endif // PREDICTOR_GEAR_H_

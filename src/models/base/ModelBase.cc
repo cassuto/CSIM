@@ -40,6 +40,10 @@ namespace csimModel
         m_VS.resize(numVS);
     }
 
+    void ModelBase::stepChangedTR(double tTime, double nstep)
+    {
+    }
+
     PropertyBag &ModelBase::property()
     {
         return m_props;

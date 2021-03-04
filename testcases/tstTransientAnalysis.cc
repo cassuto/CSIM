@@ -65,6 +65,8 @@ namespace csim
         ASSERT_EQ(CERR_SUCCEEDED, ret);
         ret = circuit->netlist()->wire("C1", 1, "V1", 1);
         ASSERT_EQ(CERR_SUCCEEDED, ret);
+        ret = circuit->netlist()->ground("V1", 1);
+        ASSERT_EQ(CERR_SUCCEEDED, ret);
 
         ret = circuit->netlist()->generateNodes();
         ASSERT_EQ(CERR_SUCCEEDED, ret);

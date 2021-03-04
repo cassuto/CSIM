@@ -16,6 +16,7 @@ set(SRCS
     "${CMAKE_CURRENT_SOURCE_DIR}/solver/IntegralCorrectorGear.cc"
     "${CMAKE_CURRENT_SOURCE_DIR}/solver/IntegralPredictor.cc"
     "${CMAKE_CURRENT_SOURCE_DIR}/solver/IntegralPredictorEuler.cc"
+    "${CMAKE_CURRENT_SOURCE_DIR}/solver/IntegralPredictorGear.cc"
     "${CMAKE_CURRENT_SOURCE_DIR}/optimizer/MNAOptimizer.cc"
     "${CMAKE_CURRENT_SOURCE_DIR}/analyzer/Analyzers.cc"
     "${CMAKE_CURRENT_SOURCE_DIR}/analyzer/AnalyzerDC.cc"

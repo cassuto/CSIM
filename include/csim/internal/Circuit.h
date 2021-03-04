@@ -17,6 +17,9 @@
 #include <vector>
 #include <set>
 #include "csim/internal/Complex.h"
+#include "csim/internal/IntegralCorrector.h"
+
+#define ENABLE_STAT
 
 namespace csimModel
 {
@@ -32,7 +35,6 @@ namespace csim
     class AnalyzerBase;
     class IntegralCorrector;
     class IntegralPredictor;
-    class IntegralHistory;
 
     class Circuit
     {
@@ -74,9 +76,18 @@ namespace csim
         int solveMNA(AnalyzerBase *analyzer);
         int stepMNA(AnalyzerBase *analyzer);
 
-        inline double getIntegralTime() const
+#if defined(ENABLE_STAT)
+        void resetStat();
+        void stat();
+#endif
+
+        inline double getDataPointTime() const
         {
             return m_tTime;
+        }
+        inline double getIntegralTime() const
+        {
+            return m_tTime + m_hsteps->get(0);
         }
         inline void setTmaxStep(double step)
         {
@@ -114,6 +125,11 @@ namespace csim
         double m_tTime;
         std::set<unsigned int> m_setIntegralU, m_setIntegralJ;
         std::vector<unsigned int> m_integralU, m_integralJ;
+#if defined(ENABLE_STAT)
+        unsigned long long m_statNumStepChanges, m_statNumNonlinearIters, m_sumNumIntegralIters;
+        double m_statTotalStep;
+        unsigned long long m_statNumMinSteps;
+#endif
     };
 
 }

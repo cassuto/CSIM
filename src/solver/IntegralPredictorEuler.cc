@@ -24,7 +24,7 @@ namespace csim
 {
     void IntegralPredictorEuler::setOrder(unsigned int order)
     {
-        assert(order == 1);
+        //assert(order == 1);
     }
 
     double IntegralPredictorEuler::predict(const IntegralHistory *x, const IntegralHistory *hsteps)

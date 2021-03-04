@@ -41,7 +41,7 @@ namespace csim
     TEST(tstIntegralCorrector, integral_RC)
     {
         IntegralCorrector *corrector = IntegralCorrector::createInstance("gear");
-        IntegralHistory X, Y;
+        IntegralHistory X, Y, hsteps;
         const double step = 1e-3;
         const double Vcc = 5.0;
         const double C = 4.7e-6;
@@ -50,8 +50,8 @@ namespace csim
         double geq, Ieq;
         X.setInitial(0.0);
 
-        corrector->setOrder(4);
-        corrector->setStep(step);
+        hsteps.setInitial(step);
+        corrector->setOrder(4, &hsteps);
 
         const unsigned int steps = 1.0 / step; /* 1s */
         unsigned int d = 0;
@@ -59,7 +59,7 @@ namespace csim
         unsigned int total_iters = 0;
         for (unsigned int i = 0; i < steps; ++i)
         {
-            double x_1;
+            double x_1 = 0.0;
             unsigned int iter = 0;
 
             do

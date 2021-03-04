@@ -21,10 +21,10 @@ namespace csim
     class IntegralPredictor
     {
     public:
-        IntegralPredictor() {}
+        IntegralPredictor() : m_order(0) {}
         virtual ~IntegralPredictor() {}
 
-        virtual void setOrder(unsigned int order)
+        virtual void setOrder(unsigned int order, const IntegralHistory *hsteps)
         {
             m_order = order;
         }
@@ -32,6 +32,7 @@ namespace csim
         {
             return m_order;
         }
+        virtual void setStep(const IntegralHistory *hsteps) {}
         virtual double predict(const IntegralHistory *x, const IntegralHistory *hsteps) = 0;
         virtual double getTruncErrorCoeff() = 0;
 

@@ -63,7 +63,7 @@ namespace csim
         AnalyzerBase *analyzer = Analyzers::createInstance("transient", circuit);
         ASSERT_NE(nullptr, analyzer);
         analyzer->property().setProperty("tstop", csimModel::Variant(csimModel::Variant::VariantDouble).setDouble(0.05));
-        analyzer->property().setProperty("tstep", csimModel::Variant(csimModel::Variant::VariantDouble).setDouble(1e-6));
+        analyzer->property().setProperty("tstep", csimModel::Variant(csimModel::Variant::VariantDouble).setDouble(1));
 
         unsigned int n1, nt;
         ret = circuit->netlist()->getTermlNode("R1", 0, &n1);
@@ -77,10 +77,10 @@ namespace csim
         /* Check solution vector of DC analyzer */
         const Variable &T = dset.getIndependentVar("time");
         const Variable &Vn1 = dset.getDependentVar("voltage", analyzer->makeVarName("V", n1));
-        //std::ofstream fof("outd.csv");
+        std::ofstream fof("outs.csv");
         for (unsigned int i = 0; i < T.getNumValues(); ++i)
         {
-            //fof << T.at(i).real() << "," << Vn1.at(i).real() << "\n";
+            fof << T.at(i).real() << "," << Vn1.at(i).real() << "\n";
         }
 
         delete analyzer;
@@ -148,7 +148,7 @@ namespace csim
         AnalyzerBase *analyzer = Analyzers::createInstance("transient", circuit);
         ASSERT_NE(nullptr, analyzer);
         analyzer->property().setProperty("tstop", csimModel::Variant(csimModel::Variant::VariantDouble).setDouble(0.05));
-        analyzer->property().setProperty("tstep", csimModel::Variant(csimModel::Variant::VariantDouble).setDouble(1e-6));
+        analyzer->property().setProperty("tstep", csimModel::Variant(csimModel::Variant::VariantDouble).setDouble(1));
 
         unsigned int n1, nt;
         ret = circuit->netlist()->getTermlNode("R1", 1, &n1);
@@ -245,7 +245,7 @@ namespace csim
         AnalyzerBase *analyzer = Analyzers::createInstance("transient", circuit);
         ASSERT_NE(nullptr, analyzer);
         analyzer->property().setProperty("tstop", csimModel::Variant(csimModel::Variant::VariantDouble).setDouble(0.05));
-        analyzer->property().setProperty("tstep", csimModel::Variant(csimModel::Variant::VariantDouble).setDouble(100e-6));
+        analyzer->property().setProperty("tstep", csimModel::Variant(csimModel::Variant::VariantDouble).setDouble(1));
 
         unsigned int n1;
         ret = circuit->netlist()->getTermlNode("R1", 1, &n1);

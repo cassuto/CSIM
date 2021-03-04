@@ -41,6 +41,7 @@ namespace csim
     void IntegralHistory::push()
     {
         m_queueHead = (m_queueHead + 1) & MaxNumHistoryMask;
+        m_queue[m_queueHead]=0.0;
     }
     void IntegralHistory::set(unsigned int delay, double val)
     {
@@ -50,10 +51,10 @@ namespace csim
 
     void IntegralHistory::setInitial(double val)
     {
+        m_queueHead = 0;
         for (unsigned int i = 0; i < MaxNumHistoryNum; ++i)
         {
-            set(0, val);
-            push();
+            m_queue[i] = val;
         }
     }
 

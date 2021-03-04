@@ -15,6 +15,7 @@
  *  Lesser General Public License for more details.                        
  */
 
+#include <fstream>
 #include <iostream>
 #include <algorithm>
 #include <cassert>
@@ -37,17 +38,17 @@ namespace csim
         : m_matrixRows(0),
           m_A(nullptr), m_x(nullptr), m_x_1(nullptr), m_z(nullptr), m_z_1(nullptr),
           m_linearSolver(LinearSolver::createInstance("LU")),
-          m_maxIterations(1000),
+          m_maxIterations(100),
           maxIntegralIterations(100),
           m_VepsMax(1e-6), m_VepsrMax(0.001),
           m_IepsMax(1e-12), m_IepsrMax(0.001),
           m_Gmin(1e-12),
-          m_predictor(IntegralPredictor::createInstance("euler")),
+          m_predictor(IntegralPredictor::createInstance("gear")),
           m_corrector(IntegralCorrector::createInstance("gear")),
           m_hsteps(new IntegralHistory()),
           m_hPredictorX(nullptr),
           m_tOrder(4),
-          m_tMaxStep(1e-3), m_tMinStep(1e-16),
+          m_tMaxStep(1e-3), m_tMinStep(1e-18),
           m_tEpsMax(1e-6), m_tEpsrMax(0.001),
           m_tTOEF(1.0),
           m_tTime(0.0)
@@ -56,6 +57,9 @@ namespace csim
         m_MNAOptimizer = new MNAOptimizer(m_netlist);
         m_MNAOptimizer->enableGmin(true);
         m_linearSolver->setOptimizer(m_MNAOptimizer);
+#if defined(ENABLE_STAT)
+        resetStat();
+#endif
     }
 
     Circuit::~Circuit()
@@ -166,10 +170,10 @@ namespace csim
         m_MNAOptimizer->reset();
         m_hPredictorX = new IntegralHistory[m_matrixRows];
         m_tTime = 0.0;
-        double step = m_tMaxStep / 100.0; /* initial step */
+        double step = m_tMinStep; /* initial step */
         m_hsteps->setInitial(step);
-        m_corrector->setStep(step);
-        m_corrector->setOrder(m_tOrder);
+        m_predictor->setOrder(m_tOrder, m_hsteps);
+        m_corrector->setOrder(m_tOrder, m_hsteps);
 
         /* Phase 1: Clear integral nodes and branches. */
         m_setIntegralU.clear();
@@ -184,6 +188,10 @@ namespace csim
             m_integralU.push_back(node);
         for (auto &vs : m_setIntegralJ)
             m_integralJ.push_back(vs);
+
+#if defined(ENABLE_STAT)
+        resetStat();
+#endif
         return 0;
     }
 
@@ -216,6 +224,10 @@ namespace csim
 
             iteration++;
         } while (iteration < m_maxIterations);
+
+#if defined(ENABLE_STAT)
+        m_statNumNonlinearIters += iteration;
+#endif
 
         if (iteration >= m_maxIterations)
             return CERR_MAX_ITERATION_EXCEEDED;
@@ -275,13 +287,33 @@ namespace csim
     int Circuit::stepMNA(AnalyzerBase *analyzer)
     {
         double nstep = m_hsteps->get(0);
+        bool stepChanged = false;
         for (;;)
         {
-            /* Run integral predictor */
-            for (unsigned int i = 0; i < m_matrixRows; ++i)
+            size_t N = m_integralU.size() + m_integralJ.size();
+            for (size_t k = 0; k < N; k++)
             {
+                unsigned int i;
+                if (k < m_integralU.size())
+                    i = m_integralU[k];
+                else
+                    i = m_integralJ[k - m_integralU.size()] + m_netlist->getNumNodes();
+
                 m_x[i] = m_predictor->predict(&m_hPredictorX[i], m_hsteps);
                 m_hPredictorX[i].set(0, m_x[i].real());
+            }
+
+            if (stepChanged)
+            {
+                /* Inform the models that the step size has changed */
+                for (auto &mif : m_netlist->models())
+                {
+                    mif.model->stepChangedTR(getIntegralTime(), m_hsteps->get(0));
+                }
+                stepChanged = false;
+#if defined(ENABLE_STAT)
+                m_statNumStepChanges++;
+#endif
             }
 
             /* Run linear and non-linear iteration with integral corrector */
@@ -289,27 +321,33 @@ namespace csim
 
             /* Check the truncation error and update step size */
             nstep = adaptStep();
-            if (nstep > 0.9 * m_hsteps->get(0))
-                break;
             if (nstep < m_hsteps->get(0))
             {
-                //std::cout << "restep="<<m_hsteps->get(0)<<"-->"<<nstep<<"\n";
+#if defined(ENABLE_STAT)
+                if (nstep <= m_tMinStep)
+                    m_statNumMinSteps++;
+
+#endif
                 m_hsteps->set(0, nstep);
-                m_corrector->setStep(nstep);
+                m_predictor->setStep(m_hsteps);
+                m_corrector->setStep(m_hsteps);
+                stepChanged = true;
                 continue;
             }
 
             break;
         }
 
-        //std::cout<<nstep<<"----\n";
-        //std::cout << m_tTime << "\n";
+#if defined(ENABLE_STAT)
+        m_statTotalStep += m_hsteps->get(0);
+        m_sumNumIntegralIters++;
+#endif
 
         /* Go to the next time step */
         m_tTime += m_hsteps->get(0);
         m_hsteps->push();
         m_hsteps->set(0, nstep);
-        m_corrector->setStep(nstep);
+        m_corrector->setStep(m_hsteps);
         for (auto &mif : m_netlist->models())
         {
             unsigned int numIntegrators = mif.model->getNumIntegrators();
@@ -330,6 +368,7 @@ namespace csim
     double Circuit::adaptStep()
     {
         double nstep = DBL_MAX;
+
         size_t N = m_integralU.size() + m_integralJ.size();
         for (size_t i = 0; i < N; i++)
         {
@@ -337,7 +376,7 @@ namespace csim
             if (i < m_integralU.size())
                 row = m_integralU[i];
             else
-                row = m_integralJ[i - m_integralJ.size()] + m_netlist->getNumNodes();
+                row = m_integralJ[i - m_integralU.size()] + m_netlist->getNumNodes();
 
             double x = m_x[row].real();
             double x_1 = m_hPredictorX[row].get(0);
@@ -346,16 +385,37 @@ namespace csim
             if (!std::isfinite(epsilon) || epsilon == 0.0)
                 continue; /* Non-convergence or invariant */
 
-            double errlimit = m_tEpsMax + m_tEpsrMax * std::max(std::abs(x), std::abs(x_1));
+            double elimit = m_tEpsMax + m_tEpsrMax * std::max(std::abs(x), std::abs(x_1));
+
             double p = m_predictor->getTruncErrorCoeff();
             double c = m_corrector->getTruncErrorCoeff();
-            double q = m_tTOEF * c * epsilon / (p * errlimit - c * errlimit);
+            double q = m_tTOEF * c * epsilon / (p * elimit - c * elimit);
             double t = m_hsteps->get(0) * std::pow(1.0 / std::abs(q), 1.0 / (1 + m_corrector->getOrder()));
-
             nstep = std::min(nstep, t);
         }
-        //std::cout<<nstep<<"\n";
+        /* Limit the growth rate of step to 2 */
+        nstep = std::min((nstep > (2 - 0.1) * m_hsteps->get(0)) ? 2 * m_hsteps->get(0) : m_hsteps->get(0), nstep);
+
         nstep = std::max(nstep, m_tMinStep);
         return std::min(nstep, m_tMaxStep);
     }
+
+#if defined(ENABLE_STAT)
+    void Circuit::resetStat()
+    {
+        m_statNumStepChanges = 0;
+        m_statNumNonlinearIters = 0;
+        m_sumNumIntegralIters = 0;
+        m_statTotalStep = 0.0;
+        m_statNumMinSteps = 0;
+    }
+
+    void Circuit::stat()
+    {
+        std::cout << "Number of step size changes = " << m_statNumStepChanges << "\n";
+        std::cout << "Average step size = " << m_statTotalStep / m_sumNumIntegralIters << "\n";
+        std::cout << "Number of min steps = " << m_statNumMinSteps << "\n";
+        std::cout << "Number of non-linear iterations = " << m_statNumNonlinearIters << "\n";
+    }
+#endif
 }

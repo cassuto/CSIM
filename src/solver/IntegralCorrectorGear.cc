@@ -15,7 +15,6 @@
  *  Lesser General Public License for more details.                        
  */
 
-#include <iostream>
 #include <cassert>
 #include <cstring>
 #include "csim/utils/errors.h"
@@ -25,10 +24,8 @@
 namespace csim
 {
     IntegralCorrectorGear::IntegralCorrectorGear()
-        : m_linearSolver(LinearSolver::createInstance("gauss"))
+        : m_linearSolver(LinearSolver::createInstance("LU"))
     {
-        m_step = 1e-9;
-        setOrder(2);
     }
 
     IntegralCorrectorGear::~IntegralCorrectorGear()
@@ -36,9 +33,10 @@ namespace csim
         delete m_linearSolver;
     }
 
-    void IntegralCorrectorGear::setOrder(unsigned int order)
+    void IntegralCorrectorGear::setOrder(unsigned int order, const IntegralHistory *hsteps)
     {
-        IntegralCorrector::setOrder(order);
+        IntegralCorrector::setOrder(order, nullptr);
+        setStep(hsteps);
 
         /*
          * Generate constant ai and bi of GEAR algorithm.
@@ -64,7 +62,6 @@ namespace csim
          * 
          * So the coefficient ai and bi can be obtained by solving the above equation.
          */
-
         unsigned int rows = order + 1;
 
         memset(m_A, 0, sizeof(*m_A) * rows * rows);
@@ -94,8 +91,6 @@ namespace csim
         assert(CSIM_OK(ret));
         (void)ret;
 
-        genCoeffs();
-
         /*
          * Generate truncation error coefficient
          */
@@ -113,19 +108,39 @@ namespace csim
         m_trucnErrorCoeff -= m_x[0].real() * std::pow(order, order) / f;
     }
 
-    void IntegralCorrectorGear::setStep(double step)
+    void IntegralCorrectorGear::setStep(const IntegralHistory *hsteps)
     {
-        IntegralCorrector::setStep(step);
-        genCoeffs();
-    }
+        unsigned int order = getOrder();
+        unsigned int rows = order + 1;
 
-    void IntegralCorrectorGear::genCoeffs()
-    {
-        double b_neg_1 = m_x[0].real();
-        m_coeffs[0] = 1.0 / getStep() / b_neg_1;
-        for (unsigned i = 1; i <= getOrder(); i++)
+        memset(m_A, 0, sizeof(*m_A) * rows * rows);
+        memset(m_b, 0, sizeof(*m_b) * rows);
+
+        /* Generate A */
+        for (unsigned int c = 0; c <= order; c++)
+            m_A[c] = 1.0;
+        double f = 0;
+        for (unsigned int c = 0; c < order; c++)
         {
-            m_coeffs[i] = -1.0 / getStep() / b_neg_1 * m_x[i].real();
+            f += hsteps->get(c);
+            double a = 1.0;
+            for (unsigned int r = 0; r < order; r++)
+            {
+                a *= f / hsteps->get(0);
+                m_A[(r + 1) * rows + c + 1] = a;
+            }
+        }
+        /* Generate B */
+        m_b[1] = -1.0 / hsteps->get(0);
+
+        /* Solve x */
+        int ret = m_linearSolver->solve(m_A, rows, m_x, m_b);
+        assert(CSIM_OK(ret));
+        (void)ret;
+
+        for (unsigned int r = 0; r <= order; r++)
+        {
+            m_coeffs[r] = m_x[r].real();
         }
     }
 

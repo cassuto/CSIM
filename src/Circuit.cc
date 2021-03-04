@@ -172,8 +172,8 @@ namespace csim
         m_tTime = 0.0;
         double step = m_tMinStep; /* initial step */
         m_hsteps->setInitial(step);
-        m_predictor->setOrder(m_tOrder, m_hsteps);
-        m_corrector->setOrder(m_tOrder, m_hsteps);
+        UPDATE_RC(m_predictor->setOrder(m_tOrder, m_hsteps));
+        UPDATE_RC(m_corrector->setOrder(m_tOrder, m_hsteps));
 
         /* Phase 1: Clear integral nodes and branches. */
         m_setIntegralU.clear();
@@ -329,8 +329,8 @@ namespace csim
 
 #endif
                 m_hsteps->set(0, nstep);
-                m_predictor->setStep(m_hsteps);
-                m_corrector->setStep(m_hsteps);
+                UPDATE_RC(m_predictor->setStep(m_hsteps));
+                UPDATE_RC(m_corrector->setStep(m_hsteps));
                 stepChanged = true;
                 continue;
             }
@@ -347,7 +347,8 @@ namespace csim
         m_tTime += m_hsteps->get(0);
         m_hsteps->push();
         m_hsteps->set(0, nstep);
-        m_corrector->setStep(m_hsteps);
+        UPDATE_RC(m_predictor->setStep(m_hsteps));
+        UPDATE_RC(m_corrector->setStep(m_hsteps));
         for (auto &mif : m_netlist->models())
         {
             unsigned int numIntegrators = mif.model->getNumIntegrators();
@@ -393,7 +394,10 @@ namespace csim
             double t = m_hsteps->get(0) * std::pow(1.0 / std::abs(q), 1.0 / (1 + m_corrector->getOrder()));
             nstep = std::min(nstep, t);
         }
-        /* Limit the growth rate of step to 2 */
+        /*
+         * Limit the growth rate of step to 2
+         * To avoid the singular matrix in the calculation of integrator coefficient due to the large change of step.
+         */
         nstep = std::min((nstep > (2 - 0.1) * m_hsteps->get(0)) ? 2 * m_hsteps->get(0) : m_hsteps->get(0), nstep);
 
         nstep = std::max(nstep, m_tMinStep);

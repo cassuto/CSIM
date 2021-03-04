@@ -15,18 +15,11 @@
  *  Lesser General Public License for more details.                        
  */
 
-#include <cassert>
-#include <cstring>
 #include "csim/utils/errors.h"
 #include "IntegralPredictorEuler.h"
 
 namespace csim
 {
-    void IntegralPredictorEuler::setOrder(unsigned int order)
-    {
-        //assert(order == 1);
-    }
-
     double IntegralPredictorEuler::predict(const IntegralHistory *x, const IntegralHistory *hsteps)
     {
         /* The previous difference */

@@ -12,8 +12,8 @@ namespace csim
     public:
         IntegralPredictorGear();
         virtual ~IntegralPredictorGear();
-        virtual void setOrder(unsigned int order, const IntegralHistory *hsteps);
-        virtual void setStep(const IntegralHistory *hsteps);
+        virtual int setOrder(unsigned int order, const IntegralHistory *hsteps);
+        virtual int setStep(const IntegralHistory *hsteps);
         virtual double predict(const IntegralHistory *x, const IntegralHistory *hsteps);
         virtual double getTruncErrorCoeff();
 

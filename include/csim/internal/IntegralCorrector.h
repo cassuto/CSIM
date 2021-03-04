@@ -46,15 +46,16 @@ namespace csim
         IntegralCorrector() : m_order(0) {}
         virtual ~IntegralCorrector() {}
 
-        virtual void setOrder(unsigned int order, const IntegralHistory *hsteps)
+        virtual int setOrder(unsigned int order, const IntegralHistory *hsteps)
         {
             m_order = order;
+            return 0;
         }
         virtual unsigned int getOrder() const
         {
             return m_order;
         }
-        virtual void setStep(const IntegralHistory *hsteps) {}
+        virtual int setStep(const IntegralHistory *hsteps) { return 0; }
         virtual void integrate(const IntegralHistory *x, IntegralHistory *y, double k, double *c0, double *c1) = 0;
         virtual double getTruncErrorCoeff() = 0;
 

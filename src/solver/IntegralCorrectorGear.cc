@@ -15,8 +15,7 @@
  *  Lesser General Public License for more details.                        
  */
 
-#include <cassert>
-#include <cstring>
+#include <algorithm>
 #include "csim/utils/errors.h"
 #include "csim/internal/LinearSolver.h"
 #include "IntegralCorrectorGear.h"
@@ -24,7 +23,7 @@
 namespace csim
 {
     IntegralCorrectorGear::IntegralCorrectorGear()
-        : m_linearSolver(LinearSolver::createInstance("LU"))
+        : m_linearSolver(LinearSolver::createInstance("gauss"))
     {
     }
 
@@ -33,10 +32,10 @@ namespace csim
         delete m_linearSolver;
     }
 
-    void IntegralCorrectorGear::setOrder(unsigned int order, const IntegralHistory *hsteps)
+    int IntegralCorrectorGear::setOrder(unsigned int order, const IntegralHistory *hsteps)
     {
         IntegralCorrector::setOrder(order, nullptr);
-        setStep(hsteps);
+        UPDATE_RC(setStep(hsteps));
 
         /*
          * Generate constant ai and bi of GEAR algorithm.
@@ -64,8 +63,8 @@ namespace csim
          */
         unsigned int rows = order + 1;
 
-        memset(m_A, 0, sizeof(*m_A) * rows * rows);
-        memset(m_b, 0, sizeof(*m_b) * rows);
+        std::fill(m_A, m_A + rows * rows, 0.0);
+        std::fill(m_b, m_b + rows, 0.0);
 
         /* Generate A */
         for (unsigned int i = 1; i <= order; i++)
@@ -87,9 +86,8 @@ namespace csim
             m_b[i] = 1;
 
         /* Solve x */
-        int ret = m_linearSolver->solve(m_A, rows, m_x, m_b);
-        assert(CSIM_OK(ret));
-        (void)ret;
+        if (m_linearSolver->solve(m_A, rows, m_x, m_b))
+            return CERR_SET_INTEGRAL_ORDER;
 
         /*
          * Generate truncation error coefficient
@@ -106,15 +104,17 @@ namespace csim
         m_trucnErrorCoeff /= f;
         f /= order + 1;
         m_trucnErrorCoeff -= m_x[0].real() * std::pow(order, order) / f;
+
+        return 0;
     }
 
-    void IntegralCorrectorGear::setStep(const IntegralHistory *hsteps)
+    int IntegralCorrectorGear::setStep(const IntegralHistory *hsteps)
     {
         unsigned int order = getOrder();
         unsigned int rows = order + 1;
 
-        memset(m_A, 0, sizeof(*m_A) * rows * rows);
-        memset(m_b, 0, sizeof(*m_b) * rows);
+        std::fill(m_A, m_A + rows * rows, 0.0);
+        std::fill(m_b, m_b + rows, 0.0);
 
         /* Generate A */
         for (unsigned int c = 0; c <= order; c++)
@@ -134,14 +134,15 @@ namespace csim
         m_b[1] = -1.0 / hsteps->get(0);
 
         /* Solve x */
-        int ret = m_linearSolver->solve(m_A, rows, m_x, m_b);
-        assert(CSIM_OK(ret));
-        (void)ret;
+        if (m_linearSolver->solve(m_A, rows, m_x, m_b))
+            return CERR_SET_INTEGRAL_STEP;
 
         for (unsigned int r = 0; r <= order; r++)
         {
             m_coeffs[r] = m_x[r].real();
         }
+
+        return 0;
     }
 
     void IntegralCorrectorGear::integrate(const IntegralHistory *x, IntegralHistory *y, double k, double *c0, double *c1)

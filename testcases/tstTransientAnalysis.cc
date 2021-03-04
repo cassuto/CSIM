@@ -1,3 +1,4 @@
+#include <fstream>
 #include "gtest/gtest.h"
 #include "tstLinearSolver.h"
 #include "constants.h"
@@ -45,7 +46,7 @@ namespace csim
         ASSERT_EQ(CERR_SUCCEEDED, ret);
 
         /* Configure */
-        const double R = 100e3;
+        const double R = 10e3;
         const double C = 4.7e-6;
         const double Vcc = 5.0;
         ret = circuit->netlist()->configComponent("R1", "R", csimModel::Variant(csimModel::Variant::VariantDouble).setDouble(R));
@@ -74,6 +75,8 @@ namespace csim
         /* Transient analysis */
         AnalyzerBase *analyzer = Analyzers::createInstance("transient", circuit);
         ASSERT_NE(nullptr, analyzer);
+        analyzer->property().setProperty("tstop", csimModel::Variant(csimModel::Variant::VariantDouble).setDouble(2));
+        analyzer->property().setProperty("tstep", csimModel::Variant(csimModel::Variant::VariantDouble).setDouble(2));
 
         unsigned int n_gnd, n1;
         ret = circuit->netlist()->getTermlNode("R1", 1, &n1);
@@ -88,6 +91,7 @@ namespace csim
         ASSERT_EQ(CERR_SUCCEEDED, ret);
 
         /* Check solution of transient analysis */
+        std::ofstream fof("outRC.csv");
         unsigned int N = dset.getIndependentVar("time").getNumValues();
         for (unsigned int i = 0; i < N; ++i)
         {
@@ -97,6 +101,7 @@ namespace csim
 
             double expected = Vcc * (1-std::exp(-time/(R*C)));
             ASSERT_NEAR(volt.real(), expected, epsilon_nonlinear);
+            fof<<time<<","<<volt.real()<<"\n";
         }
 
         delete analyzer;

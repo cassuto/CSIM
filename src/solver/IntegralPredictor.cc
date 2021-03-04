@@ -15,7 +15,6 @@
  *  Lesser General Public License for more details.                        
  */
 
-#include <cassert>
 #include "IntegralPredictorEuler.h"
 #include "IntegralPredictorGear.h"
 #include "csim/internal/IntegralPredictor.h"

@@ -12,8 +12,8 @@ namespace csim
         IntegralCorrectorGear();
         ~IntegralCorrectorGear();
 
-        virtual void setStep(const IntegralHistory *hsteps);
-        virtual void setOrder(unsigned int order, const IntegralHistory *hsteps);
+        virtual int setStep(const IntegralHistory *hsteps);
+        virtual int setOrder(unsigned int order, const IntegralHistory *hsteps);
         virtual void integrate(const IntegralHistory *x, IntegralHistory *y, double k, double *c0, double *c1);
         virtual double getTruncErrorCoeff();
 

@@ -9,7 +9,6 @@ namespace csim
     class IntegralPredictorEuler : public IntegralPredictor
     {
     public:
-        virtual void setOrder(unsigned int order);
         virtual double predict(const IntegralHistory *x, const IntegralHistory *hsteps) ;
         virtual double getTruncErrorCoeff();
     };

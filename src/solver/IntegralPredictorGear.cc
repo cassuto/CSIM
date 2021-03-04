@@ -15,8 +15,6 @@
  *  Lesser General Public License for more details.                        
  */
 
-#include <cassert>
-#include <cstring>
 #include <algorithm>
 #include "csim/utils/errors.h"
 #include "csim/internal/LinearSolver.h"
@@ -25,7 +23,7 @@
 namespace csim
 {
     IntegralPredictorGear::IntegralPredictorGear()
-        : m_linearSolver(LinearSolver::createInstance("LU"))
+        : m_linearSolver(LinearSolver::createInstance("gauss"))
     {
     }
     IntegralPredictorGear::~IntegralPredictorGear()
@@ -33,13 +31,13 @@ namespace csim
         delete m_linearSolver;
     }
 
-    void IntegralPredictorGear::setOrder(unsigned int order, const IntegralHistory *hsteps)
+    int IntegralPredictorGear::setOrder(unsigned int order, const IntegralHistory *hsteps)
     {
         IntegralPredictor::setOrder(order, nullptr);
-        setStep(hsteps);
+        return setStep(hsteps);
     }
 
-    void IntegralPredictorGear::setStep(const IntegralHistory *hsteps)
+    int IntegralPredictorGear::setStep(const IntegralHistory *hsteps)
     {
         unsigned int rows = getOrder() + 1;
 
@@ -64,9 +62,9 @@ namespace csim
         m_b[0] = 1;
 
         /* Solve x */
-        int ret = m_linearSolver->solve(m_A, rows, m_x, m_b);
-        assert(CSIM_OK(ret));
-        (void)ret;
+        if (m_linearSolver->solve(m_A, rows, m_x, m_b))
+            return CERR_SET_INTEGRAL_STEP;
+        return 0;
     }
 
     double IntegralPredictorGear::predict(const IntegralHistory *x, const IntegralHistory *hsteps)

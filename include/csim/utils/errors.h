@@ -50,6 +50,10 @@
 #define CERR_SINGULAR_MATRIX (-12)
 /** No target to analyze */
 #define CERR_NO_TARGET_TO_ANALYZE (-13)
+/** Failed to set the integral order */
+#define CERR_SET_INTEGRAL_ORDER (-14)
+/** Failed to set the integral step */
+#define CERR_SET_INTEGRAL_STEP (-15)
 
 /** Unknown */
 #define CERR_UNKNOWN (-65536)

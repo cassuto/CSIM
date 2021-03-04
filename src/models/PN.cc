@@ -174,9 +174,10 @@ namespace csimModel
     {
         bool flag = false;
         double Ud_0, Ud_1, Ud_f;
+        const double Ute = m_N * m_Ut;
 
         /* Fix the very small voltage */
-        if (m_Bv_set && Ud < std::min(0.0, -m_Bv + 10 * m_N * m_Ut))
+        if (m_Bv_set && Ud < std::min(0.0, -m_Bv + 10 * Ute))
         {
             Ud_0 = -(Ud + m_Bv);
             Ud_1 = -(m_Ud_1 + m_Bv);
@@ -189,18 +190,18 @@ namespace csimModel
         }
 
         /* This code comes from SPICE3F5. Authors: 1985 Thomas L. Quarles, 2000 Alan Gillespie. */
-        if (Ud_0 > m_Uth && std::abs(Ud_0 - Ud_1) > 2 * m_Ut)
+        if (Ud_0 > m_Uth && std::abs(Ud_0 - Ud_1) > 2 * Ute)
         {
             if (Ud_1 > 0)
             {
-                double arg = (Ud_0 - Ud_1) / m_Ut;
+                double arg = (Ud_0 - Ud_1) / Ute;
                 if (arg > 0)
-                    Ud_f = Ud_1 + m_Ut * (2 + std::log(arg - 2));
+                    Ud_f = Ud_1 + Ute * (2 + std::log(arg - 2));
                 else
-                    Ud_f = Ud_1 - m_Ut * (2 + std::log(2 - arg));
+                    Ud_f = Ud_1 - Ute * (2 + std::log(2 - arg));
             }
             else
-                Ud_f = m_Ut * std::log(Ud_0 / m_Ut);
+                Ud_f = Ute * std::log(Ud_0 / Ute);
         }
         else
         {

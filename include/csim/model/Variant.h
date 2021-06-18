@@ -2,7 +2,7 @@
  *  FastCSIM Copyright (C) 2021 cassuto                                    
  *  This project is free edition; you can redistribute it and/or           
  *  modify it under the terms of the GNU Lesser General Public             
- *  License(GPL) as published by the Free Software Foundation; either      
+ *  License(LGPL) as published by the Free Software Foundation; either      
  *  version 2.1 of the License, or (at your option) any later version.     
  *                                                                         
  *  This project is distributed in the hope that it will be useful,        
@@ -16,9 +16,12 @@
 
 #include "csim/model/Types.h"
 #include <string>
+#include <vector>
 
 namespace csimModel
 {
+
+    class PropertyMdl;
 
     class Variant
     {
@@ -37,11 +40,12 @@ namespace csimModel
             VariantDouble,
             VariantBoolean,
             VariantString,
+            VariantPropertyModel
         };
 
         Variant();
         explicit Variant(VariantType type);
-        explicit Variant(const Variant &src);
+        Variant(const Variant &src);
 
         VariantType getType() const;
 
@@ -56,6 +60,7 @@ namespace csimModel
         Variant &setDouble(double d);
         Variant &setBoolean(bool b);
         Variant &setString(const char *str);
+        Variant &setPropertyModel(PropertyMdl *mdl);
 
         uint8_t getUint8() const;
         uint16_t getUint16() const;
@@ -68,6 +73,7 @@ namespace csimModel
         double getDouble() const;
         bool getBoolean() const;
         const char *getString() const;
+        PropertyMdl *getPropertyModel() const;
 
     private:
         VariantType m_type;
@@ -84,6 +90,7 @@ namespace csimModel
             float f;
             double d;
             bool b;
+            PropertyMdl *mdl;
         } m_dat;
         std::string m_str;
     };

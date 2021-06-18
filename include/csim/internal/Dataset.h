@@ -2,7 +2,7 @@
  *  FastCSIM Copyright (C) 2021 cassuto                                    
  *  This project is free edition; you can redistribute it and/or           
  *  modify it under the terms of the GNU Lesser General Public             
- *  License(GPL) as published by the Free Software Foundation; either      
+ *  License(LGPL) as published by the Free Software Foundation; either      
  *  version 2.1 of the License, or (at your option) any later version.     
  *                                                                         
  *  This project is distributed in the hope that it will be useful,        
@@ -17,7 +17,7 @@
 #include <vector>
 #include <map>
 #include <string>
-#include "csim/internal/Complex.h"
+#include "csim/model/Types.h"
 
 namespace csim
 {
@@ -26,7 +26,7 @@ namespace csim
     public:
         Variable() {}
         Variable(const std::string &name);
-        void addValue(const Complex &value);
+        void addValue(const csimModel::MComplex &value);
         void addIndependVar(const Variable &var);
         void clearValues();
         void clearIndependVars();
@@ -38,7 +38,7 @@ namespace csim
         {
             return m_independentVars.size();
         }
-        inline const Complex &at(unsigned int index) const
+        inline const csimModel::MComplex &at(unsigned int index) const
         {
             return m_values.at(index);
         }
@@ -50,7 +50,7 @@ namespace csim
     private:
         std::string m_name;
         std::vector<std::string> m_independentVars;
-        std::vector<Complex> m_values;
+        std::vector<csimModel::MComplex> m_values;
     };
 
     class Dataset

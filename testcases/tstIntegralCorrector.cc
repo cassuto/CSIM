@@ -52,6 +52,7 @@ namespace csim
 
         hsteps.setInitial(step);
         corrector->setOrder(4, &hsteps);
+        std::cout << "trunc coeff = "<<corrector->getTruncErrorCoeff() << std::endl;
 
         const unsigned int steps = 1.0 / step; /* 1s */
         unsigned int d = 0;

@@ -2,7 +2,7 @@
  *  FastCSIM Copyright (C) 2021 cassuto                                    
  *  This project is free edition; you can redistribute it and/or           
  *  modify it under the terms of the GNU Lesser General Public             
- *  License(GPL) as published by the Free Software Foundation; either      
+ *  License(LGPL) as published by the Free Software Foundation; either      
  *  version 2.1 of the License, or (at your option) any later version.     
  *                                                                         
  *  This project is distributed in the hope that it will be useful,        
@@ -14,9 +14,12 @@
 #ifndef CSIM_MODELBASE_H_
 #define CSIM_MODELBASE_H_
 
+#include <string>
 #include <vector>
 #include "csim/model/Types.h"
 #include "csim/model/PropertyBag.h"
+#include "csim/model/PropertyMdl.h"
+#include "csim/utils/errors.h"
 
 namespace csim
 {
@@ -38,16 +41,25 @@ namespace csimModel
     public:
         virtual int configure() = 0;
         virtual int prepareDC() = 0;
+        virtual int prepareOP();
+        virtual int prepareTrOP();
         virtual int prepareAC() = 0;
         virtual int prepareTR() = 0;
         virtual int iterateDC() = 0;
+        virtual int iterateOP();
+        virtual int iterateTrOP();
         virtual int iterateAC(double omega) = 0;
         virtual int iterateTR(double tTime) = 0;
+        virtual int saveOP();
         virtual void stepChangedTR(double tTime, double nstep);
+        virtual void adaptStep(double *step);
+        virtual bool checkConvergence();
+        virtual Variant queryStatus(unsigned int id, int *rc);
+
+        const char *name() const;
 
     public:
         PropertyBag &property();
-
         unsigned int getNumTerml() const;
         unsigned int getNumInnerNode() const;
         unsigned int getNumVS() const;
@@ -59,14 +71,25 @@ namespace csimModel
         unsigned int getVS(unsigned int idx) const;
 
         /* MNA matrices */
-        MComplex getY(unsigned int row, unsigned int col) const;
-        MComplex getB(unsigned int row, unsigned int col) const;
-        MComplex getC(unsigned int row, unsigned int col) const;
-        MComplex getD(unsigned int row, unsigned int col) const;
-        MComplex getI(unsigned int row) const;
-        MComplex getE(unsigned int row) const;
-        MComplex getU(unsigned int row) const;
-        MComplex getJ(unsigned int row) const;
+        const MComplex &getY(unsigned int row, unsigned int col) const;
+        const MComplex &getB(unsigned int row, unsigned int col) const;
+        const MComplex &getC(unsigned int row, unsigned int col) const;
+        const MComplex &getD(unsigned int row, unsigned int col) const;
+        const MComplex &getI(unsigned int row) const;
+        const MComplex &getE(unsigned int row) const;
+        const MComplex &getU(unsigned int row) const;
+        const MComplex &getJ(unsigned int row) const;
+        const MComplex &getPrevU(unsigned int row) const;
+        const MComplex &getPrevJ(unsigned int row) const;
+
+        double *getYPtr(unsigned int row, unsigned int col);
+        double *getBPtr(unsigned int row, unsigned int col);
+        double *getCPtr(unsigned int row, unsigned int col);
+        double *getDPtr(unsigned int row, unsigned int col);
+        double *getIPtr(unsigned int row);
+        double *getEPtr(unsigned int row);
+        double *getUPtr(unsigned int row);
+        double *getJPtr(unsigned int row);
 
         unsigned int getNumIntegrators() const;
         csim::IntegralHistory *getIntegratorX(unsigned int nint);
@@ -78,6 +101,25 @@ namespace csimModel
         void registerIntegralU(unsigned int col);
         void registerIntegralJ(unsigned int col);
         double integrate(unsigned int nint, double x, double k, double *c0, double *c1);
+        double integrate(unsigned int nint, double k, double *c0, double *c1);
+        double getIntegratorCoeff(unsigned int index) const;
+        double getIntegratorTruncErrorCoeff() const;
+        unsigned int getIntegratorOrder() const;
+        const csim::IntegralHistory *getIntegratorTimestep() const;
+        Environment *getEnvironment() const;
+
+        void registerAdoptStep();
+
+        class StatusDescriptor
+        {
+        public:
+            const char *name;
+            Variant::VariantType type;
+            const char *desc;
+            unsigned int id;
+        };
+
+        void registerStatus(const StatusDescriptor *array, int count);
 
         /* MNA matrices */
         void addY(unsigned int row, unsigned int col, const MComplex &delta);
@@ -95,6 +137,7 @@ namespace csimModel
         std::vector<unsigned int> m_VS;
         csim::IntegralHistory *m_historyX, *m_historyY;
         unsigned int m_numIntegrators;
+        std::string m_name;
     };
 
     typedef ModelBase *(*pfnCreateModel_t)(MODELBASE_CONSTRUCTOR_DEF);

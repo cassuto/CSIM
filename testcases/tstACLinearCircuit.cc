@@ -108,7 +108,7 @@ namespace csim
         EXPECT_NEAR(F.at(0).real(), fstart, epsilon_linear);
         const Variable &Vgnd = dset.getDependentVar("voltage", analyzer->makeVarName("V", n_gnd));
         const Variable &Vn1 = dset.getDependentVar("voltage", analyzer->makeVarName("V", n1));
-        Complex volt = Vn1.at(0) - Vgnd.at(0);
+        csimModel::MComplex volt = Vn1.at(0) - Vgnd.at(0);
         double mag = std::abs(volt);
         double phase = 180.0 * std::arg(volt) / M_PI;
         EXPECT_NEAR(mag, 1.0, epsilon_linear);

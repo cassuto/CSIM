@@ -96,12 +96,12 @@ namespace csim
         for (unsigned int i = 0; i < N; ++i)
         {
             double time = dset.getIndependentVar("time").at(i).real();
-            Complex volt = dset.getDependentVar("voltage", analyzer->makeVarName("V", n1)).at(i) -
-                           dset.getDependentVar("voltage", analyzer->makeVarName("V", n_gnd)).at(i);
+            csimModel::MComplex volt = dset.getDependentVar("voltage", analyzer->makeVarName("V", n1)).at(i) -
+                                       dset.getDependentVar("voltage", analyzer->makeVarName("V", n_gnd)).at(i);
 
-            double expected = Vcc * (1-std::exp(-time/(R*C)));
+            double expected = Vcc * (1 - std::exp(-time / (R * C)));
             ASSERT_NEAR(volt.real(), expected, epsilon_nonlinear);
-            fof<<time<<","<<volt.real()<<"\n";
+            fof << time << "," << volt.real() <<"\n";
         }
 
         delete analyzer;

@@ -2,7 +2,7 @@
  *  FastCSIM Copyright (C) 2021 cassuto                                    
  *  This project is free edition; you can redistribute it and/or           
  *  modify it under the terms of the GNU Lesser General Public             
- *  License(GPL) as published by the Free Software Foundation; either      
+ *  License(LGPL) as published by the Free Software Foundation; either      
  *  version 2.1 of the License, or (at your option) any later version.     
  *                                                                         
  *  This project is distributed in the hope that it will be useful,        
@@ -16,44 +16,65 @@
 
 #include <cstdint>
 #include <complex>
+#include <iostream>
 
 namespace csimModel
 {
 
     /*
      * Complex class restricted to model SDK
+     * Note that this class is assumed to be `trivial typed`, i.e., no any virtual
+     * function or non-trival type membership, which ensures `memset-safe`.
      */
-    class MComplex
+    struct MComplex
     {
     public:
         MComplex();
         MComplex(double real);
         MComplex(double real, double imag);
+        MComplex(const MComplex &src);
 
         double real() const;
         double imag() const;
+        double *ptr();
 
-        MComplex operator+(const MComplex &rval);
+        MComplex operator+(const MComplex &rval) const;
         MComplex operator+=(const MComplex &rval);
-        MComplex operator-(const MComplex &rval);
+        MComplex operator-(const MComplex &rval) const;
         MComplex operator-=(const MComplex &rval);
 
-        MComplex operator*(double rval);
+        MComplex operator*(const MComplex &rval) const;
+        MComplex operator*(double rval) const;
         MComplex operator*=(double rval);
-        MComplex operator/(double rval);
+        MComplex operator/(const MComplex &rval) const;
+        MComplex operator/(double rval) const;
         MComplex operator/=(double rval);
 
-        MComplex operator-();
+        MComplex operator-() const;
 
-    private:
-        double m_real, m_imag;
+        friend std::ostream& operator<<(std::ostream &out, const MComplex &src);
+
+    public:
+        double m_complex[2];
     };
 
+    std::ostream& operator<<(std::ostream &out, const MComplex &src);
+
+    class ModelBase;
 }
 
 namespace csim
 {
     class Circuit;
+}
+
+namespace std
+{
+    double abs(const csimModel::MComplex &cplx);
+    double norm(const csimModel::MComplex &cplx);
+    double real(const csimModel::MComplex &cplx);
+    double imag(const csimModel::MComplex &cplx);
+    double arg(const csimModel::MComplex &cplx);
 }
 
 #endif // CSIM_TYPES_H_

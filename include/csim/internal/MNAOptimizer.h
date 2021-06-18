@@ -2,7 +2,7 @@
  *  FastCSIM Copyright (C) 2021 cassuto                                    
  *  This project is free edition; you can redistribute it and/or           
  *  modify it under the terms of the GNU Lesser General Public             
- *  License(GPL) as published by the Free Software Foundation; either      
+ *  License(LGPL) as published by the Free Software Foundation; either      
  *  version 2.1 of the License, or (at your option) any later version.     
  *                                                                         
  *  This project is distributed in the hope that it will be useful,        
@@ -14,7 +14,7 @@
 #ifndef CSIM_MNAOPTIMIZER_H_
 #define CSIM_MNAOPTIMIZER_H_
 
-#include "csim/internal/Complex.h"
+#include "csim/model/Types.h"
 #include "csim/internal/LinearSolverOptimizer.h"
 
 namespace csim
@@ -25,7 +25,7 @@ namespace csim
     public:
         MNAOptimizer(Netlist *netlist);
         void reset();
-        int singularRow(Complex *A, unsigned curRow, unsigned int nRows);
+        int singularRow(csimModel::MComplex *A, unsigned curRow, unsigned int nRows);
 
         inline void enableGmin(bool enabled)
         {

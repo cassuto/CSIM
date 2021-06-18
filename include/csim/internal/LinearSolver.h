@@ -2,7 +2,7 @@
  *  FastCSIM Copyright (C) 2021 cassuto                                    
  *  This project is free edition; you can redistribute it and/or           
  *  modify it under the terms of the GNU Lesser General Public             
- *  License(GPL) as published by the Free Software Foundation; either      
+ *  License(LGPL) as published by the Free Software Foundation; either      
  *  version 2.1 of the License, or (at your option) any later version.     
  *                                                                         
  *  This project is distributed in the hope that it will be useful,        
@@ -15,7 +15,7 @@
 #define CSIM_LINEARSOLVER_H_
 
 #include "csim/internal/LinearSolverOptimizer.h"
-#include "csim/internal/Complex.h"
+#include "csim/model/Types.h"
 
 namespace csim
 {
@@ -35,7 +35,7 @@ namespace csim
          * @param [in,out] B Pointer to the matrix B.
          * @return Status code.
          */
-        virtual int solve(Complex *A, unsigned int n, Complex *x, Complex *B) = 0;
+        virtual int solve(csimModel::MComplex *A, unsigned int n, csimModel::MComplex *x, csimModel::MComplex *B) = 0;
 
         inline void setOptimizer(LinearSolverOptimizer *optimizer)
         {

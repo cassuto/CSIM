@@ -31,11 +31,11 @@ endif ()
 
 include_directories(
 	"${PROJECT_SOURCE_DIR}/include"
-	"${PROJECT_SOURCE_DIR}/src"
+	"${PROJECT_SOURCE_DIR}/core"
 )
 
-add_subdirectory("${PROJECT_SOURCE_DIR}/src/")
-add_subdirectory("${PROJECT_SOURCE_DIR}/src/models")
+add_subdirectory("${PROJECT_SOURCE_DIR}/core/")
+add_subdirectory("${PROJECT_SOURCE_DIR}/core/models")
 
 if (enable_testcases)
 	enable_testing()

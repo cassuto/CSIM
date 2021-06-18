@@ -77,7 +77,7 @@ namespace csim
         /* Check solution vector of DC analyzer */
         const Variable &T = dset.getIndependentVar("time");
         const Variable &Vn1 = dset.getDependentVar("voltage", analyzer->makeVarName("V", n1));
-        std::ofstream fof("outs.csv");
+        std::ofstream fof("outsD.csv");
         for (unsigned int i = 0; i < T.getNumValues(); ++i)
         {
             fof << T.at(i).real() << "," << Vn1.at(i).real() << "\n";
@@ -162,7 +162,7 @@ namespace csim
         /* Check solution vector of DC analyzer */
         const Variable &T = dset.getIndependentVar("time");
         const Variable &Vn1 = dset.getDependentVar("voltage", analyzer->makeVarName("V", n1));
-        std::ofstream fof("outc.csv");
+        std::ofstream fof("outsD_C.csv");
         for (unsigned int i = 0; i < T.getNumValues(); ++i)
         {
             fof << T.at(i).real() << "," << Vn1.at(i).real() << "\n";
@@ -259,7 +259,7 @@ namespace csim
         /* Check solution vector of DC analyzer */
         const Variable &T = dset.getIndependentVar("time");
         const Variable &Vn1 = dset.getDependentVar("voltage", analyzer->makeVarName("V", n1));
-        std::ofstream fof("outa.csv");
+        std::ofstream fof("outD_RLC.csv");
         for (unsigned int i = 0; i < T.getNumValues(); ++i)
         {
             fof << T.at(i).real() << "," << Vn1.at(i).real() << "\n";

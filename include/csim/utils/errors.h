@@ -2,7 +2,7 @@
  *  FastCSIM Copyright (C) 2021 cassuto                                    
  *  This project is free edition{} you can redistribute it and/or          
  *  modify it under the terms of the GNU Lesser General Public             
- *  License(GPL) as published by the Free Software Foundation{} either     
+ *  License(LGPL) as published by the Free Software Foundation{} either     
  *  version 2.1 of the License, or (at your option) any later version.     
  *                                                                         
  *  This project is distributed in the hope that it will be useful,        
@@ -54,6 +54,14 @@
 #define CERR_SET_INTEGRAL_ORDER (-14)
 /** Failed to set the integral step */
 #define CERR_SET_INTEGRAL_STEP (-15)
+/** No mdl specified */
+#define CERR_NO_MDL (-16)
+/** Invalid parameter */
+#define CERR_INVALID_PARAMETER (-17)
+/** Non convergence */
+#define CERR_NON_CONVERGENCE (-18)
+/** Implemented */
+#define CERR_UNIMPLEMENTED (-19)
 
 /** Unknown */
 #define CERR_UNKNOWN (-65536)

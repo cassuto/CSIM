@@ -2,7 +2,7 @@
  *  FastCSIM Copyright (C) 2021 cassuto                                    
  *  This project is free edition{} you can redistribute it and/or          
  *  modify it under the terms of the GNU Lesser General Public             
- *  License(GPL) as published by the Free Software Foundation{} either     
+ *  License(LGPL) as published by the Free Software Foundation{} either     
  *  version 2.1 of the License, or (at your option) any later version.     
  *                                                                         
  *  This project is distributed in the hope that it will be useful,        
@@ -17,6 +17,7 @@
 #include <map>
 #include <vector>
 #include <string>
+#include <istream>
 #include "csim/model/Variant.h"
 
 namespace csimModel
@@ -42,6 +43,7 @@ namespace csim
         int prepare();
         int wire(const char *ref_A, unsigned int terml_A, const char *ref_B, unsigned int terml_B);
         int ground(const char *ref, unsigned int terml);
+        int parse(std::istream &stream);
         int generateNodes();
         bool hasGroundNode();
         unsigned int getGroundNode();

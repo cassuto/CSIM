@@ -7,14 +7,14 @@ namespace csim
     void tst_equ_real_1(LinearSolver *solver)
     {
         const int n = 2;
-        Complex A[] = {
+        csimModel::MComplex A[] = {
             47.0,
             28.0,
             89.0,
             53.0,
         };
-        Complex *x = new Complex[n];
-        Complex B[] = {19.0, 36.0};
+        csimModel::MComplex *x = new csimModel::MComplex[n];
+        csimModel::MComplex B[] = {19.0, 36.0};
 
         int ret = solver->solve(A, n, x, B);
         EXPECT_EQ(0, ret);
@@ -31,7 +31,7 @@ namespace csim
     void tst_equ_real_2(LinearSolver *solver)
     {
         const int n = 3;
-        Complex A[] = {
+        csimModel::MComplex A[] = {
             4.0,
             5.0,
             6.0,
@@ -42,8 +42,8 @@ namespace csim
             0.0,
             7.0,
         };
-        Complex *x = new Complex[n];
-        Complex B[] = {10.0, 3.0, 7.0};
+        csimModel::MComplex *x = new csimModel::MComplex[n];
+        csimModel::MComplex B[] = {10.0, 3.0, 7.0};
 
         int ret = solver->solve(A, n, x, B);
         EXPECT_EQ(0, ret);
@@ -61,13 +61,13 @@ namespace csim
     void tst_equ_complex_1(LinearSolver *solver)
     {
         const int n = 2;
-        Complex A[] = {
+        csimModel::MComplex A[] = {
             {2.0, 3.0},
             {-2.0},
             {-2.0},
             {2.0, -1.0}};
-        Complex *x = new Complex[n];
-        Complex B[] = {-2.0, 1.0};
+        csimModel::MComplex *x = new csimModel::MComplex[n];
+        csimModel::MComplex B[] = {-2.0, 1.0};
 
         int ret = solver->solve(A, n, x, B);
         EXPECT_EQ(0, ret);

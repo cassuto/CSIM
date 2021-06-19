@@ -11,20 +11,36 @@
  *  Lesser General Public License for more details.                        
  */
 
-#ifndef CSIM_LINEARSOLVEROPTIMIZER_H_
-#define CSIM_LINEARSOLVEROPTIMIZER_H_
-
-#include "csim/model/Types.h"
+#include <cassert>
+#include <cstring>
+#include "csim/internal/SweepLinear.h"
+#include "csim/internal/SweepLogarithm.h"
+#include "csim/internal/SweepDecade.h"
+#include "csim/internal/SweepOctave.h"
 
 namespace csim
 {
-    class LinearSolverOptimizer
+    Sweep *Sweep::createInstance(const char *name)
     {
-    public:
-        virtual ~LinearSolverOptimizer(){};
-        virtual void reset() = 0;
-        virtual int singularDiag(csimModel::MComplex *A, unsigned curRow, unsigned int nRows) = 0;
-    };
+        if (std::strcmp(name, "lin") == 0)
+        {
+            return new SweepLinear();
+        }
+        else if (std::strcmp(name, "log") == 0)
+        {
+            return new SweepLogarithm();
+        }
+        else if (std::strcmp(name, "dec") == 0)
+        {
+            return new SweepDecade();
+        }
+        else if (std::strcmp(name, "oct") == 0)
+        {
+            return new SweepOctave();
+        }
+        else
+        {
+            return 0l;
+        }
+    }
 }
-
-#endif // CSIM_LINEARSOLVEROPTIMIZER_H_

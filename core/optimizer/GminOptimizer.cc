@@ -1,5 +1,5 @@
 /**
- * @file Optimizer for linear equations solver
+ * @file Optimizer for zero elements on diagonal of singular matrix
  */
 
 /*
@@ -19,24 +19,24 @@
 #include <cstring>
 #include "csim/internal/Netlist.h"
 #include "csim/utils/errors.h"
-#include "csim/internal/MNAOptimizer.h"
+#include "csim/internal/GminOptimizer.h"
 
 namespace csim
 {
 
-    MNAOptimizer::MNAOptimizer(Netlist *netlist)
+    GminOptimizer::GminOptimizer(Netlist *netlist)
         : m_netlist(netlist),
           m_gminEnabled(true),
           m_gmin(1e-12)
     {
     }
 
-    void MNAOptimizer::reset()
+    void GminOptimizer::reset()
     {
         m_lastFixRow = (unsigned int)-1;
     }
 
-    int MNAOptimizer::singularRow(csimModel::MComplex *A, unsigned curRow, unsigned int nRows)
+    int GminOptimizer::singularDiag(csimModel::MComplex *A, unsigned curRow, unsigned int nRows)
     {
         int ret = CERR_SINGULAR_MATRIX;
         if (getGminEnabled())

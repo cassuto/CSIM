@@ -35,7 +35,7 @@ namespace csim
 {
 
     class LinearSolver;
-    class MNAOptimizer;
+    class GminOptimizer;
     class Netlist;
     class AnalyzerBase;
     class IntegralCorrector;
@@ -110,7 +110,7 @@ namespace csim
 
         inline csimModel::MComplex getBranchCurrent(unsigned int vs) const
         {
-            assert(vs < m_netlist->getNumVS());
+            assert(vs < m_netlist->getNumBranches());
             return m_x[m_netlist->getNumNodes() + vs];
         }
 
@@ -142,16 +142,11 @@ namespace csim
             return m_environment;
         }
 
-        enum AnalysisFlags
-        {
-            ANALYSIS_FLAG_NONE = 0U,
-            ANALYSIS_FLAG_NO_TIME_DOMAIN = (1UL << 0)
-        };
-
         int initMNA();
-        int prepareMNA(AnalyzerBase *analyzer, uint32_t flags);
+        int prepareMNA(AnalyzerBase *analyzer);
         int solveMNA(AnalyzerBase *analyzer);
         int saveOP();
+        int loadTempature(double temp);
         int stepIntegral(AnalyzerBase *analyzer);
 
 #if defined(ENABLE_STAT)
@@ -182,7 +177,7 @@ namespace csim
         void registerAdoptStepCallback(csimModel::ModelBase *model);
 
     private:
-        void createMatrix(unsigned int numNodes, unsigned int numVS);
+        void createMatrix(unsigned int numNodes, unsigned int numBranches);
         bool isConverged();
         double adaptStep();
 
@@ -191,7 +186,7 @@ namespace csim
         unsigned int m_matrixRows;
         csimModel::MComplex *m_A, *m_x, *m_x_1, *m_z, *m_z_1;
         LinearSolver *m_linearSolver;
-        MNAOptimizer *m_MNAOptimizer;
+        GminOptimizer *m_GminOptimizer;
         Netlist *m_netlist;
         unsigned int m_maxIterations, maxIntegralIterations;
         IntegralPredictor *m_predictor;

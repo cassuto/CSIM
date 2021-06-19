@@ -57,7 +57,7 @@ namespace csim
 #if defined(ENABLE_SPICE_COMPATIBLE)
         UPDATE_RC(circuit()->spiceCompatible()->setFlagsOP());
 #endif
-        UPDATE_RC(circuit()->prepareMNA(this, Circuit::ANALYSIS_FLAG_NO_TIME_DOMAIN));
+        UPDATE_RC(circuit()->prepareMNA(this));
         UPDATE_RC(circuit()->solveMNA(this));
         UPDATE_RC(circuit()->saveOP());
 

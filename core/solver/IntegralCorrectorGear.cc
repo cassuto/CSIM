@@ -148,20 +148,11 @@ namespace csim
 
     void IntegralCorrectorGear::integrate(const IntegralHistory *x, IntegralHistory *y, double k, double *c0, double *c1)
     {
-        if (m_enabled)
-        {
-            *c0 = k * m_coeffs[0];
-            *c1 = 0.0;
-            for (unsigned int i = 1; i <= getOrder(); i++)
-                *c1 += k * m_coeffs[i] * x->get(i);
-            y->set(0, x->get(0) * (*c0) + *c1);
-        }
-        else
-        {
-            *c0 = 0.0;
-            *c1 = 0.0;
-            y->set(0, 0.0);
-        }
+        *c0 = k * m_coeffs[0];
+        *c1 = 0.0;
+        for (unsigned int i = 1; i <= getOrder(); i++)
+            *c1 += k * m_coeffs[i] * x->get(i);
+        y->set(0, x->get(0) * (*c0) + *c1);
     }
 
     double IntegralCorrectorGear::getTruncErrorCoeff()

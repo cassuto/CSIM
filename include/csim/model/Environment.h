@@ -47,6 +47,8 @@ namespace csimModel
         double getGmin() const;
         long getCKTmode() const;
 
+        void setTemp(double temp);
+
         void logging(LogLevel level, const char *format, ...);
 
     private:

@@ -53,6 +53,10 @@ namespace csim
         ASSERT_EQ(CERR_SUCCEEDED, ret);
         ret = circuit->netlist()->configComponent("V1", "V", csimModel::Variant(csimModel::Variant::VariantDouble).setDouble(12.0));
         ASSERT_EQ(CERR_SUCCEEDED, ret);
+        ret = circuit->netlist()->configComponent("V2", "Vp", csimModel::Variant(csimModel::Variant::VariantDouble).setDouble(2.0));
+        ASSERT_EQ(CERR_SUCCEEDED, ret);
+        ret = circuit->netlist()->configComponent("V2", "freq", csimModel::Variant(csimModel::Variant::VariantDouble).setDouble(50.0));
+        ASSERT_EQ(CERR_SUCCEEDED, ret);
 
         /* Set netlist */
         ret = circuit->netlist()->prepare();

@@ -22,7 +22,7 @@ namespace csim
     class IntegralCorrector
     {
     public:
-        IntegralCorrector() : m_order(0), m_enabled(true) {}
+        IntegralCorrector() : m_order(0) {}
         virtual ~IntegralCorrector() {}
 
         /* NOTE! Any derived class must call setOrder() of this base class
@@ -37,15 +37,6 @@ namespace csim
             return m_order;
         }
 
-        virtual void setEnabled(bool val)
-        {
-            m_enabled = val;
-        }
-        virtual bool getEnabled() const
-        {
-            return m_enabled;
-        }
-
         virtual int setStep(const IntegralHistory *hsteps) { return 0; }
         virtual void integrate(const IntegralHistory *x, IntegralHistory *y, double k, double *c0, double *c1) = 0;
         virtual double getTruncErrorCoeff() = 0;
@@ -56,7 +47,6 @@ namespace csim
 
     protected:
         unsigned int m_order;
-        bool m_enabled;
     };
 
 }

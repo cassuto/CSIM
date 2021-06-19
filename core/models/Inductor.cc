@@ -55,13 +55,13 @@ namespace csimModel
         resizeIntegrator(1);
         registerIntegralU(getNode(0));
         registerIntegralU(getNode(1));
-        registerIntegralJ(getVS(0));
+        registerIntegralJ(getBranch(0));
         return 0;
     }
 
     int Inductor::iterateDC()
     {
-        unsigned int k = getVS(0);
+        unsigned int k = getBranch(0);
         addB(getNode(0), k, +1.0);
         addB(getNode(1), k, -1.0);
         addC(k, getNode(0), 1.0), addC(k, getNode(1), -1.0);
@@ -71,7 +71,7 @@ namespace csimModel
 
     int Inductor::iterateAC(double omega)
     {
-        unsigned int k = getVS(0);
+        unsigned int k = getBranch(0);
         addB(getNode(0), k, +1.0);
         addB(getNode(1), k, -1.0);
 
@@ -93,12 +93,12 @@ namespace csimModel
     }
     int Inductor::iterateTR(double tTime)
     {
-        double I = getJ(getVS(0)).real();
+        double I = getJ(getBranch(0)).real();
         double req, Ueq;
 
         integrate(0, I, m_kZimag, &req, &Ueq);
 
-        unsigned int k = getVS(0);
+        unsigned int k = getBranch(0);
         addB(getNode(0), k, +1.0);
         addB(getNode(1), k, -1.0);
         addC(k, getNode(0), +1.0), addC(k, getNode(1), -1.0);

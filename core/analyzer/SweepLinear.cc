@@ -11,20 +11,26 @@
  *  Lesser General Public License for more details.                        
  */
 
-#ifndef CSIM_LINEARSOLVEROPTIMIZER_H_
-#define CSIM_LINEARSOLVEROPTIMIZER_H_
-
-#include "csim/model/Types.h"
+#include <cassert>
+#include <cmath>
+#include <algorithm>
+#include "csim/internal/SweepLinear.h"
 
 namespace csim
 {
-    class LinearSolverOptimizer
+    int SweepLinear::init(double start, double stop, int points)
     {
-    public:
-        virtual ~LinearSolverOptimizer(){};
-        virtual void reset() = 0;
-        virtual int singularDiag(csimModel::MComplex *A, unsigned curRow, unsigned int nRows) = 0;
-    };
+        m_start = start;
+        m_step = (stop - start) / (points - 1);
+        return 0;
+    }
+    double SweepLinear::next()
+    {
+        assert(hasNext());
+        return m_start + (m_point++ * m_step);
+    }
+    bool SweepLinear::hasNext()
+    {
+        return m_point <= m_numPoints;
+    }
 }
-
-#endif // CSIM_LINEARSOLVEROPTIMIZER_H_

@@ -33,11 +33,11 @@ namespace csimModel
         delete[] m_historyY;
     }
 
-    void ModelBase::resizeModel(unsigned int numTermls, unsigned int numInnerNodes, unsigned int numVS)
+    void ModelBase::resizeModel(unsigned int numTermls, unsigned int numInnerNodes, unsigned int numBranches)
     {
         m_termls.resize(numTermls);
         m_innerNodes.resize(numInnerNodes);
-        m_VS.resize(numVS);
+        m_branches.resize(numBranches);
     }
 
     int ModelBase::prepareOP()
@@ -51,16 +51,21 @@ namespace csimModel
 
     int ModelBase::prepareTrOP()
     {
-        return 0; /* Default case: no transient operating point analysis */
+        return prepareTR(); /* Default case: Transient operating point analysis == Transient analysis */
     }
     int ModelBase::iterateTrOP()
     {
-        return 0; /* Default case: no transient operating point analysis */
+        return iterateTR(0.0); /* Default case: Transient operating point analysis == Transient analysis */
     }
 
     int ModelBase::saveOP()
     {
         return 0; /* Default: not a non-linear device and no need to store operating point */
+    }
+
+    int ModelBase::loadTempature()
+    {
+        return 0;
     }
 
     void ModelBase::stepChangedTR(double tTime, double nstep)
@@ -95,6 +100,11 @@ namespace csimModel
         return m_props;
     }
 
+    void ModelBase::setName(const char *name)
+    {
+        m_name = name;
+    }
+
     unsigned int ModelBase::getNumTerml() const
     {
         return m_termls.size();
@@ -103,9 +113,9 @@ namespace csimModel
     {
         return m_innerNodes.size();
     }
-    unsigned int ModelBase::getNumVS() const
+    unsigned int ModelBase::getNumBranches() const
     {
-        return m_VS.size();
+        return m_branches.size();
     }
 
     void ModelBase::setNode(unsigned int terml, unsigned int node)
@@ -124,13 +134,13 @@ namespace csimModel
     {
         return m_innerNodes[index];
     }
-    void ModelBase::setVS(unsigned int idx, unsigned int branch)
+    void ModelBase::setBranch(unsigned int idx, unsigned int branch)
     {
-        m_VS[idx] = branch;
+        m_branches[idx] = branch;
     }
-    unsigned int ModelBase::getVS(unsigned int idx) const
+    unsigned int ModelBase::getBranch(unsigned int idx) const
     {
-        return m_VS[idx];
+        return m_branches[idx];
     }
 
     /* MNA matrices */
@@ -141,17 +151,17 @@ namespace csimModel
     }
     const MComplex &ModelBase::getB(unsigned int row, unsigned int col) const
     {
-        assert(row < m_circuit->netlist()->getNumNodes() && col < m_circuit->netlist()->getNumVS());
+        assert(row < m_circuit->netlist()->getNumNodes() && col < m_circuit->netlist()->getNumBranches());
         return m_circuit->getA(row, m_circuit->netlist()->getNumNodes() + col);
     }
     const MComplex &ModelBase::getC(unsigned int row, unsigned int col) const
     {
-        assert(row < m_circuit->netlist()->getNumVS() && col < m_circuit->netlist()->getNumNodes());
+        assert(row < m_circuit->netlist()->getNumBranches() && col < m_circuit->netlist()->getNumNodes());
         return m_circuit->getA(m_circuit->netlist()->getNumNodes() + row, col);
     }
     const MComplex &ModelBase::getD(unsigned int row, unsigned int col) const
     {
-        assert(row < m_circuit->netlist()->getNumVS() && col < m_circuit->netlist()->getNumVS());
+        assert(row < m_circuit->netlist()->getNumBranches() && col < m_circuit->netlist()->getNumBranches());
         return m_circuit->getA(m_circuit->netlist()->getNumNodes() + row, m_circuit->netlist()->getNumNodes() + col);
     }
     const MComplex &ModelBase::getI(unsigned int row) const
@@ -161,7 +171,7 @@ namespace csimModel
     }
     const MComplex &ModelBase::getE(unsigned int row) const
     {
-        assert(row < m_circuit->netlist()->getNumVS());
+        assert(row < m_circuit->netlist()->getNumBranches());
         return m_circuit->getZ(m_circuit->netlist()->getNumNodes() + row);
     }
     const MComplex &ModelBase::getU(unsigned int row) const
@@ -171,7 +181,7 @@ namespace csimModel
     }
     const MComplex &ModelBase::getJ(unsigned int row) const
     {
-        assert(row < m_circuit->netlist()->getNumVS());
+        assert(row < m_circuit->netlist()->getNumBranches());
         return m_circuit->getX(m_circuit->netlist()->getNumNodes() + row);
     }
     const MComplex &ModelBase::getPrevU(unsigned int row) const
@@ -181,7 +191,7 @@ namespace csimModel
     }
     const MComplex &ModelBase::getPrevJ(unsigned int row) const
     {
-        assert(row < m_circuit->netlist()->getNumVS());
+        assert(row < m_circuit->netlist()->getNumBranches());
         return m_circuit->getPrevX(m_circuit->netlist()->getNumNodes() + row);
     }
 
@@ -193,19 +203,19 @@ namespace csimModel
 
     double *ModelBase::getBPtr(unsigned int row, unsigned int col)
     {
-        assert(row < m_circuit->netlist()->getNumNodes() && col < m_circuit->netlist()->getNumVS());
+        assert(row < m_circuit->netlist()->getNumNodes() && col < m_circuit->netlist()->getNumBranches());
         return m_circuit->getAPtr(row, m_circuit->netlist()->getNumNodes() + col);
     }
 
     double *ModelBase::getCPtr(unsigned int row, unsigned int col)
     {
-        assert(row < m_circuit->netlist()->getNumVS() && col < m_circuit->netlist()->getNumNodes());
+        assert(row < m_circuit->netlist()->getNumBranches() && col < m_circuit->netlist()->getNumNodes());
         return m_circuit->getAPtr(m_circuit->netlist()->getNumNodes() + row, col);
     }
 
     double *ModelBase::getDPtr(unsigned int row, unsigned int col)
     {
-        assert(row < m_circuit->netlist()->getNumVS() && col < m_circuit->netlist()->getNumVS());
+        assert(row < m_circuit->netlist()->getNumBranches() && col < m_circuit->netlist()->getNumBranches());
         return m_circuit->getAPtr(m_circuit->netlist()->getNumNodes() + row, m_circuit->netlist()->getNumNodes() + col);
     }
 
@@ -217,7 +227,7 @@ namespace csimModel
 
     double *ModelBase::getEPtr(unsigned int row)
     {
-        assert(row < m_circuit->netlist()->getNumVS());
+        assert(row < m_circuit->netlist()->getNumBranches());
         return m_circuit->getZPtr(m_circuit->netlist()->getNumNodes() + row);
     }
 
@@ -229,7 +239,7 @@ namespace csimModel
 
     double *ModelBase::getJPtr(unsigned int row)
     {
-        assert(row < m_circuit->netlist()->getNumVS());
+        assert(row < m_circuit->netlist()->getNumBranches());
         return m_circuit->getXPtr(m_circuit->netlist()->getNumNodes() + row);
     }
 
@@ -240,17 +250,17 @@ namespace csimModel
     }
     void ModelBase::addB(unsigned int row, unsigned int col, const MComplex &delta)
     {
-        assert(row < m_circuit->netlist()->getNumNodes() && col < m_circuit->netlist()->getNumVS());
+        assert(row < m_circuit->netlist()->getNumNodes() && col < m_circuit->netlist()->getNumBranches());
         m_circuit->addA(row, m_circuit->netlist()->getNumNodes() + col, delta);
     }
     void ModelBase::addC(unsigned int row, unsigned int col, const MComplex &delta)
     {
-        assert(row < m_circuit->netlist()->getNumVS() && col < m_circuit->netlist()->getNumNodes());
+        assert(row < m_circuit->netlist()->getNumBranches() && col < m_circuit->netlist()->getNumNodes());
         m_circuit->addA(m_circuit->netlist()->getNumNodes() + row, col, delta);
     }
     void ModelBase::addD(unsigned int row, unsigned int col, const MComplex &delta)
     {
-        assert(row < m_circuit->netlist()->getNumVS() && col < m_circuit->netlist()->getNumVS());
+        assert(row < m_circuit->netlist()->getNumBranches() && col < m_circuit->netlist()->getNumBranches());
         m_circuit->addA(m_circuit->netlist()->getNumNodes() + row, m_circuit->netlist()->getNumNodes() + col, delta);
     }
     void ModelBase::addI(unsigned int row, const MComplex &delta)
@@ -260,7 +270,7 @@ namespace csimModel
     }
     void ModelBase::addE(unsigned int row, const MComplex &delta)
     {
-        assert(row < m_circuit->netlist()->getNumVS());
+        assert(row < m_circuit->netlist()->getNumBranches());
         m_circuit->addZ(m_circuit->netlist()->getNumNodes() + row, delta);
     }
 

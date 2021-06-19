@@ -66,6 +66,8 @@ namespace csim
         ASSERT_EQ(CERR_SUCCEEDED, ret);
         ret = circuit->netlist()->configComponent("V1", "Vp", csimModel::Variant(csimModel::Variant::VariantDouble).setDouble(1.0));
         ASSERT_EQ(CERR_SUCCEEDED, ret);
+        ret = circuit->netlist()->configComponent("V1", "freq", csimModel::Variant(csimModel::Variant::VariantDouble).setDouble(50.0));
+        ASSERT_EQ(CERR_SUCCEEDED, ret);
 
         /* Set netlist */
         ret = circuit->netlist()->prepare();
@@ -89,8 +91,8 @@ namespace csim
         const double fstart = 1.0 / (2 * M_PI * std::sqrt(L * C));
         analyzer->property().setProperty("fstart", csimModel::Variant(csimModel::Variant::VariantDouble).setDouble(fstart));
         analyzer->property().setProperty("fstop", csimModel::Variant(csimModel::Variant::VariantDouble).setDouble(800));
-        analyzer->property().setProperty("fstep", csimModel::Variant(csimModel::Variant::VariantDouble).setDouble(1.0));
-
+        analyzer->property().setProperty("fpoints", csimModel::Variant(csimModel::Variant::VariantUint32).setUint32(50));
+        
         unsigned int n_gnd, n1;
         ret = circuit->netlist()->getTermlNode("R1", 0, &n1);
         EXPECT_EQ(CERR_SUCCEEDED, ret);
@@ -103,7 +105,7 @@ namespace csim
         ret = analyzer->analyze(&dset);
         ASSERT_EQ(CERR_SUCCEEDED, ret);
 
-        /* Check solution vector of DC analyzer */
+        /* Check solution vector of AC analyzer */
         const Variable &F = dset.getIndependentVar("frequency");
         EXPECT_NEAR(F.at(0).real(), fstart, epsilon_linear);
         const Variable &Vgnd = dset.getDependentVar("voltage", analyzer->makeVarName("V", n_gnd));

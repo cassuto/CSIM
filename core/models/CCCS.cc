@@ -51,7 +51,7 @@ namespace csimModel
 
     int CCCS::iterateDC()
     {
-        unsigned int c = getVS(0);
+        unsigned int c = getBranch(0);
         addB(getNode(S_NODE), c, m_alpha);
         addB(getNode(T_NODE), c, -m_alpha);
         addB(getNode(P_NODE), c, 1.0);

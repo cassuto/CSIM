@@ -31,9 +31,10 @@ namespace csimModel
         };
         void addProperty(const char *entry, const Variant &def, const char *desc, uint32_t flags);
         void setProperty(const char *entry, const Variant &val);
-        const Variant &getProperty(const char *entry) const;
+        Variant &getProperty(const char *entry);
         bool hasProperty(const char *entry) const;
         bool propertyGiven(const char *entry) const;
+        bool missingRequired() const;
 
         /* Meta data iterator */
         void metaBegin();

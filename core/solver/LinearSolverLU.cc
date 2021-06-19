@@ -116,7 +116,7 @@ namespace csim
                 if (maxPivot <= 0.0)
                 {
                     if (optimizer())
-                        UPDATE_RC(optimizer()->singularRow(m_bufA, c, n));
+                        UPDATE_RC(optimizer()->singularDiag(m_bufA, c, n));
                     else
                         return CERR_SINGULAR_MATRIX;
                 }

@@ -11,20 +11,14 @@
  *  Lesser General Public License for more details.                        
  */
 
-#ifndef CSIM_LINEARSOLVEROPTIMIZER_H_
-#define CSIM_LINEARSOLVEROPTIMIZER_H_
-
-#include "csim/model/Types.h"
+#include <cassert>
+#include <cmath>
+#include "csim/internal/SweepOctave.h"
 
 namespace csim
 {
-    class LinearSolverOptimizer
+    int SweepOctave::init(double start, double stop, int points)
     {
-    public:
-        virtual ~LinearSolverOptimizer(){};
-        virtual void reset() = 0;
-        virtual int singularDiag(csimModel::MComplex *A, unsigned curRow, unsigned int nRows) = 0;
-    };
+        return SweepLogarithm::init(start, stop, int(((log10(stop) - log10(start)) / log10(8.0)) * points));
+    }
 }
-
-#endif // CSIM_LINEARSOLVEROPTIMIZER_H_

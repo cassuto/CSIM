@@ -32,5 +32,6 @@ static const char *CCCSLibrary = DLIB_PREFIX "csimModelCCCS" DLIB_SUFFIX;
 static const char *PNLibrary = DLIB_PREFIX "csimModelPN" DLIB_SUFFIX;
 static const char *CapacitorLibrary = DLIB_PREFIX "csimModelCapacitor" DLIB_SUFFIX;
 static const char *InductorLibrary = DLIB_PREFIX "csimModelInductor" DLIB_SUFFIX;
+static const char *BSIM3V32Library = DLIB_PREFIX "csimModelBSIM3V32" DLIB_SUFFIX;
 
 #endif // CONSTANTS_H_

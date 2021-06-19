@@ -30,7 +30,6 @@ namespace csim
         virtual int iterateMNA();
 
     private:
-        double m_currentPos;
         double m_currentOmega;
         bool m_analyzeOp;
     };

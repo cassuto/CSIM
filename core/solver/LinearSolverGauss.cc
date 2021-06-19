@@ -82,7 +82,7 @@ namespace csim
             if (maxcolumn <= 0.0)
             {
                 if (optimizer())
-                    UPDATE_RC(optimizer()->singularRow(m_bufA, i, n));
+                    UPDATE_RC(optimizer()->singularDiag(m_bufA, i, n));
                 else
                     return CERR_SINGULAR_MATRIX;
             }

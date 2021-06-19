@@ -60,6 +60,8 @@ namespace csim
             dcurrent[i]->addIndependVar(dtime);
         }
 
+        if (property().missingRequired())
+            return CERR_MSSING_PARAMETERS;
         double tstop = property().getProperty("tstop").getDouble();
         double tstep = property().getProperty("tstep").getDouble();
         circuit()->setTmaxStep(tstep);
@@ -74,10 +76,9 @@ namespace csim
 #if defined(ENABLE_SPICE_COMPATIBLE)
         UPDATE_RC(circuit()->spiceCompatible()->setFlagsTrOP());
 #endif
-        UPDATE_RC(circuit()->prepareMNA(this, Circuit::ANALYSIS_FLAG_NO_TIME_DOMAIN));
+        UPDATE_RC(circuit()->prepareMNA(this));
         UPDATE_RC(circuit()->solveMNA(this));
         m_analyzeTrOP = false;
-        saveDataset(dvolt, dcurrent, dtime, tTime, N, M);
 
         /*
          * Transient analysis
@@ -85,7 +86,7 @@ namespace csim
 #if defined(ENABLE_SPICE_COMPATIBLE)
         UPDATE_RC(circuit()->spiceCompatible()->setFlagsTR());
 #endif
-        UPDATE_RC(circuit()->prepareMNA(this, 0));
+        UPDATE_RC(circuit()->prepareMNA(this));
         do
         {
             UPDATE_RC(circuit()->stepIntegral(this));

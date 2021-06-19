@@ -15,4 +15,5 @@ include_directories(${CMAKE_CURRENT_BINARY_DIR})
 add_library(${PROJECT_NAME}
     ${CMAKE_CURRENT_BINARY_DIR}/errors-generated.h
     ${CMAKE_CURRENT_SOURCE_DIR}/errors.cc
+    ${CMAKE_CURRENT_SOURCE_DIR}/string.cc
 )

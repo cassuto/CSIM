@@ -22,6 +22,7 @@
 #include "csim/internal/Netlist.h"
 #include "csim/internal/Circuit.h"
 #include "csim/internal/Dataset.h"
+#include "csim/internal/Sweep.h"
 #include "AnalyzerAC.h"
 
 namespace csim
@@ -29,13 +30,13 @@ namespace csim
 
     AnalyzerAC::AnalyzerAC(Circuit *circuit)
         : AnalyzerBase(circuit),
-          m_currentPos(0.0),
           m_currentOmega(0.0),
           m_analyzeOp(false)
     {
         property().addProperty("fstart", csimModel::Variant(csimModel::Variant::VariantDouble).setDouble(50.0), "Start frequency", csimModel::PropertyBag::Required | csimModel::PropertyBag::Write | csimModel::PropertyBag::Read);
         property().addProperty("fstop", csimModel::Variant(csimModel::Variant::VariantDouble).setDouble(1000.0), "Stop frequency", csimModel::PropertyBag::Required | csimModel::PropertyBag::Write | csimModel::PropertyBag::Read);
-        property().addProperty("fstep", csimModel::Variant(csimModel::Variant::VariantDouble).setDouble(0.1), "Frequency step", csimModel::PropertyBag::Required | csimModel::PropertyBag::Write | csimModel::PropertyBag::Read);
+        property().addProperty("fpoints", csimModel::Variant(csimModel::Variant::VariantUint32).setUint32(0), "Data points", csimModel::PropertyBag::Required | csimModel::PropertyBag::Write | csimModel::PropertyBag::Read);
+        property().addProperty("fspace", csimModel::Variant(csimModel::Variant::VariantString).setString("lin"), "Numerical space of frequency", csimModel::PropertyBag::Write | csimModel::PropertyBag::Read);
     }
     AnalyzerAC::~AnalyzerAC()
     {
@@ -67,15 +68,12 @@ namespace csim
         /*
          * See the sweep range
          */
+        if (property().missingRequired())
+            return CERR_MSSING_PARAMETERS;
         double fstart = property().getProperty("fstart").getDouble();
         double fstop = property().getProperty("fstop").getDouble();
-        double fstep = property().getProperty("fstep").getDouble();
-
-        if (fstop < fstart)
-        {
-            return CERR_INVALD_RANGE;
-        }
-        unsigned int numSteps = std::max(1.0, (fstop - fstart) / fstep);
+        uint32_t fpoints = property().getProperty("fpoints").getUint32();
+        const char *fspace = property().getProperty("fspace").getString();
 
         UPDATE_RC(circuit()->initMNA());
 
@@ -86,7 +84,7 @@ namespace csim
 #if defined(ENABLE_SPICE_COMPATIBLE)
         UPDATE_RC(circuit()->spiceCompatible()->setFlagsOP());
 #endif
-        UPDATE_RC(circuit()->prepareMNA(this, Circuit::ANALYSIS_FLAG_NO_TIME_DOMAIN));
+        UPDATE_RC(circuit()->prepareMNA(this));
         UPDATE_RC(circuit()->solveMNA(this));
         UPDATE_RC(circuit()->saveOP());
         m_analyzeOp = false;
@@ -97,12 +95,18 @@ namespace csim
 #if defined(ENABLE_SPICE_COMPATIBLE)
         UPDATE_RC(circuit()->spiceCompatible()->setFlagsAC());
 #endif
-        UPDATE_RC(circuit()->prepareMNA(this, Circuit::ANALYSIS_FLAG_NO_TIME_DOMAIN));
+        UPDATE_RC(circuit()->prepareMNA(this));
 
-        for (unsigned int i = 0; i < numSteps; ++i)
+        Sweep *sweep = Sweep::createInstance(fspace);
+        if (!sweep)
+            return CERR_INVALID_PARAMETER;
+
+        UPDATE_RC(sweep->init(fstart, fstop, fpoints));
+
+        while (sweep->hasNext())
         {
-            m_currentPos = fstart + fstep * i;
-            m_currentOmega = 2 * M_PI * m_currentPos;
+            double f = sweep->next();
+            m_currentOmega = 2 * M_PI * f;
 
             UPDATE_RC(circuit()->solveMNA(this));
 
@@ -116,7 +120,7 @@ namespace csim
                 dcurrent[i]->addValue(circuit()->getBranchCurrent(getInterestBranch(i)));
             }
 
-            dfreq.addValue(m_currentPos);
+            dfreq.addValue(f);
         }
         return 0;
     }

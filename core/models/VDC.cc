@@ -53,7 +53,7 @@ namespace csimModel
     {
         double V = property().getProperty("V").getDouble();
 
-        unsigned int k = getVS(0);
+        unsigned int k = getBranch(0);
         addB(getNode(0), k, +1.0);
         addB(getNode(1), k, -1.0);
         addC(k, getNode(0), 1.0), addC(k, getNode(1), -1.0);
@@ -63,7 +63,7 @@ namespace csimModel
 
     int VDC::iterateAC(double omega)
     {
-        unsigned int k = getVS(0);
+        unsigned int k = getBranch(0);
         addB(getNode(0), k, +1.0);
         addB(getNode(1), k, -1.0);
         addC(k, getNode(0), 1.0), addC(k, getNode(1), -1.0);

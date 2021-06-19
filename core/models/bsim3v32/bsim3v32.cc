@@ -382,7 +382,6 @@ namespace csimModel
         resizeIntegrator(BSIM3v32numStates);
         if (!model)
             return CERR_NO_MDL;
-        model->setTemp(this, getEnvironment());
         return 0;
     }
     int BSIM3V32::prepareOP()
@@ -445,6 +444,13 @@ namespace csimModel
     int BSIM3V32::saveOP()
     {
         return stampDCTran(getEnvironment());
+    }
+
+    int BSIM3V32::loadTempature()
+    {
+        if (!model)
+            return CERR_NO_MDL;
+        return model->setTemp(this, getEnvironment());
     }
 
     void BSIM3V32::adaptStep(double *step)

@@ -62,6 +62,12 @@
 #define CERR_NON_CONVERGENCE (-18)
 /** Implemented */
 #define CERR_UNIMPLEMENTED (-19)
+/** Invalid source name */
+#define CERR_INVALID_SRCNAME (-20)
+/** Invalid space of sweep variable */
+#define CERR_INVALID_SWEEP_SPACE (-21)
+/** Missing required parameters */
+#define CERR_MSSING_PARAMETERS (-22)
 
 /** Unknown */
 #define CERR_UNKNOWN (-65536)

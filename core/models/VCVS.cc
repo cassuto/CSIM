@@ -52,7 +52,7 @@ namespace csimModel
 
     int VCVS::iterateDC()
     {
-        unsigned int k = getVS(0);
+        unsigned int k = getBranch(0);
         addB(getNode(S_NODE), k, +1.0);
         addB(getNode(T_NODE), k, -1.0);
         addC(k, getNode(S_NODE), 1.0), addC(k, getNode(T_NODE), -1.0);

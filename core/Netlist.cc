@@ -18,6 +18,7 @@
 #include <algorithm>
 #include <cassert>
 #include "csim/utils/errors.h"
+#include "csim/utils/string.h"
 #include "csim/model/ModelBase.h"
 #include "csim/internal/ModelLoader.h"
 #include "csim/internal/Netlist.h"
@@ -26,7 +27,7 @@ namespace csim
 {
     Netlist::Netlist(Circuit *circuit)
         : m_numNodes(0),
-          m_numVS(0),
+          m_numBranches(0),
           m_numTermls(0),
           m_circuit(circuit),
           m_hasGround(false)
@@ -46,24 +47,41 @@ namespace csim
      */
     int Netlist::addComponent(const char *ref, const ModelEntry *modelEnt)
     {
-        if (m_modelIndex.find(ref) != m_modelIndex.end())
+        std::string refNorm = toUpper(ref);
+        if (m_modelIndex.find(refNorm) != m_modelIndex.end())
             return CERR_DUP_COMPONENT_REFERENCE;
 
         csimModel::ModelBase *model = modelEnt->createInstance(m_circuit);
         ModelInfo mif;
         mif.entry = modelEnt;
         mif.model = model;
+        model->setName(refNorm.c_str());
         m_models.push_back(mif);
-        m_modelIndex[ref] = m_models.size() - 1;
+        m_modelIndex[refNorm] = m_models.size() - 1;
         return 0;
+    }
+
+    /**
+     * @brief Get the instance of a component by its name.
+     * @param ref Name of the instance
+     * @retval NULL if no such instance
+     * @retval Pointer to the component instance
+     */
+    csimModel::ModelBase *Netlist::getComponent(const char *ref)
+    {
+        std::string refNorm = toUpper(ref);
+        if (m_modelIndex.find(refNorm) == m_modelIndex.end())
+            return 0l;
+        return m_models[m_modelIndex.at(refNorm)].model;
     }
 
     int Netlist::configComponent(const char *ref, const char *property, const csimModel::Variant &value)
     {
-        if (m_modelIndex.find(ref) == m_modelIndex.end())
+        std::string refNorm = toUpper(ref);
+        if (m_modelIndex.find(refNorm) == m_modelIndex.end())
             return CER_NO_SUCH_COMPONENT_REFERENCE;
 
-        auto &mif = m_models[m_modelIndex.at(ref)];
+        auto &mif = m_models[m_modelIndex.at(refNorm)];
         csimModel::PropertyBag &props = mif.model->property();
 
         if (props.hasProperty(property))
@@ -76,10 +94,11 @@ namespace csim
 
     int Netlist::getTermlNode(const char *ref, unsigned int terml, unsigned int *out)
     {
+        std::string refNorm = toUpper(ref);
         *out = (unsigned int)-1;
-        if (m_modelIndex.find(ref) == m_modelIndex.end())
+        if (m_modelIndex.find(refNorm) == m_modelIndex.end())
             return CER_NO_SUCH_COMPONENT_REFERENCE;
-        auto &mif = m_models[m_modelIndex.at(ref)];
+        auto &mif = m_models[m_modelIndex.at(refNorm)];
         if (terml >= mif.model->getNumTerml())
             return CERR_INVALID_TERML_INDEX;
         *out = mif.model->getNode(terml);
@@ -94,7 +113,7 @@ namespace csim
         }
         m_modelIndex.clear();
         m_models.clear();
-        m_numNodes = m_numVS = m_numTermls = 0;
+        m_numNodes = m_numBranches = m_numTermls = 0;
         m_ufset.clear();
         m_hasGround = false;
     }
@@ -103,13 +122,15 @@ namespace csim
     {
         for (auto &mif : m_models)
         {
+            if (mif.model->property().missingRequired())
+                return CERR_MSSING_PARAMETERS;
             UPDATE_RC(mif.model->configure());
         }
 
-        m_numNodes = m_numVS = m_numTermls = 0;
+        m_numNodes = m_numBranches = m_numTermls = 0;
         for (auto &minf : m_models)
         {
-            m_numVS += minf.model->getNumVS();
+            m_numBranches += minf.model->getNumBranches();
             minf.termlIndexOffset = m_numTermls; /* Allocate global index of terminals */
             m_numTermls += minf.model->getNumTerml();
         }
@@ -148,9 +169,10 @@ namespace csim
 
     int Netlist::ground(const char *ref, unsigned int terml)
     {
-        if (m_modelIndex.find(ref) == m_modelIndex.end())
+        std::string refNorm = toUpper(ref);
+        if (m_modelIndex.find(refNorm) == m_modelIndex.end())
             return CER_NO_SUCH_COMPONENT_REFERENCE;
-        const ModelInfo &mif = m_models[m_modelIndex.at(ref)];
+        const ModelInfo &mif = m_models[m_modelIndex.at(refNorm)];
         if (terml >= mif.model->getNumTerml())
             return CERR_INVALID_TERML_INDEX;
 
@@ -202,13 +224,13 @@ namespace csim
         unsigned int vsIndex = 0;
         for (auto &mif : m_models)
         {
-            for (unsigned int i = 0; i < mif.model->getNumVS(); ++i)
+            for (unsigned int i = 0; i < mif.model->getNumBranches(); ++i)
             {
-                mif.model->setVS(i, vsIndex);
+                mif.model->setBranch(i, vsIndex);
                 vsIndex++;
             }
         }
-        assert(vsIndex == m_numVS);
+        assert(vsIndex == m_numBranches);
 
         /* Assign the index to the node of each terminal */
         for (auto &mif : m_models)

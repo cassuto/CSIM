@@ -1744,6 +1744,7 @@ namespace csimModel
         virtual int iterateAC(double omega);
         virtual int iterateTR(double tTime);
         virtual int saveOP();
+        virtual int loadTempature();
         virtual void adaptStep(double *step);
         virtual bool checkConvergence();
         virtual Variant queryStatus(unsigned int id, int *rc);

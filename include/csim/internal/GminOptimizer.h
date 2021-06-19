@@ -11,8 +11,8 @@
  *  Lesser General Public License for more details.                        
  */
 
-#ifndef CSIM_MNAOPTIMIZER_H_
-#define CSIM_MNAOPTIMIZER_H_
+#ifndef CSIM_GMINOPTIMIZER_H_
+#define CSIM_GMINOPTIMIZER_H_
 
 #include "csim/model/Types.h"
 #include "csim/internal/LinearSolverOptimizer.h"
@@ -20,12 +20,12 @@
 namespace csim
 {
     class Netlist;
-    class MNAOptimizer : public LinearSolverOptimizer
+    class GminOptimizer : public LinearSolverOptimizer
     {
     public:
-        MNAOptimizer(Netlist *netlist);
+        GminOptimizer(Netlist *netlist);
         void reset();
-        int singularRow(csimModel::MComplex *A, unsigned curRow, unsigned int nRows);
+        int singularDiag(csimModel::MComplex *A, unsigned curRow, unsigned int nRows);
 
         inline void enableGmin(bool enabled)
         {
@@ -48,4 +48,4 @@ namespace csim
     };
 }
 
-#endif // CSIM_LINEARSOLVEROPTIMIZER_H_
+#endif // CSIM_GMINOPTIMIZER_H_

@@ -23,7 +23,7 @@
 #include "csim/model/ModelBase.h"
 #include "csim/model/Environment.h"
 #include "csim/internal/LinearSolver.h"
-#include "csim/internal/MNAOptimizer.h"
+#include "csim/internal/GminOptimizer.h"
 #include "csim/internal/Netlist.h"
 #include "csim/internal/Analyzers.h"
 #include "csim/internal/IntegralPredictor.h"
@@ -51,9 +51,9 @@ namespace csim
     {
         m_environment = new csimModel::Environment(this);
         m_netlist = new Netlist(this);
-        m_MNAOptimizer = new MNAOptimizer(m_netlist);
-        m_MNAOptimizer->enableGmin(true);
-        m_linearSolver->setOptimizer(m_MNAOptimizer);
+        m_GminOptimizer = new GminOptimizer(m_netlist);
+        m_GminOptimizer->enableGmin(true);
+        m_linearSolver->setOptimizer(m_GminOptimizer);
 #if defined(ENABLE_SPICE_COMPATIBLE)
         m_spiceCompatible = new csimModel::SPICE_Compatible();
 #endif
@@ -69,7 +69,7 @@ namespace csim
         delete[] m_x_1;
         delete[] m_z;
         delete[] m_z_1;
-        delete m_MNAOptimizer;
+        delete m_GminOptimizer;
         delete m_linearSolver;
         delete m_netlist;
         delete m_predictor;
@@ -83,13 +83,13 @@ namespace csim
     /**
      * @brief Create matrices
      * @param numNodes The number of nodes.
-     * @param numVS The number of voltage sources, 0 if none.
+     * @param numBranch The number of current branches, 0 if none.
      */
-    void Circuit::createMatrix(unsigned int numNodes, unsigned int numVS)
+    void Circuit::createMatrix(unsigned int numNodes, unsigned int numBranch)
     {
         assert(numNodes > 0);
 
-        m_matrixRows = (numNodes + numVS);
+        m_matrixRows = (numNodes + numBranch);
 
         delete[] m_A;
         delete[] m_x;
@@ -105,23 +105,22 @@ namespace csim
 
     int Circuit::initMNA()
     {
-        createMatrix(m_netlist->getNumNodes(), m_netlist->getNumVS());
+        createMatrix(m_netlist->getNumNodes(), m_netlist->getNumBranches());
 #if defined(ENABLE_STAT)
         resetStat();
 #endif
         return 0;
     }
 
-    int Circuit::prepareMNA(AnalyzerBase *analyzer, uint32_t flags)
+    int Circuit::prepareMNA(AnalyzerBase *analyzer)
     {
-        m_MNAOptimizer->setGmin(m_environment->m_Gmin);
-        m_MNAOptimizer->reset();
+        m_GminOptimizer->setGmin(m_environment->m_Gmin);
+        m_GminOptimizer->reset();
         m_tTime = 0.0;
         m_hsteps->setInitial(m_tMinStep); /* initial step */
         UPDATE_RC(m_predictor->setOrder(m_tOrder, m_hsteps));
         UPDATE_RC(m_corrector->setOrder(m_tOrder, m_hsteps));
         m_firstIntegralStep = true;
-        m_corrector->setEnabled(!(flags & ANALYSIS_FLAG_NO_TIME_DOMAIN));
 
         /* Phase 1: Clear integral nodes and branches. */
         m_setIntegralU.clear(); /* for duplicate removal */
@@ -149,6 +148,8 @@ namespace csim
         {
             m_hPredictorX[k].set(0, m_x[k].real());
         }
+
+        loadTempature(m_environment->getNormTemp());
         return 0;
     }
 
@@ -227,7 +228,7 @@ namespace csim
         }
 
         unsigned int lowerb = m_netlist->getNumNodes();
-        unsigned int upperb = m_netlist->getNumNodes() + m_netlist->getNumVS();
+        unsigned int upperb = m_netlist->getNumNodes() + m_netlist->getNumBranches();
         for (unsigned int i = lowerb; i < upperb; i++)
         {
             double maxX = std::max(std::abs(m_x[i]), std::abs(m_x_1[i]));
@@ -271,12 +272,20 @@ namespace csim
         return 0;
     }
 
+    int Circuit::loadTempature(double temp)
+    {
+        m_environment->setTemp(temp);
+        for (auto &mif : m_netlist->models())
+        {
+            UPDATE_RC(mif.model->loadTempature());
+        }
+        return 0;
+    }
+
     int Circuit::stepIntegral(AnalyzerBase *analyzer)
     {
         double nstep = m_hsteps->get(0);
         bool stepChanged = false;
-
-        assert(m_corrector->getEnabled());
 
         for (;;)
         {

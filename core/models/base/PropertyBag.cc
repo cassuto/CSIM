@@ -39,7 +39,7 @@ namespace csimModel
         m_props[entry].given = true;
     }
 
-    const Variant &PropertyBag::getProperty(const char *entry) const
+    Variant &PropertyBag::getProperty(const char *entry)
     {
         assert(hasProperty(entry));
         return m_props.at(entry).value;
@@ -54,6 +54,16 @@ namespace csimModel
     {
         assert(m_props.find(entry) != m_props.end());
         return m_props.at(entry).given;
+    }
+
+    bool PropertyBag::missingRequired() const
+    {
+        for (std::map<std::string, Entry>::const_iterator it = m_props.begin(); it != m_props.end(); it++)
+        {
+            if ((it->second.flags & Required) && !it->second.given)
+                return true;
+        }
+        return false;
     }
 
     /**

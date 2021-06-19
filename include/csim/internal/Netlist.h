@@ -37,6 +37,7 @@ namespace csim
         ~Netlist();
 
         int addComponent(const char *ref, const ModelEntry *modelEnt);
+        csimModel::ModelBase *getComponent(const char *ref);
         int configComponent(const char *ref, const char *property, const csimModel::Variant &value);
         int getTermlNode(const char *ref, unsigned int terml, unsigned int *out);
         void clear();
@@ -52,9 +53,9 @@ namespace csim
         {
             return m_numNodes;
         }
-        inline unsigned int getNumVS() const
+        inline unsigned int getNumBranches() const
         {
-            return m_numVS;
+            return m_numBranches;
         }
 
         class ModelInfo
@@ -78,7 +79,7 @@ namespace csim
         void ufsetMerge(unsigned int x, unsigned int y);
 
     private:
-        unsigned int m_numNodes, m_numVS, m_numTermls;
+        unsigned int m_numNodes, m_numBranches, m_numTermls;
         Circuit *m_circuit;
         std::map<std::string, unsigned int> m_modelIndex;
         std::vector<ModelInfo> m_models;

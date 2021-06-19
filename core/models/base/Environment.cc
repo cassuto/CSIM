@@ -117,6 +117,11 @@ namespace csimModel
         return m_enableModelBypass;
     }
 
+    void Environment::setTemp(double temp)
+    {
+        m_temperature = temp;
+    }
+
     const char *Environment::getLevelMsg(LogLevel level) const
     {
         switch (level)

@@ -51,6 +51,7 @@ namespace csimModel
         virtual int iterateAC(double omega) = 0;
         virtual int iterateTR(double tTime) = 0;
         virtual int saveOP();
+        virtual int loadTempature();
         virtual void stepChangedTR(double tTime, double nstep);
         virtual void adaptStep(double *step);
         virtual bool checkConvergence();
@@ -60,15 +61,16 @@ namespace csimModel
 
     public:
         PropertyBag &property();
+        void setName(const char *name);
         unsigned int getNumTerml() const;
         unsigned int getNumInnerNode() const;
-        unsigned int getNumVS() const;
+        unsigned int getNumBranches() const;
         void setNode(unsigned int terml, unsigned int node);
         unsigned int getNode(unsigned int terml) const;
         void setInnerNode(unsigned int index, unsigned int node);
         unsigned int getInnerNode(unsigned int index) const;
-        void setVS(unsigned int idx, unsigned int branch);
-        unsigned int getVS(unsigned int idx) const;
+        void setBranch(unsigned int idx, unsigned int branch);
+        unsigned int getBranch(unsigned int idx) const;
 
         /* MNA matrices */
         const MComplex &getY(unsigned int row, unsigned int col) const;
@@ -96,7 +98,7 @@ namespace csimModel
         csim::IntegralHistory *getIntegratorY(unsigned int nint);
 
     protected:
-        void resizeModel(unsigned int numTermls, unsigned int numInnerNodes, unsigned int numVS);
+        void resizeModel(unsigned int numTermls, unsigned int numInnerNodes, unsigned int numBranches);
         void resizeIntegrator(unsigned int numIntegrators);
         void registerIntegralU(unsigned int col);
         void registerIntegralJ(unsigned int col);
@@ -134,7 +136,7 @@ namespace csimModel
         PropertyBag m_props;
         std::vector<unsigned int> m_termls;
         std::vector<unsigned int> m_innerNodes;
-        std::vector<unsigned int> m_VS;
+        std::vector<unsigned int> m_branches;
         csim::IntegralHistory *m_historyX, *m_historyY;
         unsigned int m_numIntegrators;
         std::string m_name;

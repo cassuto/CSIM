@@ -37,106 +37,96 @@ UNIT ([vV]|[aA]|[oO][hH][mM]|[mM][hH][oO]|[sS]|[fF]|[hH])
 NUMBER ({SIGNED}|{F_INT_EXP}|{F_INT_SML_EXP}|{F_INT_PT}){SCALE}?{UNIT}?
 IDENTIFIER [A-Za-z][A-Za-z0-9_]*
 
-/* Actions */
-%x STARTUP
-
 %%
 
  /* Algebraic expression */
-<INITIAL>"'" {
-    BEGIN(STARTUP);
-    return K_ExprBegin;
-}
-<STARTUP>"-" {
+"-" {
     return K_ExprMinus;
 }
-<STARTUP>"!" {
+"!" {
     return K_ExprNot;
 }
-<STARTUP>"**"|"^" {
+"**"|"^" {
     return K_ExprPow;
 }
-<STARTUP>"*" {
+"*" {
     return K_ExprMul;
 }
-<STARTUP>"/" {
+"/" {
     return K_ExprDiv;
 }
-<STARTUP>"%" {
+"%" {
     return K_ExprMod;
 }
-<STARTUP>"\\" {
+"\\" {
     return K_ExprIntDiv;
 }
-<STARTUP>"+" {
+"+" {
     return K_ExprPlus;
 }
-<STARTUP>"==" {
+"==" {
     return K_ExprEq;
 }
-<STARTUP>"!="|"<>" {
+"!="|"<>" {
     return K_ExprNe;
 }
-<STARTUP>"<=" {
+"<=" {
     return K_ExprLe;
 }
-<STARTUP>">=" {
+">=" {
     return K_ExprGe;
 }
-<STARTUP>"<" {
+"<" {
     return K_ExprLt;
 }
-<STARTUP>">" {
+">" {
     return K_ExprGt;
 }
-<STARTUP>"&&" {
+"&&" {
     return K_ExprAnd;
 }
-<STARTUP>"||" {
+"||" {
     return K_ExprOr;
 }
-<STARTUP>"?" {
+"?" {
     return K_ExprSel;
 }
-<STARTUP>":" {
+":" {
     return K_ExprColon;
 }
-<STARTUP>"(" {
+"(" {
     return K_ExprLPar;
 }
-<STARTUP>")" {
+")" {
     return K_ExprRPar;
 }
-<STARTUP>"," {
+"," {
     return K_ExprComma;
 }
 
  /* Text of unsigned digits  */
-<STARTUP>{DIGIT}+ {
+{DIGIT}+ {
     algebraic_lval.text = strdup (algebraic_text);
     return K_Unsigned;
 }
 
  /* Signed integers or floats */
-<STARTUP>{NUMBER} {
+{NUMBER} {
     algebraic_lval.text = strdup (algebraic_text);
     return K_Number;
 }
 
  /* Identifiers */
-<STARTUP>{IDENTIFIER}+ {
+{IDENTIFIER}+ {
     algebraic_lval.text = strdup (algebraic_text);
     return K_ExprId;
 }
 
-<STARTUP>{SPACE}+ {
+{SPACE}+ {
     /* ignore spaces */
 }
 
-<STARTUP>"'" {
-    BEGIN(STARTUP);
-    return K_ExprEnd;
-}
+<*>. { /* skip any other chars */ }
 
 
 %%

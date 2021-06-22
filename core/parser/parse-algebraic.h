@@ -48,30 +48,28 @@ extern int algebraic_debug;
     K_Text = 258,
     K_Unsigned = 259,
     K_Number = 260,
-    K_ExprBegin = 261,
-    K_ExprEnd = 262,
-    K_ExprNot = 263,
-    K_ExprPow = 264,
-    K_ExprMul = 265,
-    K_ExprMod = 266,
-    K_ExprDiv = 267,
-    K_ExprIntDiv = 268,
-    K_ExprPlus = 269,
-    K_ExprMinus = 270,
-    K_ExprEq = 271,
-    K_ExprNe = 272,
-    K_ExprLe = 273,
-    K_ExprGe = 274,
-    K_ExprLt = 275,
-    K_ExprGt = 276,
-    K_ExprAnd = 277,
-    K_ExprOr = 278,
-    K_ExprSel = 279,
-    K_ExprColon = 280,
-    K_ExprLPar = 281,
-    K_ExprRPar = 282,
-    K_ExprId = 283,
-    K_ExprComma = 284
+    K_ExprNot = 261,
+    K_ExprPow = 262,
+    K_ExprMul = 263,
+    K_ExprMod = 264,
+    K_ExprDiv = 265,
+    K_ExprIntDiv = 266,
+    K_ExprPlus = 267,
+    K_ExprMinus = 268,
+    K_ExprEq = 269,
+    K_ExprNe = 270,
+    K_ExprLe = 271,
+    K_ExprGe = 272,
+    K_ExprLt = 273,
+    K_ExprGt = 274,
+    K_ExprAnd = 275,
+    K_ExprOr = 276,
+    K_ExprSel = 277,
+    K_ExprColon = 278,
+    K_ExprLPar = 279,
+    K_ExprRPar = 280,
+    K_ExprId = 281,
+    K_ExprComma = 282
   };
 #endif
 
@@ -85,7 +83,7 @@ union YYSTYPE
     char *text;
     double real;
 
-#line 89 "/cygdrive/e/FastCSIM/core/parser/parse-algebraic.h" /* yacc.c:1909  */
+#line 87 "/cygdrive/e/FastCSIM/core/parser/parse-algebraic.h" /* yacc.c:1909  */
 };
 
 typedef union YYSTYPE YYSTYPE;

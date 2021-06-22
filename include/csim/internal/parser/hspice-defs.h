@@ -24,7 +24,7 @@ namespace csim
     class HSPICE_KeyValueList
     {
     public:
-        std::vector<std::pair<std::string, csimModel::Variant>> kvs;
+        std::vector<std::pair<std::string, csimModel::Variant>> kvs; /* Algebraic object is deleted by ~HSPICE_Block() */
     };
 
     class HSPICE_Model
@@ -46,7 +46,7 @@ namespace csim
     };
 
     class HSPICE_SubBlock;
-    class HSPICE_Block
+    class HSPICE_Block : public AlgebraicScope
     {
     public:
         ~HSPICE_Block();
@@ -96,6 +96,7 @@ namespace csim
     };
 
     extern HSPICE_AST *hspice_ast;
+    extern bool hspice_err;
 
     csimModel::Variant hspice_parseReal(const char *str);
 }

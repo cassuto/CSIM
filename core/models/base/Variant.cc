@@ -46,9 +46,9 @@ namespace csimModel
         case VariantDouble:
         case VariantBoolean:
         case VariantPropertyModel:
+        case VariantAlgebraic:
             m_dat = src.m_dat;
             break;
-        case VariantAlgebraic:
         case VariantString:
             m_str = src.m_str;
             break;
@@ -138,10 +138,10 @@ namespace csimModel
         m_dat.mdl = mdl;
         return (*this);
     }
-    Variant &Variant::setAlgebraic(const char *expr)
+    Variant &Variant::setAlgebraic(csim::Algebraic *alg)
     {
         assert(m_type == VariantAlgebraic);
-        m_str = expr;
+        m_dat.alg = alg;
         return (*this);
     }
 
@@ -208,10 +208,10 @@ namespace csimModel
         assert(m_type == VariantPropertyModel);
         return m_dat.mdl;
     }
-    const char *Variant::getAlgebraic() const
+    csim::Algebraic *Variant::getAlgebraic() const
     {
         assert(m_type == VariantAlgebraic);
-        return m_str.c_str();
+        return m_dat.alg;
     }
 
 }

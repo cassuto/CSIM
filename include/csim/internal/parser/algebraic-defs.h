@@ -18,17 +18,36 @@
 
 namespace csim
 {
+    class Algebraic;
     class AlgebraicScope
     {
     public:
+        AlgebraicScope();
+        ~AlgebraicScope();
         AlgebraicScope(AlgebraicScope *parent);
 
         int getValue(const char *identifier, double *out);
         void addParam(const char *identifier, double value);
+        void addParam(const char *identifier, Algebraic *alg);
+
+        inline void setParent(AlgebraicScope *parent)
+        {
+            m_parent = parent;
+        }
 
     private:
+        class ParamEntry
+        {
+        public:
+            bool unsolved;
+            union
+            {
+                double real;
+                Algebraic *alg;
+            } u;
+        };
         AlgebraicScope *m_parent;
-        std::map<std::string, double> m_params;
+        std::map<std::string, ParamEntry> m_params;
     };
 
     class Algebraic
@@ -49,6 +68,7 @@ namespace csim
 
     extern AlgebraicScope *algebraic_currentScope;
     extern double algebraic_result;
+    extern bool algebraic_err;
 }
 
 extern void algebraic_restart(FILE *input_file);

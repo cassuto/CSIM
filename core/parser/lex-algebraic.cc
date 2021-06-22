@@ -630,8 +630,8 @@ static void yynoreturn yy_fatal_error ( const char* msg  );
 	(yy_hold_char) = *yy_cp; \
 	*yy_cp = '\0'; \
 	(yy_c_buf_p) = yy_cp;
-#define YY_NUM_RULES 28
-#define YY_END_OF_BUFFER 29
+#define YY_NUM_RULES 27
+#define YY_END_OF_BUFFER 28
 /* This struct is not used in this scanner,
    but its presence is necessary. */
 struct yy_trans_info
@@ -639,23 +639,22 @@ struct yy_trans_info
 	flex_int32_t yy_verify;
 	flex_int32_t yy_nxt;
 	};
-static const flex_int16_t yy_accept[63] =
+static const flex_int16_t yy_accept[60] =
     {   0,
-        0,    0,    0,    0,   29,   28,    1,   26,    3,    7,
-       28,   27,   20,   21,    5,    9,   22,    2,   28,    6,
-       23,   19,   14,   28,   15,   18,   25,    8,    4,   28,
-       26,   11,   16,    4,    0,   24,   24,   24,   23,   24,
-        0,   24,   24,    0,   12,   10,   13,   25,   25,   17,
-        0,    0,   24,    0,    0,   24,    0,    0,    0,   24,
-        0,    0
+        0,    0,   28,   26,   25,   27,    2,    6,   26,   19,
+       20,    4,    8,   21,    1,   26,    5,   22,   18,   13,
+       26,   14,   17,   24,    7,    3,   26,   25,   10,   15,
+        3,    0,   23,   23,   23,   22,   23,    0,   23,   23,
+        0,   11,    9,   12,   24,   24,   16,    0,    0,   23,
+        0,    0,   23,    0,    0,    0,   23,    0,    0
     } ;
 
 static const YY_CHAR yy_ec[256] =
     {   0,
-        1,    1,    1,    1,    1,    1,    1,    1,    2,    1,
+        1,    1,    1,    1,    1,    1,    1,    1,    2,    3,
         2,    2,    1,    1,    1,    1,    1,    1,    1,    1,
         1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
-        1,    2,    3,    1,    1,    1,    4,    5,    6,    7,
+        1,    2,    4,    1,    1,    1,    5,    6,    1,    7,
         8,    9,   10,   11,   12,   13,   14,   15,   15,   15,
        15,   15,   15,   15,   15,   15,   15,   16,    1,   17,
        18,   19,   20,    1,   21,   22,   22,   22,   23,   24,
@@ -691,77 +690,73 @@ static const YY_CHAR yy_meta[42] =
         1
     } ;
 
-static const flex_int16_t yy_base[65] =
+static const flex_int16_t yy_base[61] =
     {   0,
-      113,  112,    0,    0,  117,  120,  120,  114,   97,  120,
-      109,  120,  120,  120,  104,   29,  120,   30,   97,  120,
-       33,  120,   31,   93,   92,  120,   32,  120,  120,   65,
-      103,  120,  120,  120,   89,   88,   58,   79,    0,  120,
-       64,   61,   57,   75,  120,  120,  120,   37,   38,  120,
-       82,   85,   73,   64,   64,   54,   46,   32,   45,   84,
-       23,  120,  107,   49
+        0,    0,  115,  116,  112,  116,   95,  116,  106,  116,
+      116,  102,   29,  116,   30,   95,  116,   33,  116,   31,
+       91,   90,  116,   32,  116,  116,   65,  103,  116,  116,
+      116,   89,   88,   58,   79,    0,  116,   64,   61,   57,
+       75,  116,  116,  116,   37,   38,  116,   82,   85,   73,
+       64,   64,   54,   46,   32,   45,   84,   23,  116,   49
     } ;
 
-static const flex_int16_t yy_def[65] =
+static const flex_int16_t yy_def[61] =
     {   0,
-       63,   63,   62,    3,   62,   62,   62,   62,   62,   62,
-       62,   62,   62,   62,   62,   62,   62,   62,   62,   62,
-       62,   62,   62,   62,   62,   62,   64,   62,   62,   62,
-       62,   62,   62,   62,   62,   21,   21,   37,   21,   62,
-       62,   62,   42,   62,   62,   62,   62,   64,   64,   62,
-       62,   62,   37,   62,   62,   62,   62,   62,   62,   37,
-       62,    0,   62,   62
+       59,    1,   59,   59,   59,   59,   59,   59,   59,   59,
+       59,   59,   59,   59,   59,   59,   59,   59,   59,   59,
+       59,   59,   59,   60,   59,   59,   59,   59,   59,   59,
+       59,   59,   18,   18,   34,   18,   59,   59,   59,   39,
+       59,   59,   59,   59,   60,   60,   59,   59,   59,   34,
+       59,   59,   59,   59,   59,   59,   34,   59,    0,   59
     } ;
 
-static const flex_int16_t yy_nxt[162] =
+static const flex_int16_t yy_nxt[158] =
     {   0,
-        6,    8,    9,   10,   11,   12,   13,   14,   15,   16,
-       17,   18,   19,   20,   21,   22,   23,   24,   25,   26,
-       27,   27,   27,   27,   27,   27,   27,   27,   27,   27,
-       27,   27,   27,   27,   27,   27,   27,   28,   29,    6,
-       30,   35,   35,   36,   36,   38,   48,   39,   45,   32,
-       49,   48,   48,   40,   40,   41,   42,   42,   40,   60,
-       42,   40,   43,   42,   44,   42,   40,   42,   42,   40,
-       62,   48,   37,   52,   42,   52,   48,   48,   53,   55,
-       51,   40,   56,   57,   40,   40,   40,   53,   42,   61,
-       54,   59,   44,   59,   40,   62,   60,   40,   60,   53,
+        4,    5,    6,    7,    8,    9,   10,   11,   12,   13,
+       14,   15,   16,   17,   18,   19,   20,   21,   22,   23,
+       24,   24,   24,   24,   24,   24,   24,   24,   24,   24,
+       24,   24,   24,   24,   24,   24,   24,   25,   26,    4,
+       27,   32,   32,   33,   33,   35,   45,   36,   42,   29,
+       46,   45,   45,   37,   37,   38,   39,   39,   37,   57,
+       39,   37,   40,   39,   41,   39,   37,   39,   39,   37,
+       59,   45,   34,   49,   39,   49,   45,   45,   50,   52,
+       48,   37,   53,   54,   37,   37,   37,   50,   39,   58,
+       51,   56,   41,   56,   37,   59,   57,   37,   57,   50,
 
-       58,   62,   36,   37,   31,   50,   62,    6,    6,   47,
-       46,   37,   34,   33,   32,   31,   62,    7,    7,    5,
-       62,   62,   62,   62,   62,   62,   62,   62,   62,   62,
-       62,   62,   62,   62,   62,   62,   62,   62,   62,   62,
-       62,   62,   62,   62,   62,   62,   62,   62,   62,   62,
-       62,   62,   62,   62,   62,   62,   62,   62,   62,   62,
-       62
+       55,   59,   33,   34,   28,   47,   59,   44,   43,   34,
+       31,   30,   29,   28,   59,    3,   59,   59,   59,   59,
+       59,   59,   59,   59,   59,   59,   59,   59,   59,   59,
+       59,   59,   59,   59,   59,   59,   59,   59,   59,   59,
+       59,   59,   59,   59,   59,   59,   59,   59,   59,   59,
+       59,   59,   59,   59,   59,   59,   59
     } ;
 
-static const flex_int16_t yy_chk[162] =
+static const flex_int16_t yy_chk[158] =
     {   0,
-        3,    3,    3,    3,    3,    3,    3,    3,    3,    3,
-        3,    3,    3,    3,    3,    3,    3,    3,    3,    3,
-        3,    3,    3,    3,    3,    3,    3,    3,    3,    3,
-        3,    3,    3,    3,    3,    3,    3,    3,    3,    3,
-        3,   16,   18,   16,   18,   21,   27,   21,   23,   23,
-       64,   48,   49,   21,   61,   21,   21,   21,   21,   59,
-       21,   58,   21,   21,   21,   21,   21,   21,   21,   21,
-       37,   27,   37,   41,   57,   41,   48,   49,   41,   43,
-       37,   42,   43,   43,   42,   56,   42,   53,   55,   54,
-       42,   51,   42,   51,   42,   53,   51,   42,   60,   52,
+        1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
+        1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
+        1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
+        1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
+        1,   13,   15,   13,   15,   18,   24,   18,   20,   20,
+       60,   45,   46,   18,   58,   18,   18,   18,   18,   56,
+       18,   55,   18,   18,   18,   18,   18,   18,   18,   18,
+       34,   24,   34,   38,   54,   38,   45,   46,   38,   40,
+       34,   39,   40,   40,   39,   53,   39,   50,   52,   51,
+       39,   48,   39,   48,   39,   50,   48,   39,   57,   49,
 
-       44,   38,   36,   35,   31,   30,   60,   63,   63,   25,
-       24,   19,   15,   11,    9,    8,    5,    2,    1,   62,
-       62,   62,   62,   62,   62,   62,   62,   62,   62,   62,
-       62,   62,   62,   62,   62,   62,   62,   62,   62,   62,
-       62,   62,   62,   62,   62,   62,   62,   62,   62,   62,
-       62,   62,   62,   62,   62,   62,   62,   62,   62,   62,
-       62
+       41,   35,   33,   32,   28,   27,   57,   22,   21,   16,
+       12,    9,    7,    5,    3,   59,   59,   59,   59,   59,
+       59,   59,   59,   59,   59,   59,   59,   59,   59,   59,
+       59,   59,   59,   59,   59,   59,   59,   59,   59,   59,
+       59,   59,   59,   59,   59,   59,   59,   59,   59,   59,
+       59,   59,   59,   59,   59,   59,   59
     } ;
 
 /* Table of booleans, true if rule could match eol. */
-static const flex_int32_t yy_rule_can_match_eol[29] =
+static const flex_int32_t yy_rule_can_match_eol[28] =
     {   0,
 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
-    0, 0, 0, 0, 0, 0, 0, 0, 0,     };
+    0, 0, 0, 0, 0, 0, 0, 0,     };
 
 static yy_state_type yy_last_accepting_state;
 static char *yy_last_accepting_cpos;
@@ -800,13 +795,10 @@ char *yytext;
 #include "parse-algebraic.h"
 #undef YY_INPUT
 #define YY_INPUT(b, r, ms) do { r = csim::algebraic_yyinput(b, ms); } while(0)
-#line 803 "/cygdrive/e/FastCSIM/core/parser/lex-algebraic.cc"
-/* Actions */
-
-#line 806 "/cygdrive/e/FastCSIM/core/parser/lex-algebraic.cc"
+#line 798 "/cygdrive/e/FastCSIM/core/parser/lex-algebraic.cc"
+#line 799 "/cygdrive/e/FastCSIM/core/parser/lex-algebraic.cc"
 
 #define INITIAL 0
-#define STARTUP 1
 
 #ifndef YY_NO_UNISTD_H
 /* Special case for "unistd.h", since it is non-ANSI. We include it way
@@ -1021,12 +1013,12 @@ YY_DECL
 		}
 
 	{
+#line 40 "/cygdrive/e/FastCSIM/core/parser/lex-algebraic.lpp"
+
+
 #line 43 "/cygdrive/e/FastCSIM/core/parser/lex-algebraic.lpp"
-
-
-#line 46 "/cygdrive/e/FastCSIM/core/parser/lex-algebraic.lpp"
  /* Algebraic expression */
-#line 1029 "/cygdrive/e/FastCSIM/core/parser/lex-algebraic.cc"
+#line 1021 "/cygdrive/e/FastCSIM/core/parser/lex-algebraic.cc"
 
 	while ( /*CONSTCOND*/1 )		/* loops until end-of-file is reached */
 		{
@@ -1053,13 +1045,13 @@ yy_match:
 			while ( yy_chk[yy_base[yy_current_state] + yy_c] != yy_current_state )
 				{
 				yy_current_state = (int) yy_def[yy_current_state];
-				if ( yy_current_state >= 63 )
+				if ( yy_current_state >= 60 )
 					yy_c = yy_meta[yy_c];
 				}
 			yy_current_state = yy_nxt[yy_base[yy_current_state] + yy_c];
 			++yy_cp;
 			}
-		while ( yy_base[yy_current_state] != 120 );
+		while ( yy_base[yy_current_state] != 116 );
 
 yy_find_action:
 		yy_act = yy_accept[yy_current_state];
@@ -1095,209 +1087,197 @@ do_action:	/* This label is used only to access EOF actions. */
 
 case 1:
 YY_RULE_SETUP
-#line 47 "/cygdrive/e/FastCSIM/core/parser/lex-algebraic.lpp"
-{
-    BEGIN(STARTUP);
-    return K_ExprBegin;
-}
-	YY_BREAK
-case 2:
-YY_RULE_SETUP
-#line 51 "/cygdrive/e/FastCSIM/core/parser/lex-algebraic.lpp"
+#line 44 "/cygdrive/e/FastCSIM/core/parser/lex-algebraic.lpp"
 {
     return K_ExprMinus;
 }
 	YY_BREAK
-case 3:
+case 2:
 YY_RULE_SETUP
-#line 54 "/cygdrive/e/FastCSIM/core/parser/lex-algebraic.lpp"
+#line 47 "/cygdrive/e/FastCSIM/core/parser/lex-algebraic.lpp"
 {
     return K_ExprNot;
 }
 	YY_BREAK
-case 4:
+case 3:
 YY_RULE_SETUP
-#line 57 "/cygdrive/e/FastCSIM/core/parser/lex-algebraic.lpp"
+#line 50 "/cygdrive/e/FastCSIM/core/parser/lex-algebraic.lpp"
 {
     return K_ExprPow;
 }
 	YY_BREAK
-case 5:
+case 4:
 YY_RULE_SETUP
-#line 60 "/cygdrive/e/FastCSIM/core/parser/lex-algebraic.lpp"
+#line 53 "/cygdrive/e/FastCSIM/core/parser/lex-algebraic.lpp"
 {
     return K_ExprMul;
 }
 	YY_BREAK
-case 6:
+case 5:
 YY_RULE_SETUP
-#line 63 "/cygdrive/e/FastCSIM/core/parser/lex-algebraic.lpp"
+#line 56 "/cygdrive/e/FastCSIM/core/parser/lex-algebraic.lpp"
 {
     return K_ExprDiv;
 }
 	YY_BREAK
-case 7:
+case 6:
 YY_RULE_SETUP
-#line 66 "/cygdrive/e/FastCSIM/core/parser/lex-algebraic.lpp"
+#line 59 "/cygdrive/e/FastCSIM/core/parser/lex-algebraic.lpp"
 {
     return K_ExprMod;
 }
 	YY_BREAK
-case 8:
+case 7:
 YY_RULE_SETUP
-#line 69 "/cygdrive/e/FastCSIM/core/parser/lex-algebraic.lpp"
+#line 62 "/cygdrive/e/FastCSIM/core/parser/lex-algebraic.lpp"
 {
     return K_ExprIntDiv;
 }
 	YY_BREAK
-case 9:
+case 8:
 YY_RULE_SETUP
-#line 72 "/cygdrive/e/FastCSIM/core/parser/lex-algebraic.lpp"
+#line 65 "/cygdrive/e/FastCSIM/core/parser/lex-algebraic.lpp"
 {
     return K_ExprPlus;
 }
 	YY_BREAK
-case 10:
+case 9:
 YY_RULE_SETUP
-#line 75 "/cygdrive/e/FastCSIM/core/parser/lex-algebraic.lpp"
+#line 68 "/cygdrive/e/FastCSIM/core/parser/lex-algebraic.lpp"
 {
     return K_ExprEq;
 }
 	YY_BREAK
-case 11:
+case 10:
 YY_RULE_SETUP
-#line 78 "/cygdrive/e/FastCSIM/core/parser/lex-algebraic.lpp"
+#line 71 "/cygdrive/e/FastCSIM/core/parser/lex-algebraic.lpp"
 {
     return K_ExprNe;
 }
 	YY_BREAK
-case 12:
+case 11:
 YY_RULE_SETUP
-#line 81 "/cygdrive/e/FastCSIM/core/parser/lex-algebraic.lpp"
+#line 74 "/cygdrive/e/FastCSIM/core/parser/lex-algebraic.lpp"
 {
     return K_ExprLe;
 }
 	YY_BREAK
-case 13:
+case 12:
 YY_RULE_SETUP
-#line 84 "/cygdrive/e/FastCSIM/core/parser/lex-algebraic.lpp"
+#line 77 "/cygdrive/e/FastCSIM/core/parser/lex-algebraic.lpp"
 {
     return K_ExprGe;
 }
 	YY_BREAK
-case 14:
+case 13:
 YY_RULE_SETUP
-#line 87 "/cygdrive/e/FastCSIM/core/parser/lex-algebraic.lpp"
+#line 80 "/cygdrive/e/FastCSIM/core/parser/lex-algebraic.lpp"
 {
     return K_ExprLt;
 }
 	YY_BREAK
-case 15:
+case 14:
 YY_RULE_SETUP
-#line 90 "/cygdrive/e/FastCSIM/core/parser/lex-algebraic.lpp"
+#line 83 "/cygdrive/e/FastCSIM/core/parser/lex-algebraic.lpp"
 {
     return K_ExprGt;
 }
 	YY_BREAK
-case 16:
+case 15:
 YY_RULE_SETUP
-#line 93 "/cygdrive/e/FastCSIM/core/parser/lex-algebraic.lpp"
+#line 86 "/cygdrive/e/FastCSIM/core/parser/lex-algebraic.lpp"
 {
     return K_ExprAnd;
 }
 	YY_BREAK
-case 17:
+case 16:
 YY_RULE_SETUP
-#line 96 "/cygdrive/e/FastCSIM/core/parser/lex-algebraic.lpp"
+#line 89 "/cygdrive/e/FastCSIM/core/parser/lex-algebraic.lpp"
 {
     return K_ExprOr;
 }
 	YY_BREAK
-case 18:
+case 17:
 YY_RULE_SETUP
-#line 99 "/cygdrive/e/FastCSIM/core/parser/lex-algebraic.lpp"
+#line 92 "/cygdrive/e/FastCSIM/core/parser/lex-algebraic.lpp"
 {
     return K_ExprSel;
 }
 	YY_BREAK
-case 19:
+case 18:
 YY_RULE_SETUP
-#line 102 "/cygdrive/e/FastCSIM/core/parser/lex-algebraic.lpp"
+#line 95 "/cygdrive/e/FastCSIM/core/parser/lex-algebraic.lpp"
 {
     return K_ExprColon;
 }
 	YY_BREAK
-case 20:
+case 19:
 YY_RULE_SETUP
-#line 105 "/cygdrive/e/FastCSIM/core/parser/lex-algebraic.lpp"
+#line 98 "/cygdrive/e/FastCSIM/core/parser/lex-algebraic.lpp"
 {
     return K_ExprLPar;
 }
 	YY_BREAK
-case 21:
+case 20:
 YY_RULE_SETUP
-#line 108 "/cygdrive/e/FastCSIM/core/parser/lex-algebraic.lpp"
+#line 101 "/cygdrive/e/FastCSIM/core/parser/lex-algebraic.lpp"
 {
     return K_ExprRPar;
 }
 	YY_BREAK
-case 22:
+case 21:
 YY_RULE_SETUP
-#line 111 "/cygdrive/e/FastCSIM/core/parser/lex-algebraic.lpp"
+#line 104 "/cygdrive/e/FastCSIM/core/parser/lex-algebraic.lpp"
 {
     return K_ExprComma;
 }
 	YY_BREAK
 /* Text of unsigned digits  */
-case 23:
+case 22:
 YY_RULE_SETUP
-#line 116 "/cygdrive/e/FastCSIM/core/parser/lex-algebraic.lpp"
+#line 109 "/cygdrive/e/FastCSIM/core/parser/lex-algebraic.lpp"
 {
     algebraic_lval.text = strdup (algebraic_text);
     return K_Unsigned;
 }
 	YY_BREAK
 /* Signed integers or floats */
-case 24:
+case 23:
 YY_RULE_SETUP
-#line 122 "/cygdrive/e/FastCSIM/core/parser/lex-algebraic.lpp"
+#line 115 "/cygdrive/e/FastCSIM/core/parser/lex-algebraic.lpp"
 {
     algebraic_lval.text = strdup (algebraic_text);
     return K_Number;
 }
 	YY_BREAK
 /* Identifiers */
-case 25:
+case 24:
 YY_RULE_SETUP
-#line 128 "/cygdrive/e/FastCSIM/core/parser/lex-algebraic.lpp"
+#line 121 "/cygdrive/e/FastCSIM/core/parser/lex-algebraic.lpp"
 {
     algebraic_lval.text = strdup (algebraic_text);
     return K_ExprId;
 }
 	YY_BREAK
-case 26:
+case 25:
 YY_RULE_SETUP
-#line 133 "/cygdrive/e/FastCSIM/core/parser/lex-algebraic.lpp"
+#line 126 "/cygdrive/e/FastCSIM/core/parser/lex-algebraic.lpp"
 {
     /* ignore spaces */
 }
 	YY_BREAK
+case 26:
+YY_RULE_SETUP
+#line 130 "/cygdrive/e/FastCSIM/core/parser/lex-algebraic.lpp"
+{ /* skip any other chars */ }
+	YY_BREAK
 case 27:
 YY_RULE_SETUP
-#line 137 "/cygdrive/e/FastCSIM/core/parser/lex-algebraic.lpp"
-{
-    BEGIN(STARTUP);
-    return K_ExprEnd;
-}
-	YY_BREAK
-case 28:
-YY_RULE_SETUP
-#line 143 "/cygdrive/e/FastCSIM/core/parser/lex-algebraic.lpp"
+#line 133 "/cygdrive/e/FastCSIM/core/parser/lex-algebraic.lpp"
 ECHO;
 	YY_BREAK
-#line 1298 "/cygdrive/e/FastCSIM/core/parser/lex-algebraic.cc"
+#line 1279 "/cygdrive/e/FastCSIM/core/parser/lex-algebraic.cc"
 case YY_STATE_EOF(INITIAL):
-case YY_STATE_EOF(STARTUP):
 	yyterminate();
 
 	case YY_END_OF_BUFFER:
@@ -1593,7 +1573,7 @@ static int yy_get_next_buffer (void)
 		while ( yy_chk[yy_base[yy_current_state] + yy_c] != yy_current_state )
 			{
 			yy_current_state = (int) yy_def[yy_current_state];
-			if ( yy_current_state >= 63 )
+			if ( yy_current_state >= 60 )
 				yy_c = yy_meta[yy_c];
 			}
 		yy_current_state = yy_nxt[yy_base[yy_current_state] + yy_c];
@@ -1621,11 +1601,11 @@ static int yy_get_next_buffer (void)
 	while ( yy_chk[yy_base[yy_current_state] + yy_c] != yy_current_state )
 		{
 		yy_current_state = (int) yy_def[yy_current_state];
-		if ( yy_current_state >= 63 )
+		if ( yy_current_state >= 60 )
 			yy_c = yy_meta[yy_c];
 		}
 	yy_current_state = yy_nxt[yy_base[yy_current_state] + yy_c];
-	yy_is_jam = (yy_current_state == 62);
+	yy_is_jam = (yy_current_state == 59);
 
 		return yy_is_jam ? 0 : yy_current_state;
 }
@@ -2313,7 +2293,7 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 143 "/cygdrive/e/FastCSIM/core/parser/lex-algebraic.lpp"
+#line 133 "/cygdrive/e/FastCSIM/core/parser/lex-algebraic.lpp"
 
 
 int yywrap() {

@@ -17,6 +17,7 @@
  *  Lesser General Public License for more details.                        
  */
 #include <iostream>
+#include "csim/internal/parser/algebraic-defs.h"
 #include "csim/internal/parser/hspice-defs.h"
 #include "parse-hspice.h"
 %}
@@ -98,6 +99,12 @@ IDENTIFIER [A-Za-z][A-Za-z0-9_]*
     return K_Ends;
 }
 
+
+ /* .param */
+<STARTUP>"."[pP][aA][rR][aA][mM] {
+    return K_Param;
+}
+
  /* Text of unsigned digits  */
 <STARTUP>{DIGIT}+ {
     hspice_lval.text = strdup (hspice_text);
@@ -154,6 +161,8 @@ IDENTIFIER [A-Za-z][A-Za-z0-9_]*
 }
 
 <STARTUP,INITIAL>^{SPACE}+ { /* skip leading spaces */ }
+
+<*>. { /* skip any other chars */ }
 
 
 %%

@@ -89,14 +89,16 @@
  *  Lesser General Public License for more details.                        
  */
 #include <iostream>
+#include "csim/internal/parser/algebraic-defs.h"
 #include "csim/internal/parser/hspice-defs.h"
 #include "parse-hspice.h"
 static void yyerror(char const *msg) {
     std::cerr<<"Error at line"<<hspice_lineno<<": "<<msg<<std::endl;
     hspice_wrap();
+    csim::hspice_err = true;
 }
 
-#line 100 "/cygdrive/e/FastCSIM/core/parser/parse-hspice.cc" /* yacc.c:339  */
+#line 102 "/cygdrive/e/FastCSIM/core/parser/parse-hspice.cc" /* yacc.c:339  */
 
 # ifndef YY_NULLPTR
 #  if defined __cplusplus && 201103L <= __cplusplus
@@ -143,7 +145,8 @@ extern int hspice_debug;
     K_Ends = 267,
     K_Equ = 268,
     K_Algebraic = 269,
-    K_End = 270
+    K_Param = 270,
+    K_End = 271
   };
 #endif
 
@@ -152,7 +155,7 @@ extern int hspice_debug;
 
 union YYSTYPE
 {
-#line 39 "/cygdrive/e/FastCSIM/core/parser/parse-hspice.ypp" /* yacc.c:355  */
+#line 42 "/cygdrive/e/FastCSIM/core/parser/parse-hspice.ypp" /* yacc.c:355  */
 
     char *text;
     csim::HSPICE_KeyValueList *kvs;
@@ -160,7 +163,7 @@ union YYSTYPE
     csim::HSPICE_SubBlock *subBlock;
     csim::HSPICE_Nodes *nodes;
 
-#line 164 "/cygdrive/e/FastCSIM/core/parser/parse-hspice.cc" /* yacc.c:355  */
+#line 167 "/cygdrive/e/FastCSIM/core/parser/parse-hspice.cc" /* yacc.c:355  */
 };
 
 typedef union YYSTYPE YYSTYPE;
@@ -177,7 +180,7 @@ int hspice_parse (void);
 
 /* Copy the second part of user declarations.  */
 
-#line 181 "/cygdrive/e/FastCSIM/core/parser/parse-hspice.cc" /* yacc.c:358  */
+#line 184 "/cygdrive/e/FastCSIM/core/parser/parse-hspice.cc" /* yacc.c:358  */
 
 #ifdef short
 # undef short
@@ -417,23 +420,23 @@ union yyalloc
 #endif /* !YYCOPY_NEEDED */
 
 /* YYFINAL -- State number of the termination state.  */
-#define YYFINAL  13
+#define YYFINAL  16
 /* YYLAST -- Last index in YYTABLE.  */
-#define YYLAST   34
+#define YYLAST   39
 
 /* YYNTOKENS -- Number of terminals.  */
-#define YYNTOKENS  16
+#define YYNTOKENS  17
 /* YYNNTS -- Number of nonterminals.  */
 #define YYNNTS  10
 /* YYNRULES -- Number of rules.  */
-#define YYNRULES  23
+#define YYNRULES  24
 /* YYNSTATES -- Number of states.  */
-#define YYNSTATES  41
+#define YYNSTATES  45
 
 /* YYTRANSLATE[YYX] -- Symbol number corresponding to YYX as returned
    by yylex, with out-of-bounds checking.  */
 #define YYUNDEFTOK  2
-#define YYMAXUTOK   270
+#define YYMAXUTOK   271
 
 #define YYTRANSLATE(YYX)                                                \
   ((unsigned int) (YYX) <= YYMAXUTOK ? yytranslate[YYX] : YYUNDEFTOK)
@@ -469,16 +472,16 @@ static const yytype_uint8 yytranslate[] =
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     1,     2,     3,     4,
        5,     6,     7,     8,     9,    10,    11,    12,    13,    14,
-      15
+      15,    16
 };
 
 #if YYDEBUG
   /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_uint8 yyrline[] =
 {
-       0,    62,    62,    67,    71,    79,    80,    84,    94,    99,
-     100,   106,   112,   121,   127,   134,   135,   138,   139,   146,
-     146,   146,   148,   148
+       0,    65,    65,    70,    74,    82,    83,    88,    98,   117,
+     122,   123,   129,   135,   145,   151,   158,   159,   162,   163,
+     170,   170,   170,   172,   172
 };
 #endif
 
@@ -489,9 +492,9 @@ static const char *const yytname[] =
 {
   "$end", "error", "$undefined", "K_Text", "K_Unsigned", "K_Number",
   "K_Nodes", "K_EOL", "K_Title", "K_Model", "K_ModelType", "K_Subckt",
-  "K_Ends", "K_Equ", "K_Algebraic", "K_End", "$accept", "Netlist", "Block",
-  "ParamLine", "SUBCKT", "SUBCKTBegin", "SUBCKTEnd", "NodeList",
-  "NodeName", "RealValue", YY_NULLPTR
+  "K_Ends", "K_Equ", "K_Algebraic", "K_Param", "K_End", "$accept",
+  "Netlist", "Block", "ParamLine", "SUBCKT", "SUBCKTBegin", "SUBCKTEnd",
+  "NodeList", "NodeName", "RealValue", YY_NULLPTR
 };
 #endif
 
@@ -501,14 +504,14 @@ static const char *const yytname[] =
 static const yytype_uint16 yytoknum[] =
 {
        0,   256,   257,   258,   259,   260,   261,   262,   263,   264,
-     265,   266,   267,   268,   269,   270
+     265,   266,   267,   268,   269,   270,   271
 };
 # endif
 
-#define YYPACT_NINF -17
+#define YYPACT_NINF -19
 
 #define yypact_value_is_default(Yystate) \
-  (!!((Yystate) == (-17)))
+  (!!((Yystate) == (-19)))
 
 #define YYTABLE_NINF -1
 
@@ -519,11 +522,11 @@ static const yytype_uint16 yytoknum[] =
      STATE-NUM.  */
 static const yytype_int8 yypact[] =
 {
-       1,     4,     4,    14,    15,     2,   -17,     4,     4,   -17,
-       8,    16,    18,   -17,   -17,    13,   -17,    24,   -17,   -17,
-     -17,    21,    18,    26,   -17,    19,    27,   -17,   -17,   -17,
-       0,     4,    24,   -17,   -17,    24,    24,   -17,   -17,   -17,
-     -17
+       2,    13,    13,     3,     9,    18,    16,   -19,    13,    13,
+     -19,     7,    15,    26,    14,    24,   -19,   -19,    21,   -19,
+      18,   -19,   -19,   -19,    27,    26,     0,    13,    32,   -19,
+      29,   -19,   -19,    18,   -19,   -19,    18,    18,   -19,   -19,
+      13,   -19,   -19,   -19,   -19
 };
 
   /* YYDEFACT[STATE-NUM] -- Default reduction number in state STATE-NUM.
@@ -531,23 +534,23 @@ static const yytype_int8 yypact[] =
      means the default is an error.  */
 static const yytype_uint8 yydefact[] =
 {
-       5,     5,     5,     0,     0,     0,     3,     5,     5,     8,
-       4,     0,    17,     1,     6,     0,     2,     9,    21,    19,
-      20,     0,    17,    15,    13,     0,     0,    14,    18,    16,
-       0,     5,     9,    22,    23,     9,     9,     7,    11,    12,
-      10
+       5,     5,     5,     0,     0,    10,     0,     3,     5,     5,
+       9,     4,     0,    18,     0,     0,     1,     6,     0,     2,
+      10,    22,    20,    21,     0,    18,     0,     5,    16,    14,
+       0,    15,    19,    10,    23,    24,    10,    10,     8,    17,
+       5,    12,    13,    11,     7
 };
 
   /* YYPGOTO[NTERM-NUM].  */
 static const yytype_int8 yypgoto[] =
 {
-     -17,   -17,    -1,   -16,   -17,   -17,   -17,     9,   -17,   -17
+     -19,   -19,    -1,   -18,   -19,   -19,   -19,    12,   -19,   -19
 };
 
   /* YYDEFGOTO[NTERM-NUM].  */
 static const yytype_int8 yydefgoto[] =
 {
-      -1,     5,     6,    26,     7,     8,    24,    21,    22,    36
+      -1,     6,     7,    15,     8,     9,    29,    24,    25,    37
 };
 
   /* YYTABLE[YYPACT[STATE-NUM]] -- What to do in state STATE-NUM.  If
@@ -555,45 +558,45 @@ static const yytype_int8 yydefgoto[] =
      number is the opposite.  If YYTABLE_NINF, syntax error.  */
 static const yytype_uint8 yytable[] =
 {
-       9,    10,    13,    32,    33,    34,    14,    15,     1,     2,
-       3,     1,     4,     3,    35,     4,    38,    11,    12,    39,
-      40,    18,    19,    16,    20,    23,    17,    25,    27,    29,
-      37,    28,    30,     0,    31
+      10,    11,    30,    33,    34,    35,    12,    17,    18,     1,
+       2,     3,    13,     4,    36,    41,    16,     5,    42,    43,
+       1,    14,     3,    19,     4,    20,    38,    26,     5,    21,
+      22,    27,    23,    28,    31,    39,    40,    32,     0,    44
 };
 
 static const yytype_int8 yycheck[] =
 {
-       1,     2,     0,     3,     4,     5,     7,     8,     7,     8,
-       9,     7,    11,     9,    14,    11,    32,     3,     3,    35,
-      36,     3,     4,    15,     6,    12,    10,     3,     7,     3,
-      31,    22,    13,    -1,     7
+       1,     2,    20,     3,     4,     5,     3,     8,     9,     7,
+       8,     9,     3,    11,    14,    33,     0,    15,    36,    37,
+       7,     3,     9,    16,    11,    10,    27,    13,    15,     3,
+       4,     7,     6,    12,     7,     3,     7,    25,    -1,    40
 };
 
   /* YYSTOS[STATE-NUM] -- The (internal number of the) accessing
      symbol of state STATE-NUM.  */
 static const yytype_uint8 yystos[] =
 {
-       0,     7,     8,     9,    11,    17,    18,    20,    21,    18,
-      18,     3,     3,     0,    18,    18,    15,    10,     3,     4,
-       6,    23,    24,    12,    22,     3,    19,     7,    23,     3,
-      13,     7,     3,     4,     5,    14,    25,    18,    19,    19,
-      19
+       0,     7,     8,     9,    11,    15,    18,    19,    21,    22,
+      19,    19,     3,     3,     3,    20,     0,    19,    19,    16,
+      10,     3,     4,     6,    24,    25,    13,     7,    12,    23,
+      20,     7,    24,     3,     4,     5,    14,    26,    19,     3,
+       7,    20,    20,    20,    19
 };
 
   /* YYR1[YYN] -- Symbol number of symbol that rule YYN derives.  */
 static const yytype_uint8 yyr1[] =
 {
-       0,    16,    17,    17,    17,    18,    18,    18,    18,    19,
-      19,    19,    19,    20,    21,    22,    22,    23,    23,    24,
-      24,    24,    25,    25
+       0,    17,    18,    18,    18,    19,    19,    19,    19,    19,
+      20,    20,    20,    20,    21,    22,    23,    23,    24,    24,
+      25,    25,    25,    26,    26
 };
 
   /* YYR2[YYN] -- Number of symbols on the right hand side of rule YYN.  */
 static const yytype_uint8 yyr2[] =
 {
-       0,     2,     3,     1,     2,     0,     2,     6,     2,     0,
-       4,     4,     4,     3,     4,     1,     2,     0,     2,     1,
-       1,     1,     1,     1
+       0,     2,     3,     1,     2,     0,     2,     6,     4,     2,
+       0,     4,     4,     4,     3,     4,     1,     2,     0,     2,
+       1,     1,     1,     1,     1
 };
 
 
@@ -1270,52 +1273,53 @@ yyreduce:
   switch (yyn)
     {
         case 2:
-#line 62 "/cygdrive/e/FastCSIM/core/parser/parse-hspice.ypp" /* yacc.c:1646  */
+#line 65 "/cygdrive/e/FastCSIM/core/parser/parse-hspice.ypp" /* yacc.c:1646  */
     {
         csim::hspice_ast->title = (yyvsp[-2].text);
         free((yyvsp[-2].text));
         csim::hspice_ast->blockRoot = (yyvsp[-1].block);
     }
-#line 1280 "/cygdrive/e/FastCSIM/core/parser/parse-hspice.cc" /* yacc.c:1646  */
+#line 1283 "/cygdrive/e/FastCSIM/core/parser/parse-hspice.cc" /* yacc.c:1646  */
     break;
 
   case 3:
-#line 67 "/cygdrive/e/FastCSIM/core/parser/parse-hspice.ypp" /* yacc.c:1646  */
+#line 70 "/cygdrive/e/FastCSIM/core/parser/parse-hspice.ypp" /* yacc.c:1646  */
     {
         /* No .END */
         csim::hspice_ast->blockRoot = (yyvsp[0].block);
     }
-#line 1289 "/cygdrive/e/FastCSIM/core/parser/parse-hspice.cc" /* yacc.c:1646  */
+#line 1292 "/cygdrive/e/FastCSIM/core/parser/parse-hspice.cc" /* yacc.c:1646  */
     break;
 
   case 4:
-#line 71 "/cygdrive/e/FastCSIM/core/parser/parse-hspice.ypp" /* yacc.c:1646  */
+#line 74 "/cygdrive/e/FastCSIM/core/parser/parse-hspice.ypp" /* yacc.c:1646  */
     {
         csim::hspice_ast->title = (yyvsp[-1].text);
         free((yyvsp[-1].text));
         csim::hspice_ast->blockRoot = (yyvsp[0].block);
         /* No .END */
     }
-#line 1300 "/cygdrive/e/FastCSIM/core/parser/parse-hspice.cc" /* yacc.c:1646  */
+#line 1303 "/cygdrive/e/FastCSIM/core/parser/parse-hspice.cc" /* yacc.c:1646  */
     break;
 
   case 5:
-#line 79 "/cygdrive/e/FastCSIM/core/parser/parse-hspice.ypp" /* yacc.c:1646  */
+#line 82 "/cygdrive/e/FastCSIM/core/parser/parse-hspice.ypp" /* yacc.c:1646  */
     { (yyval.block) = new csim::HSPICE_Block(); }
-#line 1306 "/cygdrive/e/FastCSIM/core/parser/parse-hspice.cc" /* yacc.c:1646  */
+#line 1309 "/cygdrive/e/FastCSIM/core/parser/parse-hspice.cc" /* yacc.c:1646  */
     break;
 
   case 6:
-#line 80 "/cygdrive/e/FastCSIM/core/parser/parse-hspice.ypp" /* yacc.c:1646  */
+#line 83 "/cygdrive/e/FastCSIM/core/parser/parse-hspice.ypp" /* yacc.c:1646  */
     {
+        (yyvsp[-1].subBlock)->block->setParent((yyvsp[0].block));
         (yyvsp[0].block)->subs.push_back((yyvsp[-1].subBlock));
         (yyval.block) = (yyvsp[0].block);
     }
-#line 1315 "/cygdrive/e/FastCSIM/core/parser/parse-hspice.cc" /* yacc.c:1646  */
+#line 1319 "/cygdrive/e/FastCSIM/core/parser/parse-hspice.cc" /* yacc.c:1646  */
     break;
 
   case 7:
-#line 84 "/cygdrive/e/FastCSIM/core/parser/parse-hspice.ypp" /* yacc.c:1646  */
+#line 88 "/cygdrive/e/FastCSIM/core/parser/parse-hspice.ypp" /* yacc.c:1646  */
     {
         /* .model */
         (yyvsp[0].block)->models.emplace_back();
@@ -1326,105 +1330,130 @@ yyreduce:
         free((yyvsp[-4].text)); free((yyvsp[-3].text));
         (yyval.block) = (yyvsp[0].block);
     }
-#line 1330 "/cygdrive/e/FastCSIM/core/parser/parse-hspice.cc" /* yacc.c:1646  */
+#line 1334 "/cygdrive/e/FastCSIM/core/parser/parse-hspice.cc" /* yacc.c:1646  */
     break;
 
   case 8:
-#line 94 "/cygdrive/e/FastCSIM/core/parser/parse-hspice.ypp" /* yacc.c:1646  */
+#line 98 "/cygdrive/e/FastCSIM/core/parser/parse-hspice.ypp" /* yacc.c:1646  */
     {
+        /* .param */
+        for(auto it = (yyvsp[-2].kvs)->kvs.rbegin(); it != (yyvsp[-2].kvs)->kvs.rend(); it++) {
+            switch (it->second.getType()){
+                case csimModel::Variant::VariantAlgebraic:
+                    (yyvsp[0].block)->addParam(it->first.c_str(), it->second.getAlgebraic()); /* Unsolved */
+                    break;
+
+                case csimModel::Variant::VariantDouble:
+                    (yyvsp[0].block)->addParam(it->first.c_str(), it->second.getDouble()); /* Solved */
+                    break;
+
+                default:
+                    hspice_error("Invalid type used in expression.");
+            }
+        }
+        delete (yyvsp[-2].kvs);
         (yyval.block) = (yyvsp[0].block);
     }
-#line 1338 "/cygdrive/e/FastCSIM/core/parser/parse-hspice.cc" /* yacc.c:1646  */
+#line 1358 "/cygdrive/e/FastCSIM/core/parser/parse-hspice.cc" /* yacc.c:1646  */
     break;
 
   case 9:
-#line 99 "/cygdrive/e/FastCSIM/core/parser/parse-hspice.ypp" /* yacc.c:1646  */
-    { (yyval.kvs) = new csim::HSPICE_KeyValueList(); }
-#line 1344 "/cygdrive/e/FastCSIM/core/parser/parse-hspice.cc" /* yacc.c:1646  */
+#line 117 "/cygdrive/e/FastCSIM/core/parser/parse-hspice.ypp" /* yacc.c:1646  */
+    {
+        (yyval.block) = (yyvsp[0].block);
+    }
+#line 1366 "/cygdrive/e/FastCSIM/core/parser/parse-hspice.cc" /* yacc.c:1646  */
     break;
 
   case 10:
-#line 100 "/cygdrive/e/FastCSIM/core/parser/parse-hspice.ypp" /* yacc.c:1646  */
+#line 122 "/cygdrive/e/FastCSIM/core/parser/parse-hspice.ypp" /* yacc.c:1646  */
+    { (yyval.kvs) = new csim::HSPICE_KeyValueList(); }
+#line 1372 "/cygdrive/e/FastCSIM/core/parser/parse-hspice.cc" /* yacc.c:1646  */
+    break;
+
+  case 11:
+#line 123 "/cygdrive/e/FastCSIM/core/parser/parse-hspice.ypp" /* yacc.c:1646  */
     {
         (yyvsp[0].kvs)->kvs.push_back(std::make_pair((yyvsp[-3].text), csim::hspice_parseReal((yyvsp[-1].text))));
         free((yyvsp[-3].text));
         free((yyvsp[-1].text));
         (yyval.kvs) = (yyvsp[0].kvs);
     }
-#line 1355 "/cygdrive/e/FastCSIM/core/parser/parse-hspice.cc" /* yacc.c:1646  */
+#line 1383 "/cygdrive/e/FastCSIM/core/parser/parse-hspice.cc" /* yacc.c:1646  */
     break;
 
-  case 11:
-#line 106 "/cygdrive/e/FastCSIM/core/parser/parse-hspice.ypp" /* yacc.c:1646  */
+  case 12:
+#line 129 "/cygdrive/e/FastCSIM/core/parser/parse-hspice.ypp" /* yacc.c:1646  */
     {
         (yyvsp[0].kvs)->kvs.push_back(std::make_pair((yyvsp[-3].text), csimModel::Variant(csimModel::Variant::VariantString).setString((yyvsp[-1].text))));
         free((yyvsp[-3].text));
         free((yyvsp[-1].text));
         (yyval.kvs) = (yyvsp[0].kvs);
     }
-#line 1366 "/cygdrive/e/FastCSIM/core/parser/parse-hspice.cc" /* yacc.c:1646  */
+#line 1394 "/cygdrive/e/FastCSIM/core/parser/parse-hspice.cc" /* yacc.c:1646  */
     break;
 
-  case 12:
-#line 112 "/cygdrive/e/FastCSIM/core/parser/parse-hspice.ypp" /* yacc.c:1646  */
+  case 13:
+#line 135 "/cygdrive/e/FastCSIM/core/parser/parse-hspice.ypp" /* yacc.c:1646  */
     {
-        (yyvsp[0].kvs)->kvs.push_back(std::make_pair((yyvsp[-3].text), csimModel::Variant(csimModel::Variant::VariantAlgebraic).setAlgebraic((yyvsp[-1].text))));
+        csim::Algebraic *alg = new csim::Algebraic((yyvsp[-1].text));
+        (yyvsp[0].kvs)->kvs.push_back(std::make_pair((yyvsp[-3].text), csimModel::Variant(csimModel::Variant::VariantAlgebraic).setAlgebraic(alg)));
         free((yyvsp[-3].text));
         free((yyvsp[-1].text));
         (yyval.kvs) = (yyvsp[0].kvs);
     }
-#line 1377 "/cygdrive/e/FastCSIM/core/parser/parse-hspice.cc" /* yacc.c:1646  */
+#line 1406 "/cygdrive/e/FastCSIM/core/parser/parse-hspice.cc" /* yacc.c:1646  */
     break;
 
-  case 13:
-#line 121 "/cygdrive/e/FastCSIM/core/parser/parse-hspice.ypp" /* yacc.c:1646  */
+  case 14:
+#line 145 "/cygdrive/e/FastCSIM/core/parser/parse-hspice.ypp" /* yacc.c:1646  */
     {
         (yyvsp[-2].subBlock)->block = (yyvsp[-1].block);
         (yyval.subBlock) = (yyvsp[-2].subBlock);
     }
-#line 1386 "/cygdrive/e/FastCSIM/core/parser/parse-hspice.cc" /* yacc.c:1646  */
+#line 1415 "/cygdrive/e/FastCSIM/core/parser/parse-hspice.cc" /* yacc.c:1646  */
     break;
 
-  case 14:
-#line 127 "/cygdrive/e/FastCSIM/core/parser/parse-hspice.ypp" /* yacc.c:1646  */
+  case 15:
+#line 151 "/cygdrive/e/FastCSIM/core/parser/parse-hspice.ypp" /* yacc.c:1646  */
     {
         (yyval.subBlock) = new csim::HSPICE_SubBlock((yyvsp[-2].text));
         free((yyvsp[-2].text));
         (yyval.subBlock)->nodes = (yyvsp[-1].nodes);
     }
-#line 1396 "/cygdrive/e/FastCSIM/core/parser/parse-hspice.cc" /* yacc.c:1646  */
-    break;
-
-  case 15:
-#line 134 "/cygdrive/e/FastCSIM/core/parser/parse-hspice.ypp" /* yacc.c:1646  */
-    { }
-#line 1402 "/cygdrive/e/FastCSIM/core/parser/parse-hspice.cc" /* yacc.c:1646  */
+#line 1425 "/cygdrive/e/FastCSIM/core/parser/parse-hspice.cc" /* yacc.c:1646  */
     break;
 
   case 16:
-#line 135 "/cygdrive/e/FastCSIM/core/parser/parse-hspice.ypp" /* yacc.c:1646  */
-    { free ((yyvsp[0].text)); /* FIXME: Overlapping in hierarchical description */ }
-#line 1408 "/cygdrive/e/FastCSIM/core/parser/parse-hspice.cc" /* yacc.c:1646  */
+#line 158 "/cygdrive/e/FastCSIM/core/parser/parse-hspice.ypp" /* yacc.c:1646  */
+    { }
+#line 1431 "/cygdrive/e/FastCSIM/core/parser/parse-hspice.cc" /* yacc.c:1646  */
     break;
 
   case 17:
-#line 138 "/cygdrive/e/FastCSIM/core/parser/parse-hspice.ypp" /* yacc.c:1646  */
-    { (yyval.nodes) = new csim::HSPICE_Nodes(); }
-#line 1414 "/cygdrive/e/FastCSIM/core/parser/parse-hspice.cc" /* yacc.c:1646  */
+#line 159 "/cygdrive/e/FastCSIM/core/parser/parse-hspice.ypp" /* yacc.c:1646  */
+    { free ((yyvsp[0].text)); /* FIXME: Overlapping in hierarchical description */ }
+#line 1437 "/cygdrive/e/FastCSIM/core/parser/parse-hspice.cc" /* yacc.c:1646  */
     break;
 
   case 18:
-#line 139 "/cygdrive/e/FastCSIM/core/parser/parse-hspice.ypp" /* yacc.c:1646  */
+#line 162 "/cygdrive/e/FastCSIM/core/parser/parse-hspice.ypp" /* yacc.c:1646  */
+    { (yyval.nodes) = new csim::HSPICE_Nodes(); }
+#line 1443 "/cygdrive/e/FastCSIM/core/parser/parse-hspice.cc" /* yacc.c:1646  */
+    break;
+
+  case 19:
+#line 163 "/cygdrive/e/FastCSIM/core/parser/parse-hspice.ypp" /* yacc.c:1646  */
     {
         (yyvsp[0].nodes)->nodes.push_back((yyvsp[-1].text));
         free((yyvsp[-1].text));
         (yyval.nodes) = (yyvsp[0].nodes);
     }
-#line 1424 "/cygdrive/e/FastCSIM/core/parser/parse-hspice.cc" /* yacc.c:1646  */
+#line 1453 "/cygdrive/e/FastCSIM/core/parser/parse-hspice.cc" /* yacc.c:1646  */
     break;
 
 
-#line 1428 "/cygdrive/e/FastCSIM/core/parser/parse-hspice.cc" /* yacc.c:1646  */
+#line 1457 "/cygdrive/e/FastCSIM/core/parser/parse-hspice.cc" /* yacc.c:1646  */
       default: break;
     }
   /* User semantic actions sometimes alter yychar, and that requires
@@ -1652,7 +1681,7 @@ yyreturn:
 #endif
   return yyresult;
 }
-#line 151 "/cygdrive/e/FastCSIM/core/parser/parse-hspice.ypp" /* yacc.c:1906  */
+#line 175 "/cygdrive/e/FastCSIM/core/parser/parse-hspice.ypp" /* yacc.c:1906  */
 
 
 /**/

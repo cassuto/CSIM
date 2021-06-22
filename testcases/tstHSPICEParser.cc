@@ -6,6 +6,7 @@
 #include <cstdio>
 #include "csim/utils/errors.h"
 #include "csim/utils/constants.h"
+#include "csim/internal/parser/algebraic-defs.h"
 #include "csim/internal/parser/hspice-defs.h"
 #include <algorithm>
 #include <cstring>
@@ -60,6 +61,87 @@ namespace csim
         delete ast;
     }
 
+    TEST(tstHSPICEParser, param)
+    {
+        int ret = 0;
+        const char *filename = "tst_hspice_param.cir";
+        const char *content =
+            TST_TITLE
+            "\n"
+            " \n"
+            ".param level=49\n"
+            ".param eval0='V1*V2'\n" /* V1 and V2 are not declared here */
+            ".subckt Rd 1 2\n"
+            "   .param eval='V1*V2'\n" /* V2 is not overriden here */
+            "   .param V1 = 3.5n\n"
+            "   .param V2 = -10\n"
+            "    \t.subckt Sub2 1 2\n"
+            "    \t.param V2 = 3\n"      /* Override outer V2 */
+            "    \t.param eval3='V2'\n"  /*FIXME? This is tested under ngspice, the result shows V2=2.4e17*/
+            "    \t.param V2 = 2.4e17\n" /* Override inner V2 */
+            ".model n3 nmos level='level' tox='V1' nch='V2' nsub='eval' vth0='eval' vv='eval0' v3='eval3'\n"
+            "    \t.ends Sub2\n"
+            ".ends Rd\n"
+            "\n"
+            ".end\n";
+        tstCreateSPICE(filename, content);
+
+        HSPICE_AST *ast = new HSPICE_AST();
+        ret = ast->parse(filename);
+        ASSERT_EQ(CERR_SUCCEEDED, ret);
+
+        ASSERT_EQ(1U, ast->blockRoot->subs.size());
+        ASSERT_EQ(1U, ast->blockRoot->subs[0]->block->subs.size());
+
+        HSPICE_Block *block = ast->blockRoot->subs[0]->block->subs[0]->block;
+        ASSERT_EQ(1U, block->models.size());
+        HSPICE_Model *model = &block->models[0];
+        double paramValue;
+        for (auto param = model->params->kvs.rbegin(); param != model->params->kvs.rend(); param++)
+        {
+            if (0 == param->first.compare("level"))
+            {
+                ASSERT_EQ(csimModel::Variant::VariantAlgebraic, param->second.getType());
+                ASSERT_EQ(CERR_SUCCEEDED, param->second.getAlgebraic()->evaluate(block, &paramValue));
+                ASSERT_FLOAT_EQ(49, paramValue);
+            }
+            else if (0 == param->first.compare("tox"))
+            {
+                ASSERT_EQ(csimModel::Variant::VariantAlgebraic, param->second.getType());
+                ASSERT_EQ(CERR_SUCCEEDED, param->second.getAlgebraic()->evaluate(block, &paramValue));
+                ASSERT_FLOAT_EQ(3.5e-9, paramValue);
+            }
+            else if (0 == param->first.compare("nch"))
+            {
+                ASSERT_EQ(csimModel::Variant::VariantAlgebraic, param->second.getType());
+                ASSERT_EQ(CERR_SUCCEEDED, param->second.getAlgebraic()->evaluate(block, &paramValue));
+                ASSERT_FLOAT_EQ(2.4e17, paramValue);
+            }
+            else if ((0 == param->first.compare("nsub")) || (0 == param->first.compare("vth0")))
+            {
+                ASSERT_EQ(csimModel::Variant::VariantAlgebraic, param->second.getType());
+                ASSERT_EQ(CERR_SUCCEEDED, param->second.getAlgebraic()->evaluate(block, &paramValue));
+                ASSERT_FLOAT_EQ(3.5e-9 * -10, paramValue);
+            }
+            else if (0 == param->first.compare("vv"))
+            {
+                ASSERT_EQ(csimModel::Variant::VariantAlgebraic, param->second.getType());
+                ASSERT_EQ(CERR_PARSE_ALGEBRAIC_EXPRESSION, param->second.getAlgebraic()->evaluate(block, &paramValue));
+            }
+            else if (0 == param->first.compare("v3"))
+            {
+                ASSERT_EQ(csimModel::Variant::VariantAlgebraic, param->second.getType());
+                ASSERT_EQ(CERR_SUCCEEDED, param->second.getAlgebraic()->evaluate(block, &paramValue));
+                ASSERT_FLOAT_EQ(2.4e17, paramValue); /* FIXME? */
+            }
+            else
+            {
+                ASSERT_NE(0, 0);
+            }
+        }
+        delete ast;
+    }
+
     TEST(tstHSPICEParser, model)
     {
         int ret = 0;
@@ -75,9 +157,11 @@ namespace csim
             "    \t.ends Sub2\n"
             ".ends Rd\n"
             "\n"
+            ".param Tnom1=27.0\n"
+            "\n"
             ".model N1 NMOS\n"
             "+Level=        8 version=3.3.0\n"
-            "+Tnom=27.0\n"
+            "+Tnom='Tnom1 + 2'\n"
             "+Nch= 2.498E+17  Tox=9E-09 Xj=1.00000E-07\n"
             "+Lint=9.36e-8 Wint=1.47e-7\n"
             "+Vth0= .6322    K1= .756  K2= -3.83e-2  K3= -2.612\n"

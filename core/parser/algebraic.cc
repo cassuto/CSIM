@@ -23,6 +23,7 @@ namespace csim
     /* Globals */
     AlgebraicScope *algebraic_currentScope;
     double algebraic_result;
+    bool algebraic_err;
     const char *algebraic_input;
     int algebraic_input_size;
 
@@ -80,9 +81,22 @@ namespace csim
         return dbl;
     }
 
+    AlgebraicScope::AlgebraicScope() : m_parent(nullptr)
+    {
+    }
     AlgebraicScope::AlgebraicScope(AlgebraicScope *parent)
         : m_parent(parent)
     {
+    }
+
+    AlgebraicScope::~AlgebraicScope()
+    {
+        for (auto &kv : m_params)
+        {
+            ParamEntry &entry = kv.second;
+            if (entry.unsolved)
+                delete entry.u.alg;
+        }
     }
 
     /**
@@ -96,7 +110,16 @@ namespace csim
         std::string id = toUpper(identifier);
         if (m_params.find(id) != m_params.end())
             return;
-        m_params[id] = value;
+        m_params[id].u.real = value;
+        m_params[id].unsolved = false;
+    }
+    void AlgebraicScope::addParam(const char *identifier, Algebraic *alg)
+    {
+        std::string id = toUpper(identifier);
+        if (m_params.find(id) != m_params.end())
+            return;
+        m_params[id].u.alg = alg; /* for lazzy evaluation later */
+        m_params[id].unsolved = true;
     }
 
     /**
@@ -107,17 +130,30 @@ namespace csim
     int AlgebraicScope::getValue(const char *identifier, double *out)
     {
         std::string id = toUpper(identifier);
-        if (m_params.find(id) != m_params.end())
-        {
-            *out = m_params.at(id);
-            return 0;
-        }
-        AlgebraicScope *cur = m_parent;
+        AlgebraicScope *cur = this;
+        int rc;
         while (cur)
         {
             if (cur->m_params.find(id) != cur->m_params.end())
             {
-                *out = cur->m_params.at(id);
+                ParamEntry &entry = cur->m_params.at(id);
+                if (entry.unsolved)
+                {
+                    /* Lazzy evaluation */
+                    rc = entry.u.alg->evaluate(cur, out);
+                    if (CSIM_OK(rc))
+                    {
+                        entry.unsolved = false;
+                        delete entry.u.alg;
+                        entry.u.real = *out;
+                    }
+                    return rc;
+                }
+                else
+                {
+                    *out = entry.u.real;
+                    return 0;
+                }
                 return 0;
             }
             cur = cur->m_parent;
@@ -157,7 +193,10 @@ namespace csim
         algebraic_restart(nullptr);
         algebraic_wrap();
         algebraic_lineno = 1;
+        algebraic_err = false;
         if (algebraic_parse())
+            rc = CERR_PARSE_ALGEBRAIC_EXPRESSION;
+        if (algebraic_err)
             rc = CERR_PARSE_ALGEBRAIC_EXPRESSION;
         algebraic_input = nullptr;
         *out = algebraic_result;

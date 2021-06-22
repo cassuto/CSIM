@@ -20,9 +20,6 @@
 
 namespace csimModel
 {
-
-    class PropertyMdl;
-
     class Variant
     {
     public:
@@ -62,7 +59,7 @@ namespace csimModel
         Variant &setBoolean(bool b);
         Variant &setString(const char *str);
         Variant &setPropertyModel(PropertyMdl *mdl);
-        Variant &setAlgebraic(const char *expr);
+        Variant &setAlgebraic(csim::Algebraic *alg);
 
         uint8_t getUint8() const;
         uint16_t getUint16() const;
@@ -76,7 +73,7 @@ namespace csimModel
         bool getBoolean() const;
         const char *getString() const;
         PropertyMdl *getPropertyModel() const;
-        const char *getAlgebraic() const;
+        csim::Algebraic *getAlgebraic() const;
 
     private:
         VariantType m_type;
@@ -94,6 +91,7 @@ namespace csimModel
             double d;
             bool b;
             PropertyMdl *mdl;
+            csim::Algebraic *alg;
         } m_dat;
         std::string m_str; /* don't place non-trivial types into union */
     };

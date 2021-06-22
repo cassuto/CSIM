@@ -19,19 +19,19 @@
 #include <cmath>
 #include <cstring>
 #include "csim/utils/string.h"
-#include "csim/internal/parser/hspice-defs.h"
 #include "csim/internal/parser/algebraic-defs.h"
+#include "csim/internal/parser/hspice-defs.h"
 #include "parse-algebraic.h"
 static void yyerror(char const *msg) {
     std::cerr<<"Error at line"<<algebraic_lineno<<": "<<msg<<std::endl;
     algebraic_wrap();
+    csim::algebraic_err = true;
 }
 %}
 
 %name-prefix "algebraic_"
 
 %token K_Text K_Unsigned K_Number
-%token K_ExprBegin K_ExprEnd
 %token K_ExprNot K_ExprPow K_ExprMul K_ExprMod K_ExprDiv K_ExprIntDiv K_ExprPlus K_ExprMinus
 %token K_ExprEq K_ExprNe K_ExprLe K_ExprGe K_ExprLt K_ExprGt K_ExprAnd K_ExprOr K_ExprSel K_ExprColon
 %token K_ExprLPar K_ExprRPar
@@ -51,8 +51,8 @@ static void yyerror(char const *msg) {
 
 %%
 
-S: K_ExprBegin Expr K_ExprEnd {
-    csim::algebraic_result = $2;
+S: Expr {
+    csim::algebraic_result = $1;
 }
 
 Expr:

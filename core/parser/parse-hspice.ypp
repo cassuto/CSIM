@@ -16,11 +16,13 @@
  *  Lesser General Public License for more details.                        
  */
 #include <iostream>
+#include "csim/internal/parser/algebraic-defs.h"
 #include "csim/internal/parser/hspice-defs.h"
 #include "parse-hspice.h"
 static void yyerror(char const *msg) {
     std::cerr<<"Error at line"<<hspice_lineno<<": "<<msg<<std::endl;
     hspice_wrap();
+    csim::hspice_err = true;
 }
 %}
 
@@ -33,6 +35,7 @@ static void yyerror(char const *msg) {
 %token K_Ends
 %token K_Equ
 %token K_Algebraic
+%token K_Param
 %token K_End
 
 /* NodeName types */
@@ -78,6 +81,7 @@ Netlist:
 
 Block: /* empty */ { $$ = new csim::HSPICE_Block(); }
     | SUBCKT Block {
+        $1->block->setParent($2);
         $2->subs.push_back($1);
         $$ = $2;
     }
@@ -90,6 +94,25 @@ Block: /* empty */ { $$ = new csim::HSPICE_Block(); }
         model.params = $4;
         free($2); free($3);
         $$ = $6;
+    }
+    | K_Param ParamLine K_EOL Block {
+        /* .param */
+        for(auto it = $2->kvs.rbegin(); it != $2->kvs.rend(); it++) {
+            switch (it->second.getType()){
+                case csimModel::Variant::VariantAlgebraic:
+                    $4->addParam(it->first.c_str(), it->second.getAlgebraic()); /* Unsolved */
+                    break;
+
+                case csimModel::Variant::VariantDouble:
+                    $4->addParam(it->first.c_str(), it->second.getDouble()); /* Solved */
+                    break;
+
+                default:
+                    hspice_error("Invalid type used in expression.");
+            }
+        }
+        delete $2;
+        $$ = $4;
     }
     | K_EOL Block {
         $$ = $2;
@@ -110,7 +133,8 @@ ParamLine: /* empty*/ { $$ = new csim::HSPICE_KeyValueList(); }
         $$ = $4;
     }
     | K_Text K_Equ K_Algebraic ParamLine {
-        $4->kvs.push_back(std::make_pair($1, csimModel::Variant(csimModel::Variant::VariantAlgebraic).setAlgebraic($3)));
+        csim::Algebraic *alg = new csim::Algebraic($3);
+        $4->kvs.push_back(std::make_pair($1, csimModel::Variant(csimModel::Variant::VariantAlgebraic).setAlgebraic(alg)));
         free($1);
         free($3);
         $$ = $4;

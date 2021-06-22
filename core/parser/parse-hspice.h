@@ -57,7 +57,8 @@ extern int hspice_debug;
     K_Ends = 267,
     K_Equ = 268,
     K_Algebraic = 269,
-    K_End = 270
+    K_Param = 270,
+    K_End = 271
   };
 #endif
 
@@ -66,7 +67,7 @@ extern int hspice_debug;
 
 union YYSTYPE
 {
-#line 39 "/cygdrive/e/FastCSIM/core/parser/parse-hspice.ypp" /* yacc.c:1909  */
+#line 42 "/cygdrive/e/FastCSIM/core/parser/parse-hspice.ypp" /* yacc.c:1909  */
 
     char *text;
     csim::HSPICE_KeyValueList *kvs;
@@ -74,7 +75,7 @@ union YYSTYPE
     csim::HSPICE_SubBlock *subBlock;
     csim::HSPICE_Nodes *nodes;
 
-#line 78 "/cygdrive/e/FastCSIM/core/parser/parse-hspice.h" /* yacc.c:1909  */
+#line 79 "/cygdrive/e/FastCSIM/core/parser/parse-hspice.h" /* yacc.c:1909  */
 };
 
 typedef union YYSTYPE YYSTYPE;

@@ -24,6 +24,7 @@
 namespace csim
 {
     HSPICE_AST *hspice_ast;
+    bool hspice_err;
 
     HSPICE_Block::~HSPICE_Block()
     {
@@ -31,7 +32,16 @@ namespace csim
             delete subs[i];
 
         for (size_t i = 0; i < models.size(); i++)
-            delete models[i].params;
+        {
+            csim::HSPICE_KeyValueList *modelParams = models[i].params;
+            for (size_t j = 0; j < modelParams->kvs.size(); j++)
+            {
+                /* Delete expression of model parameter */
+                if (modelParams->kvs[j].second.getType() == csimModel::Variant::VariantAlgebraic)
+                    delete modelParams->kvs[j].second.getAlgebraic();
+            }
+            delete modelParams;
+        }
     }
 
     HSPICE_SubBlock::~HSPICE_SubBlock()
@@ -67,12 +77,15 @@ namespace csim
         hspice_wrap();
         hspice_lineno = 1;
         hspice_ast = this;
+        hspice_err = false;
         if (hspice_parse())
+            rc = CERR_PARSE_FILE;
+        if (hspice_err)
             rc = CERR_PARSE_FILE;
         fclose(hspice_in);
         hspice_in = nullptr;
         hspice_ast = nullptr;
-        /*TODO: Global unlock here */
+        /*TODO: Global unlock herse */
         return rc;
     }
 
@@ -109,6 +122,15 @@ namespace csim
                 case csimModel::Variant::VariantString:
                     std::cout << "\"" << param->second.getString() << "\"";
                     break;
+                case csimModel::Variant::VariantAlgebraic:
+                {
+                    double paramValue;
+                    if (param->second.getAlgebraic()->evaluate(block, &paramValue))
+                        std::cout << "(failed evaluation)";
+                    else
+                        std::cout << paramValue;
+                    break;
+                }
                 default:
                     std::cout << "(unknown type)";
                 }

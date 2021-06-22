@@ -61,11 +61,13 @@ namespace csimModel
     std::ostream& operator<<(std::ostream &out, const MComplex &src);
 
     class ModelBase;
+    class PropertyMdl;
 }
 
 namespace csim
 {
     class Circuit;
+    class Algebraic;
 }
 
 namespace std

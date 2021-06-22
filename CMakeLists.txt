@@ -26,8 +26,26 @@ else ()
 	message(FATAL_ERROR "Unsupported platform ${CMAKE_SYSTEM}")
 endif ()
 if (CYGWIN)
-add_definitions(-DCSIM_IN_CYGWIN)
+    add_definitions(-DCSIM_IN_CYGWIN)
 endif ()
+
+#
+# Find bison
+#
+find_package(BISON 2.4 REQUIRED)
+if(BISON_FOUND)
+else()
+message(FATAL_ERROR "BISON is required but not found")
+endif()
+
+#
+# Find Flex
+#
+find_package(FLEX 2.5.9  REQUIRED)
+if(FLEX_FOUND)
+else()
+  message(FATAL_ERROR "BISON is required but not found" )
+endif()
 
 include_directories(
 	"${PROJECT_SOURCE_DIR}/include"

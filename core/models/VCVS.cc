@@ -23,7 +23,7 @@ namespace csimModel
         : ModelBase(MODELBASE_CONSTRUCTOR_VAR),
           m_mu(0.0)
     {
-        property().addProperty("Mu", Variant(Variant::VariantDouble).setDouble(1.0), 0l, csimModel::PropertyBag::Required | csimModel::PropertyBag::Write | csimModel::PropertyBag::Read);
+        property().addProperty("Mu", Variant(Variant::VariantDouble).setDouble(1.0), nullptr, csimModel::PropertyBag::Required | csimModel::PropertyBag::Write | csimModel::PropertyBag::Read);
     }
 
     VCVS::~VCVS()

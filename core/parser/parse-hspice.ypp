@@ -1,0 +1,153 @@
+%{
+/**
+ * @file Lexer of HSPICE-compatible circuit description
+ */
+
+/*
+ *  FastCSIM Copyright (C) 2021 cassuto                                    
+ *  This project is free edition{} you can redistribute it and/or          
+ *  modify it under the terms of the GNU Lesser General Public             
+ *  License(LGPL) as published by the Free Software Foundation{} either     
+ *  version 2.1 of the License, or (at your option) any later version.     
+ *                                                                         
+ *  This project is distributed in the hope that it will be useful,        
+ *  but WITHOUT ANY WARRANTY{} without even the implied warranty of        
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU      
+ *  Lesser General Public License for more details.                        
+ */
+#include <iostream>
+#include "csim/internal/parser/hspice-defs.h"
+#include "parse-hspice.h"
+static void yyerror(char const *msg) {
+    std::cerr<<"Error at line"<<hspice_lineno<<": "<<msg<<std::endl;
+    hspice_wrap();
+}
+%}
+
+%name-prefix "hspice_"
+
+%token K_Text K_Unsigned K_Number K_Nodes K_EOL
+%token K_Title
+%token K_Model K_ModelType
+%token K_Subckt
+%token K_Ends
+%token K_Equ
+%token K_Algebraic
+%token K_End
+
+/* NodeName types */
+%union {
+    char *text;
+    csim::HSPICE_KeyValueList *kvs;
+    csim::HSPICE_Block *block;
+    csim::HSPICE_SubBlock *subBlock;
+    csim::HSPICE_Nodes *nodes;
+}
+
+%type <text> K_Text K_Title K_Unsigned K_Number K_Nodes
+%type <text> RealValue
+%type <block> Block
+%type <subBlock> SUBCKT SUBCKTBegin
+%type <text> K_ModelType
+%type <text> NodeName
+%type <nodes> NodeList
+%type <kvs> ParamLine
+%type <text> K_Algebraic
+
+%start Netlist
+
+%%
+
+Netlist:
+    K_Title Block K_End {
+        csim::hspice_ast->title = $1;
+        free($1);
+        csim::hspice_ast->blockRoot = $2;
+    }
+    | Block {
+        /* No .END */
+        csim::hspice_ast->blockRoot = $1;
+    }
+    | K_Title Block {
+        csim::hspice_ast->title = $1;
+        free($1);
+        csim::hspice_ast->blockRoot = $2;
+        /* No .END */
+    }
+;
+
+Block: /* empty */ { $$ = new csim::HSPICE_Block(); }
+    | SUBCKT Block {
+        $2->subs.push_back($1);
+        $$ = $2;
+    }
+    | K_Model K_Text K_ModelType ParamLine K_EOL Block {
+        /* .model */
+        $6->models.emplace_back();
+        csim::HSPICE_Model &model = $6->models.back();
+        model.name = $2;
+        model.type = $3;
+        model.params = $4;
+        free($2); free($3);
+        $$ = $6;
+    }
+    | K_EOL Block {
+        $$ = $2;
+    }
+;
+
+ParamLine: /* empty*/ { $$ = new csim::HSPICE_KeyValueList(); }
+    | K_Text K_Equ RealValue ParamLine {
+        $4->kvs.push_back(std::make_pair($1, csim::hspice_parseReal($3)));
+        free($1);
+        free($3);
+        $$ = $4;
+    }
+    | K_Text K_Equ K_Text ParamLine {
+        $4->kvs.push_back(std::make_pair($1, csimModel::Variant(csimModel::Variant::VariantString).setString($3)));
+        free($1);
+        free($3);
+        $$ = $4;
+    }
+    | K_Text K_Equ K_Algebraic ParamLine {
+        $4->kvs.push_back(std::make_pair($1, csimModel::Variant(csimModel::Variant::VariantAlgebraic).setAlgebraic($3)));
+        free($1);
+        free($3);
+        $$ = $4;
+    }
+;
+
+SUBCKT:
+    SUBCKTBegin Block SUBCKTEnd {
+        $1->block = $2;
+        $$ = $1;
+    }
+;
+SUBCKTBegin:
+    K_Subckt K_Text NodeList K_EOL {
+        $$ = new csim::HSPICE_SubBlock($2);
+        free($2);
+        $$->nodes = $3;
+    }
+;
+SUBCKTEnd:
+    K_Ends { }
+    | K_Ends K_Text { free ($2); /* FIXME: Overlapping in hierarchical description */ }
+;
+
+NodeList: /* empty */ { $$ = new csim::HSPICE_Nodes(); }
+    | NodeName NodeList {
+        $2->nodes.push_back($1);
+        free($1);
+        $$ = $2;
+    }
+;
+
+NodeName: K_Unsigned | K_Nodes | K_Text;
+
+RealValue: K_Unsigned | K_Number;
+
+
+%%
+
+/**/

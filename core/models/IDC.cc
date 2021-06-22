@@ -23,7 +23,7 @@ namespace csimModel
     IDC::IDC(MODELBASE_CONSTRUCTOR_DEF)
         : ModelBase(MODELBASE_CONSTRUCTOR_VAR)
     {
-        property().addProperty("I", Variant(Variant::VariantDouble).setDouble(0.2), 0l, csimModel::PropertyBag::Required | csimModel::PropertyBag::Write | csimModel::PropertyBag::Read);
+        property().addProperty("I", Variant(Variant::VariantDouble).setDouble(0.2), nullptr, csimModel::PropertyBag::Required | csimModel::PropertyBag::Write | csimModel::PropertyBag::Read);
     }
 
     IDC::~IDC()

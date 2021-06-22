@@ -49,7 +49,7 @@ namespace csim
         const char *srcname = property().getProperty("srcname").getString();
         bool sweepTemp = false;
         csimModel::ModelBase *model;
-        csimModel::Variant *sweepVariable = 0l;
+        csimModel::Variant *sweepVariable = nullptr;
         std::string sweepName;
 
         switch (std::toupper(*srcname))

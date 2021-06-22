@@ -28,6 +28,8 @@ set(TEST_SRCS
     "${CMAKE_CURRENT_SOURCE_DIR}/tstOPSources.cc"
     "${CMAKE_CURRENT_SOURCE_DIR}/tstTransientNonlinearCircuit.cc"
     "${CMAKE_CURRENT_SOURCE_DIR}/tstGearTruncationError.cc"
+    "${CMAKE_CURRENT_SOURCE_DIR}/tstHSPICEParser.cc"
+    "${CMAKE_CURRENT_SOURCE_DIR}/tstAlgebraic.cc"
 )
 
 add_executable(tstall ${TEST_SRCS})

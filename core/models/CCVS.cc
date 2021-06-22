@@ -23,7 +23,7 @@ namespace csimModel
         : ModelBase(MODELBASE_CONSTRUCTOR_VAR),
           m_r(0.0)
     {
-        property().addProperty("r", Variant(Variant::VariantDouble).setDouble(1.0), 0l, csimModel::PropertyBag::Required | csimModel::PropertyBag::Write | csimModel::PropertyBag::Read);
+        property().addProperty("r", Variant(Variant::VariantDouble).setDouble(1.0), nullptr, csimModel::PropertyBag::Required | csimModel::PropertyBag::Write | csimModel::PropertyBag::Read);
     }
 
     CCVS::~CCVS()

@@ -28,9 +28,9 @@ namespace csimModel
           m_omega(0.0),
           m_phase(0.0)
     {
-        property().addProperty("Vp", Variant(Variant::VariantDouble).setDouble(5.0), 0l, csimModel::PropertyBag::Required | csimModel::PropertyBag::Write | csimModel::PropertyBag::Read);
-        property().addProperty("freq", Variant(Variant::VariantDouble).setDouble(50.0), 0l, csimModel::PropertyBag::Required | csimModel::PropertyBag::Write | csimModel::PropertyBag::Read);
-        property().addProperty("phase", Variant(Variant::VariantDouble).setDouble(0.0), 0l, csimModel::PropertyBag::Write | csimModel::PropertyBag::Read);
+        property().addProperty("Vp", Variant(Variant::VariantDouble).setDouble(5.0), nullptr, csimModel::PropertyBag::Required | csimModel::PropertyBag::Write | csimModel::PropertyBag::Read);
+        property().addProperty("freq", Variant(Variant::VariantDouble).setDouble(50.0), nullptr, csimModel::PropertyBag::Required | csimModel::PropertyBag::Write | csimModel::PropertyBag::Read);
+        property().addProperty("phase", Variant(Variant::VariantDouble).setDouble(0.0), nullptr, csimModel::PropertyBag::Write | csimModel::PropertyBag::Read);
     }
 
     VAC::~VAC()

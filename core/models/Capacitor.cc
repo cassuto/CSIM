@@ -25,7 +25,7 @@ namespace csimModel
         : ModelBase(MODELBASE_CONSTRUCTOR_VAR),
           m_kZimag(0.0)
     {
-        property().addProperty("C", Variant(Variant::VariantDouble).setDouble(1e-5), 0l, csimModel::PropertyBag::Required | csimModel::PropertyBag::Write | csimModel::PropertyBag::Read);
+        property().addProperty("C", Variant(Variant::VariantDouble).setDouble(1e-5), nullptr, csimModel::PropertyBag::Required | csimModel::PropertyBag::Write | csimModel::PropertyBag::Read);
     }
 
     Capacitor::~Capacitor()

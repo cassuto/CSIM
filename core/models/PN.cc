@@ -30,15 +30,15 @@ namespace csimModel
           m_Uth(0.0),
           m_Ud_1(0.0)
     {
-        property().addProperty("Is", Variant(Variant::VariantDouble).setDouble(1e-14), 0l, csimModel::PropertyBag::Write | csimModel::PropertyBag::Read);
-        property().addProperty("N", Variant(Variant::VariantDouble).setDouble(1.0), 0l, csimModel::PropertyBag::Write | csimModel::PropertyBag::Read);
-        property().addProperty("Isr", Variant(Variant::VariantDouble).setDouble(0.0), 0l, csimModel::PropertyBag::Write | csimModel::PropertyBag::Read);
-        property().addProperty("Nr", Variant(Variant::VariantDouble).setDouble(2.0), 0l, csimModel::PropertyBag::Write | csimModel::PropertyBag::Read);
-        property().addProperty("Temp", Variant(Variant::VariantDouble).setDouble(27.0), 0l, csimModel::PropertyBag::Write | csimModel::PropertyBag::Read);
-        property().addProperty("Ibv", Variant(Variant::VariantDouble).setDouble(1e-3), 0l, csimModel::PropertyBag::Write | csimModel::PropertyBag::Read);
-        property().addProperty("Bv", Variant(Variant::VariantDouble).setDouble(40.0), 0l, csimModel::PropertyBag::Write | csimModel::PropertyBag::Read);
-        property().addProperty("Bv_set", Variant(Variant::VariantBoolean).setBoolean(true), 0l, csimModel::PropertyBag::Write | csimModel::PropertyBag::Read);
-        property().addProperty("Area", Variant(Variant::VariantDouble).setDouble(1.0), 0l, csimModel::PropertyBag::Write | csimModel::PropertyBag::Read);
+        property().addProperty("Is", Variant(Variant::VariantDouble).setDouble(1e-14), nullptr, csimModel::PropertyBag::Write | csimModel::PropertyBag::Read);
+        property().addProperty("N", Variant(Variant::VariantDouble).setDouble(1.0), nullptr, csimModel::PropertyBag::Write | csimModel::PropertyBag::Read);
+        property().addProperty("Isr", Variant(Variant::VariantDouble).setDouble(0.0), nullptr, csimModel::PropertyBag::Write | csimModel::PropertyBag::Read);
+        property().addProperty("Nr", Variant(Variant::VariantDouble).setDouble(2.0), nullptr, csimModel::PropertyBag::Write | csimModel::PropertyBag::Read);
+        property().addProperty("Temp", Variant(Variant::VariantDouble).setDouble(27.0), nullptr, csimModel::PropertyBag::Write | csimModel::PropertyBag::Read);
+        property().addProperty("Ibv", Variant(Variant::VariantDouble).setDouble(1e-3), nullptr, csimModel::PropertyBag::Write | csimModel::PropertyBag::Read);
+        property().addProperty("Bv", Variant(Variant::VariantDouble).setDouble(40.0), nullptr, csimModel::PropertyBag::Write | csimModel::PropertyBag::Read);
+        property().addProperty("Bv_set", Variant(Variant::VariantBoolean).setBoolean(true), nullptr, csimModel::PropertyBag::Write | csimModel::PropertyBag::Read);
+        property().addProperty("Area", Variant(Variant::VariantDouble).setDouble(1.0), nullptr, csimModel::PropertyBag::Write | csimModel::PropertyBag::Read);
     }
 
     PN::~PN()

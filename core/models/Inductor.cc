@@ -26,7 +26,7 @@ namespace csimModel
           m_kZimag(0.0),
           m_cutThrough(false)
     {
-        property().addProperty("L", Variant(Variant::VariantDouble).setDouble(1e-5), 0l, csimModel::PropertyBag::Required | csimModel::PropertyBag::Write | csimModel::PropertyBag::Read);
+        property().addProperty("L", Variant(Variant::VariantDouble).setDouble(1e-5), nullptr, csimModel::PropertyBag::Required | csimModel::PropertyBag::Write | csimModel::PropertyBag::Read);
     }
 
     Inductor::~Inductor()

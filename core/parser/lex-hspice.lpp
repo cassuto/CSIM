@@ -1,0 +1,164 @@
+%option prefix="hspice_"
+%{
+/**
+ * @file Lexer of HSPICE-compatible circuit description
+ */
+
+/*
+ *  FastCSIM Copyright (C) 2021 cassuto                                    
+ *  This project is free edition{} you can redistribute it and/or          
+ *  modify it under the terms of the GNU Lesser General Public             
+ *  License(LGPL) as published by the Free Software Foundation{} either     
+ *  version 2.1 of the License, or (at your option) any later version.     
+ *                                                                         
+ *  This project is distributed in the hope that it will be useful,        
+ *  but WITHOUT ANY WARRANTY{} without even the implied warranty of        
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU      
+ *  Lesser General Public License for more details.                        
+ */
+#include <iostream>
+#include "csim/internal/parser/hspice-defs.h"
+#include "parse-hspice.h"
+%}
+
+%option yylineno
+
+WHITE [ \t\f\v\n\r]
+SPACE [ \t\f\v]
+EOL \r*\n
+TEXT [A-Za-z0-9_\.][A-Za-z0-9_\.\-/]*
+TITLE [^\r\n]*\r*\n
+DIGIT [0-9]
+SIGNED [+-]?{DIGIT}+
+EXPONENT [Ee][+-]?{DIGIT}+
+F_INT_EXP [+-]?{DIGIT}+{EXPONENT}
+F_INT_SML_EXP [+-]?{DIGIT}*"."{DIGIT}+({EXPONENT})?
+F_INT_PT [+-]?{DIGIT}+"."
+SCALE ([fF]|[pP]|[nN]|[uU]|[mM]|[mM][iI][lL]|[kK]|[mM][eE][gG]|[gG]|[tT])
+UNIT ([vV]|[aA]|[oO][hH][mM]|[mM][hH][oO]|[sS]|[fF]|[hH])
+NUMBER ({SIGNED}|{F_INT_EXP}|{F_INT_SML_EXP}|{F_INT_PT}){SCALE}?{UNIT}?
+
+/* Symbol of nodes */
+NODES ([A-Za-z0-9_#\+-]+|[\+]|[-])
+
+/* For algebraic expression */
+IDENTIFIER [A-Za-z][A-Za-z0-9_]*
+
+/* Actions */
+%x STARTUP COMMENT
+%x MODEL_NAME MODEL_TYPE
+%x SUBCKT
+%x ALGEBRAIC_EXP
+
+%%
+
+ /* title line */
+<INITIAL>^{TITLE} {
+    hspice_lval.text = strdup (hspice_text);
+    BEGIN(STARTUP);
+    return K_Title;
+}
+
+
+ /* .end */
+<STARTUP,INITIAL>"."[eE][nN][dD]{SPACE}*{EOL}* {
+    return K_End;
+}
+
+
+ /* .model */
+<STARTUP,INITIAL>"."[mM][oO][dD][eE][lL] {
+    BEGIN(MODEL_NAME);
+    return K_Model;
+}
+<MODEL_NAME>{TEXT} {
+    hspice_lval.text = strdup (hspice_text);
+    BEGIN(MODEL_TYPE);
+    return K_Text;
+}
+<MODEL_TYPE>{TEXT} {
+    hspice_lval.text = strdup (hspice_text);
+    BEGIN(STARTUP);
+    return K_ModelType;
+}
+
+
+ /* .subckt */
+<STARTUP,INITIAL>"."[sS][uU][bB][cC][kK][tT] {
+    BEGIN(SUBCKT);
+    return K_Subckt;
+}
+<SUBCKT>{TEXT} {
+    hspice_lval.text = strdup (hspice_text);
+    BEGIN(STARTUP);
+    return K_Text;
+}
+ /* .ends */
+<STARTUP>"."[eE][nN][dD][sS] {
+    return K_Ends;
+}
+
+ /* Text of unsigned digits  */
+<STARTUP>{DIGIT}+ {
+    hspice_lval.text = strdup (hspice_text);
+    return K_Unsigned;
+}
+
+ /* Signed integers or floats */
+<STARTUP>{NUMBER} {
+    hspice_lval.text = strdup (hspice_text);
+    return K_Number;
+}
+
+ /* Text */
+<STARTUP>{TEXT} {
+    hspice_lval.text = strdup (hspice_text);
+    return K_Text;
+}
+
+ /* Nodes (After TEXT mismatched) */
+<STARTUP>{NODES} {
+    hspice_lval.text = strdup (hspice_text);
+    return K_Nodes;
+}
+
+ /* Equ */
+<STARTUP>"=" {
+    return K_Equ;
+}
+
+ /* Line continuation */
+<STARTUP>{EOL}{SPACE}*"+" {
+}
+
+ /* Algebraic expression */
+<STARTUP>"'" {
+    BEGIN(ALGEBRAIC_EXP);
+}
+<ALGEBRAIC_EXP>"'" {
+    BEGIN(STARTUP);
+    hspice_lval.text = strdup(hspice_text);
+    return K_Algebraic;
+}
+<ALGEBRAIC_EXP>. { yymore(); }
+
+
+
+<STARTUP,INITIAL>^"*" { BEGIN(COMMENT); }
+<COMMENT>{EOL} { BEGIN(STARTUP); }
+<COMMENT>. {  }
+
+<STARTUP>{EOL} {
+    BEGIN(STARTUP);
+    return K_EOL;
+}
+
+<STARTUP,INITIAL>^{SPACE}+ { /* skip leading spaces */ }
+
+
+%%
+
+int yywrap() {
+    {BEGIN INITIAL;}
+    return 1;
+}

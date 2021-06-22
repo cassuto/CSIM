@@ -71,7 +71,7 @@ namespace csim
     {
         std::string refNorm = toUpper(ref);
         if (m_modelIndex.find(refNorm) == m_modelIndex.end())
-            return 0l;
+            return nullptr;
         return m_models[m_modelIndex.at(refNorm)].model;
     }
 

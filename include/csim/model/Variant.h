@@ -40,7 +40,8 @@ namespace csimModel
             VariantDouble,
             VariantBoolean,
             VariantString,
-            VariantPropertyModel
+            VariantPropertyModel,
+            VariantAlgebraic
         };
 
         Variant();
@@ -61,6 +62,7 @@ namespace csimModel
         Variant &setBoolean(bool b);
         Variant &setString(const char *str);
         Variant &setPropertyModel(PropertyMdl *mdl);
+        Variant &setAlgebraic(const char *expr);
 
         uint8_t getUint8() const;
         uint16_t getUint16() const;
@@ -74,6 +76,7 @@ namespace csimModel
         bool getBoolean() const;
         const char *getString() const;
         PropertyMdl *getPropertyModel() const;
+        const char *getAlgebraic() const;
 
     private:
         VariantType m_type;
@@ -92,7 +95,7 @@ namespace csimModel
             bool b;
             PropertyMdl *mdl;
         } m_dat;
-        std::string m_str;
+        std::string m_str; /* don't place non-trivial types into union */
     };
 
 }

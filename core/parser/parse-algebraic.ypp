@@ -1,0 +1,264 @@
+%{
+/**
+ * @file Lexer of HSPICE-compatible circuit description
+ */
+
+/*
+ *  FastCSIM Copyright (C) 2021 cassuto                                    
+ *  This project is free edition{} you can redistribute it and/or          
+ *  modify it under the terms of the GNU Lesser General Public             
+ *  License(LGPL) as published by the Free Software Foundation{} either     
+ *  version 2.1 of the License, or (at your option) any later version.     
+ *                                                                         
+ *  This project is distributed in the hope that it will be useful,        
+ *  but WITHOUT ANY WARRANTY{} without even the implied warranty of        
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU      
+ *  Lesser General Public License for more details.                        
+ */
+#include <limits>
+#include <cmath>
+#include <cstring>
+#include "csim/utils/string.h"
+#include "csim/internal/parser/hspice-defs.h"
+#include "csim/internal/parser/algebraic-defs.h"
+#include "parse-algebraic.h"
+static void yyerror(char const *msg) {
+    std::cerr<<"Error at line"<<algebraic_lineno<<": "<<msg<<std::endl;
+    algebraic_wrap();
+}
+%}
+
+%name-prefix "algebraic_"
+
+%token K_Text K_Unsigned K_Number
+%token K_ExprBegin K_ExprEnd
+%token K_ExprNot K_ExprPow K_ExprMul K_ExprMod K_ExprDiv K_ExprIntDiv K_ExprPlus K_ExprMinus
+%token K_ExprEq K_ExprNe K_ExprLe K_ExprGe K_ExprLt K_ExprGt K_ExprAnd K_ExprOr K_ExprSel K_ExprColon
+%token K_ExprLPar K_ExprRPar
+%token K_ExprId
+%token K_ExprComma
+
+/* NodeName types */
+%union {
+    char *text;
+    double real;
+}
+
+%type <text> K_ExprId K_Unsigned K_Number
+%type <real> Expr ExprOr ExprAnd ExprEQ ExprRelation ExprTerm ExprFactor ExprPow ExprUnary Atom
+
+%start S
+
+%%
+
+S: K_ExprBegin Expr K_ExprEnd {
+    csim::algebraic_result = $2;
+}
+
+Expr:
+    ExprOr {
+        $$ = $1;
+    }
+	| ExprOr K_ExprSel Expr K_ExprColon Expr {
+        $$ = (std::fabs($1)>std::numeric_limits<float>::epsilon()) ? $3 : $5;
+    }
+;
+
+ExprOr:
+    ExprAnd {
+        $$ = $1;
+    }
+	| ExprOr K_ExprOr ExprAnd {
+        $$ = ((std::fabs($1)>std::numeric_limits<float>::epsilon()) || (std::fabs($3)>std::numeric_limits<float>::epsilon())) ? 1.0 : 0.0;
+    }
+;
+
+ExprAnd:
+    ExprEQ {
+        $$ = $1;
+    }
+	| ExprAnd K_ExprAnd ExprEQ {
+        $$ = ((std::fabs($1)<=std::numeric_limits<float>::epsilon()) && (std::fabs($3)<=std::numeric_limits<float>::epsilon())) ? 1.0 : 0.0;
+    }
+;
+
+ExprEQ:
+    ExprRelation {
+        $$ = $1;
+    }
+	| ExprEQ K_ExprEq ExprRelation {
+        $$ = ($1 == $3) ? 1.0 : 0.0;
+    }
+	| ExprEQ K_ExprNe ExprRelation {
+        $$ = ($1 != $3) ? 1.0 : 0.0;
+    }
+;
+
+ExprRelation:
+    ExprTerm {
+        $$ = $1;
+    }
+	| ExprRelation K_ExprLt ExprTerm {
+        $$ = ($1 < $3) ? 1.0 : 0.0;
+    }
+	| ExprRelation K_ExprGt ExprTerm {
+        $$ = ($1 > $3) ? 1.0 : 0.0;
+    }
+	| ExprRelation K_ExprLe ExprTerm {
+        $$ = ($1 <= $3) ? 1.0 : 0.0;
+    }
+	| ExprRelation K_ExprGe ExprTerm {
+        $$ = ($1 >= $3) ? 1.0 : 0.0;
+    }
+;
+
+ExprTerm:
+    ExprFactor {
+        $$ = $1;
+    }
+	| ExprTerm K_ExprPlus ExprFactor {
+        $$ = $1 + $3;
+    }
+	| ExprTerm K_ExprMinus ExprFactor {
+        $$ = $1 - $3;
+    }
+;
+
+ExprFactor:
+    ExprPow {
+        $$ = $1;
+    }
+	| ExprFactor K_ExprMul ExprPow {
+        $$ = $1 * $3;
+    }
+	| ExprFactor K_ExprDiv ExprPow {
+        $$ = $1 / $3;
+    }
+    | ExprFactor K_ExprIntDiv ExprPow {
+        $$ = csim::algebraic_trunc(std::fabs($1 / $3));
+    }
+	| ExprFactor K_ExprMod ExprPow {
+        double t = csim::algebraic_trunc($1 / $3);
+        $$ = $1 - $3 * t;
+    }
+;
+
+ExprPow:
+    ExprUnary {
+        $$ = $1;
+    }
+    | ExprPow K_ExprPow ExprUnary {
+        $$ = std::pow(std::fabs($1),$3);
+    }
+;
+    
+
+ExprUnary:
+    Atom {
+        $$ = $1;
+    }
+	| K_ExprMinus ExprPow {
+        $$ = -$2;
+    }
+    | K_ExprNot ExprPow {
+        $$ = int($2) ? 0.0 : 1.0;
+    }
+;
+
+Atom:
+	K_ExprId {
+        double val;
+        if (csim::algebraic_currentScope->getValue($1,&val)) {
+            yyerror("Variable undefined");
+        }
+        $$ = val;
+        free($1);
+    }
+	| K_Unsigned {
+        $$ = csim::algebraic_parseReal($1);
+        free($1);
+    }
+	| K_Number {
+        $$ = csim::algebraic_parseReal($1);
+        free($1);
+    }
+	| K_ExprLPar Expr K_ExprRPar {
+        $$ = $2;
+    }
+    | K_ExprId K_ExprLPar Expr K_ExprRPar {
+        if (0==csim::strcmp_nocase($1, "sqr"))
+            $$ = $3 * $3;
+        else if (0==csim::strcmp_nocase($1, "sqrt"))
+            $$ = std::sqrt($3);
+        else if (0==csim::strcmp_nocase($1, "sin"))
+            $$ = std::sin($3);
+        else if (0==csim::strcmp_nocase($1, "cos"))
+            $$ = std::cos($3);
+        else if (0==csim::strcmp_nocase($1, "tan"))
+            $$ = std::tan($3);
+        else if (0==csim::strcmp_nocase($1, "sinh"))
+            $$ = std::sinh($3);
+        else if (0==csim::strcmp_nocase($1, "cosh"))
+            $$ = std::cosh($3);
+        else if (0==csim::strcmp_nocase($1, "tanh"))
+            $$ = std::tanh($3);
+        else if (0==csim::strcmp_nocase($1, "asin"))
+            $$ = std::asin($3);
+        else if (0==csim::strcmp_nocase($1, "acos"))
+            $$ = std::acos($3);
+        else if (0==csim::strcmp_nocase($1, "atan"))
+            $$ = std::atan($3);
+        else if (0==csim::strcmp_nocase($1, "asinh"))
+            $$ = std::asinh($3);
+        else if (0==csim::strcmp_nocase($1, "acosh"))
+            $$ = std::acosh($3);
+        else if (0==csim::strcmp_nocase($1, "atanh"))
+            $$ = std::atanh($3);
+        else if (0==csim::strcmp_nocase($1, "arctan"))
+            $$ = std::atan($3);
+        else if (0==csim::strcmp_nocase($1, "exp"))
+            $$ = std::exp($3);
+        else if (0==csim::strcmp_nocase($1, "ln"))
+            $$ = std::log($3);
+        else if (0==csim::strcmp_nocase($1, "log"))
+            $$ = std::log($3);
+        else if (0==csim::strcmp_nocase($1, "log10"))
+            $$ = std::log10($3);
+        else if (0==csim::strcmp_nocase($1, "abs"))
+            $$ = std::fabs($3);
+        else if (0==csim::strcmp_nocase($1, "nint"))
+            $$ = std::nearbyint($3);
+        else if (0==csim::strcmp_nocase($1, "nint"))
+            $$ = std::nearbyint($3);
+        else if (0==csim::strcmp_nocase($1, "int"))
+            $$ = csim::algebraic_trunc($3);
+        else if (0==csim::strcmp_nocase($1, "floor"))
+            $$ = std::floor($3);
+        else if (0==csim::strcmp_nocase($1, "ceil"))
+            $$ = std::ceil($3);
+        else if (0==csim::strcmp_nocase($1, "sgn"))
+            $$ = ($3 > 0.0) ? 1.0 : ($3 < 0.0) ? -1.0 : 0.0;
+        else {
+            algebraic_error("Unknown function");
+        }
+        free($1);
+    }
+    | K_ExprId K_ExprLPar Expr K_ExprComma Expr K_ExprRPar {
+        if (0==csim::strcmp_nocase($1, "pow"))
+            $$ = std::pow($3, $5);
+        else if (0==csim::strcmp_nocase($1, "pwr"))
+            $$ = std::pow(std::fabs($3), $5);
+        else if (0==csim::strcmp_nocase($1, "min"))
+            $$ = std::min($3, $5);
+        else if (0==csim::strcmp_nocase($1, "max"))
+            $$ = std::max($3, $5);
+        else {
+            algebraic_error("Unknown function");
+        }
+        free($1);
+    }
+;
+
+%%
+
+/**/

@@ -63,8 +63,152 @@ namespace csimModel
         {"capbs", Variant::VariantDouble, "Capbs", BSIM3v32_STAT_CAPBS},
     };
 
-    BSIM3V32::BSIM3V32(MODELBASE_CONSTRUCTOR_DEF) : ModelBase(MODELBASE_CONSTRUCTOR_VAR),
-                                                    tranFirstStep(true), BSIM3v32dNodePrimeInserted(false), BSIM3v32sNodePrimeInserted(false), BSIM3v32qNodeInserted(false), model(0l)
+    BSIM3V32::BSIM3V32(MODELBASE_CONSTRUCTOR_DEF)
+        : ModelBase(MODELBASE_CONSTRUCTOR_VAR),
+          tranFirstStep(true),
+          BSIM3v32dNodePrimeInserted(false),
+          BSIM3v32sNodePrimeInserted(false),
+          BSIM3v32qNodeInserted(false),
+          BSIM3v32dNodePrime(0),
+          BSIM3v32sNodePrime(0),
+          BSIM3v32qNode(0),
+          BSIM3v32ueff(0),
+          BSIM3v32thetavth(0),
+          BSIM3v32von(0),
+          BSIM3v32vdsat(0),
+          BSIM3v32cgdo(0),
+          BSIM3v32cgso(0),
+          BSIM3v32vjsm(0),
+          BSIM3v32IsEvjsm(0),
+          BSIM3v32vjdm(0),
+          BSIM3v32IsEvjdm(0),
+
+          BSIM3v32l(0),
+          BSIM3v32w(0),
+          BSIM3v32m(0),
+          BSIM3v32drainArea(0),
+          BSIM3v32sourceArea(0),
+          BSIM3v32drainSquares(0),
+          BSIM3v32sourceSquares(0),
+          BSIM3v32drainPerimeter(0),
+          BSIM3v32sourcePerimeter(0),
+          BSIM3v32sourceConductance(0),
+          BSIM3v32drainConductance(0),
+          BSIM3v32delvto(0),
+          BSIM3v32mulu0(0),
+          BSIM3v32vth0(0),
+          BSIM3v32vfb(0),
+          BSIM3v32vfbzb(0),
+          BSIM3v32u0temp(0),
+          BSIM3v32tconst(0),
+
+          BSIM3v32icVBS(0),
+          BSIM3v32icVDS(0),
+          BSIM3v32icVGS(0),
+          BSIM3v32off(0),
+          BSIM3v32mode(0),
+          BSIM3v32nqsMod(0),
+          BSIM3v32geo(0),
+
+          BSIM3v32qinv(0),
+          BSIM3v32cd(0),
+          BSIM3v32cbs(0),
+          BSIM3v32cbd(0),
+          BSIM3v32csub(0),
+          BSIM3v32gm(0),
+          BSIM3v32gds(0),
+          BSIM3v32gmbs(0),
+          BSIM3v32gbd(0),
+          BSIM3v32gbs(0),
+
+          BSIM3v32gbbs(0),
+          BSIM3v32gbgs(0),
+          BSIM3v32gbds(0),
+
+          BSIM3v32cggb(0),
+          BSIM3v32cgdb(0),
+          BSIM3v32cgsb(0),
+          BSIM3v32cbgb(0),
+          BSIM3v32cbdb(0),
+          BSIM3v32cbsb(0),
+          BSIM3v32cdgb(0),
+          BSIM3v32cddb(0),
+          BSIM3v32cdsb(0),
+          BSIM3v32capbd(0),
+          BSIM3v32capbs(0),
+
+          BSIM3v32cqgb(0),
+          BSIM3v32cqdb(0),
+          BSIM3v32cqsb(0),
+          BSIM3v32cqbb(0),
+
+          BSIM3v32qgate(0),
+          BSIM3v32qbulk(0),
+          BSIM3v32qdrn(0),
+
+          BSIM3v32gtau(0),
+          BSIM3v32gtg(0),
+          BSIM3v32gtd(0),
+          BSIM3v32gts(0),
+          BSIM3v32gtb(0),
+          BSIM3v32rds(0),
+          BSIM3v32Vgsteff(0),
+          BSIM3v32Vdseff(0),
+          BSIM3v32Abulk(0),
+          BSIM3v32AbovVgst2Vtm(0),
+          pParam(nullptr),
+          BSIM3v32lGiven(0),
+          BSIM3v32wGiven(0),
+          BSIM3v32mGiven(0),
+          BSIM3v32drainAreaGiven(0),
+          BSIM3v32sourceAreaGiven(0),
+          BSIM3v32drainSquaresGiven(0),
+          BSIM3v32sourceSquaresGiven(0),
+          BSIM3v32drainPerimeterGiven(0),
+          BSIM3v32sourcePerimeterGiven(0),
+          BSIM3v32delvtoGiven(0),
+          BSIM3v32mulu0Given(0),
+          BSIM3v32dNodePrimeSet(0),
+          BSIM3v32sNodePrimeSet(0),
+          BSIM3v32icVBSGiven(0),
+          BSIM3v32icVDSGiven(0),
+          BSIM3v32icVGSGiven(0),
+          BSIM3v32nqsModGiven(0),
+          BSIM3v32geoGiven(0),
+
+          BSIM3v32DdPtr(nullptr),
+          BSIM3v32GgPtr(nullptr),
+          BSIM3v32SsPtr(nullptr),
+          BSIM3v32BbPtr(nullptr),
+          BSIM3v32DPdpPtr(nullptr),
+          BSIM3v32SPspPtr(nullptr),
+          BSIM3v32DdpPtr(nullptr),
+          BSIM3v32GbPtr(nullptr),
+          BSIM3v32GdpPtr(nullptr),
+          BSIM3v32GspPtr(nullptr),
+          BSIM3v32SspPtr(nullptr),
+          BSIM3v32BdpPtr(nullptr),
+          BSIM3v32BspPtr(nullptr),
+          BSIM3v32DPspPtr(nullptr),
+          BSIM3v32DPdPtr(nullptr),
+          BSIM3v32BgPtr(nullptr),
+          BSIM3v32DPgPtr(nullptr),
+          BSIM3v32SPgPtr(nullptr),
+          BSIM3v32SPsPtr(nullptr),
+          BSIM3v32DPbPtr(nullptr),
+          BSIM3v32SPbPtr(nullptr),
+          BSIM3v32SPdpPtr(nullptr),
+
+          BSIM3v32QqPtr(nullptr),
+          BSIM3v32QdpPtr(nullptr),
+          BSIM3v32QgPtr(nullptr),
+          BSIM3v32QspPtr(nullptr),
+          BSIM3v32QbPtr(nullptr),
+          BSIM3v32DPqPtr(nullptr),
+          BSIM3v32GqPtr(nullptr),
+          BSIM3v32SPqPtr(nullptr),
+          BSIM3v32BqPtr(nullptr),
+          model(nullptr)
     {
         property().addProperty("l", Variant(Variant::VariantDouble).setDouble(0), "Length", csimModel::PropertyBag::Write | csimModel::PropertyBag::Read);
         property().addProperty("w", Variant(Variant::VariantDouble).setDouble(0), "Width", csimModel::PropertyBag::Write | csimModel::PropertyBag::Read);
@@ -83,7 +227,7 @@ namespace csimModel
         property().addProperty("ic_vbs", Variant(Variant::VariantDouble).setDouble(0), "BS initial voltages", csimModel::PropertyBag::Write);
         property().addProperty("ic_vds", Variant(Variant::VariantDouble).setDouble(0), "DS initial voltages", csimModel::PropertyBag::Write);
         property().addProperty("ic_vgs", Variant(Variant::VariantDouble).setDouble(0), "GS initial voltages", csimModel::PropertyBag::Write);
-        property().addProperty("mdl", Variant(Variant::VariantPropertyModel).setPropertyModel(0l), "Model", csimModel::PropertyBag::Required | csimModel::PropertyBag::Write | csimModel::PropertyBag::Read);
+        property().addProperty("mdl", Variant(Variant::VariantPropertyModel).setPropertyModel(nullptr), "Model", csimModel::PropertyBag::Required | csimModel::PropertyBag::Write | csimModel::PropertyBag::Read);
 
         registerStatus(m_statusDesc, sizeof(m_statusDesc) / sizeof(ModelBase::StatusDescriptor));
     }
@@ -363,15 +507,15 @@ namespace csimModel
         }
         else
         {
-            this->BSIM3v32QqPtr = 0l;
-            this->BSIM3v32QdpPtr = 0l;
-            this->BSIM3v32QspPtr = 0l;
-            this->BSIM3v32QgPtr = 0l;
-            this->BSIM3v32QbPtr = 0l;
-            this->BSIM3v32DPqPtr = 0l;
-            this->BSIM3v32SPqPtr = 0l;
-            this->BSIM3v32GqPtr = 0l;
-            this->BSIM3v32BqPtr = 0l;
+            this->BSIM3v32QqPtr = nullptr;
+            this->BSIM3v32QdpPtr = nullptr;
+            this->BSIM3v32QspPtr = nullptr;
+            this->BSIM3v32QgPtr = nullptr;
+            this->BSIM3v32QbPtr = nullptr;
+            this->BSIM3v32DPqPtr = nullptr;
+            this->BSIM3v32SPqPtr = nullptr;
+            this->BSIM3v32GqPtr = nullptr;
+            this->BSIM3v32BqPtr = nullptr;
         }
 
         return 0;

@@ -28,9 +28,9 @@ namespace csimModel
           m_omega(0.0),
           m_phase(0.0)
     {
-        property().addProperty("Ip", Variant(Variant::VariantDouble).setDouble(0.2), 0l, csimModel::PropertyBag::Required | csimModel::PropertyBag::Write | csimModel::PropertyBag::Read);
-        property().addProperty("freq", Variant(Variant::VariantDouble).setDouble(50.0), 0l, csimModel::PropertyBag::Required | csimModel::PropertyBag::Write | csimModel::PropertyBag::Read);
-        property().addProperty("phase", Variant(Variant::VariantDouble).setDouble(0.0), 0l, csimModel::PropertyBag::Required | csimModel::PropertyBag::Write | csimModel::PropertyBag::Read);
+        property().addProperty("Ip", Variant(Variant::VariantDouble).setDouble(0.2), nullptr, csimModel::PropertyBag::Required | csimModel::PropertyBag::Write | csimModel::PropertyBag::Read);
+        property().addProperty("freq", Variant(Variant::VariantDouble).setDouble(50.0), nullptr, csimModel::PropertyBag::Required | csimModel::PropertyBag::Write | csimModel::PropertyBag::Read);
+        property().addProperty("phase", Variant(Variant::VariantDouble).setDouble(0.0), nullptr, csimModel::PropertyBag::Required | csimModel::PropertyBag::Write | csimModel::PropertyBag::Read);
     }
 
     IAC::~IAC()

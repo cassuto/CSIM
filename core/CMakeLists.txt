@@ -32,11 +32,76 @@ set(SRCS
     "${CMAKE_CURRENT_SOURCE_DIR}/analyzer/SweepLogarithm.cc"
     "${CMAKE_CURRENT_SOURCE_DIR}/analyzer/SweepDecade.cc"
     "${CMAKE_CURRENT_SOURCE_DIR}/analyzer/SweepOctave.cc"
+    "${CMAKE_CURRENT_SOURCE_DIR}/parser/ast-hspice.cc"
+    "${CMAKE_CURRENT_SOURCE_DIR}/parser/algebraic.cc"
     "${CMAKE_CURRENT_SOURCE_DIR}/Circuit.cc"
     "${CMAKE_CURRENT_SOURCE_DIR}/Netlist.cc"
     "${CMAKE_CURRENT_SOURCE_DIR}/Dataset.cc"
 )
 
-add_library(${PROJECT_NAME} SHARED ${SRCS})
+# Generate lexior
+set(FLEX_HSPICE_OUT
+    ${CMAKE_CURRENT_SOURCE_DIR}/parser/lex-hspice.cc )
+add_custom_command(
+    OUTPUT ${FLEX_HSPICE_OUT}
+    COMMAND ${FLEX_EXECUTABLE}
+            --outfile=${FLEX_HSPICE_OUT}
+            ${CMAKE_CURRENT_SOURCE_DIR}/parser/lex-hspice.lpp
+    DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/parser/lex-hspice.lpp
+)
+set_source_files_properties(${FLEX_HSPICE_OUT} PROPERTIES GENERATED TRUE)
+
+
+# Generate parser
+set(BISON_HSPICE_OUT
+    ${CMAKE_CURRENT_SOURCE_DIR}/parser/parse-hspice.cc
+    ${CMAKE_CURRENT_SOURCE_DIR}/parser/parse-hspice.h )
+add_custom_command(
+    OUTPUT ${BISON_HSPICE_OUT}
+    COMMAND ${BISON_EXECUTABLE}
+                --defines=${CMAKE_CURRENT_SOURCE_DIR}/parser/parse-hspice.h
+                --output=${CMAKE_CURRENT_SOURCE_DIR}/parser/parse-hspice.cc
+                ${CMAKE_CURRENT_SOURCE_DIR}/parser/parse-hspice.ypp
+    DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/parser/parse-hspice.ypp
+)
+set_source_files_properties(${BISON_HSPICE_OUT} PROPERTIES GENERATED TRUE)
+
+
+
+# Generate lexior
+set(FLEX_ALGEBRAIC_OUT
+    ${CMAKE_CURRENT_SOURCE_DIR}/parser/lex-algebraic.cc )
+add_custom_command(
+    OUTPUT ${FLEX_ALGEBRAIC_OUT}
+    COMMAND ${FLEX_EXECUTABLE}
+            --outfile=${FLEX_ALGEBRAIC_OUT}
+            ${CMAKE_CURRENT_SOURCE_DIR}/parser/lex-algebraic.lpp
+    DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/parser/lex-algebraic.lpp
+)
+set_source_files_properties(${FLEX_ALGEBRAIC_OUT} PROPERTIES GENERATED TRUE)
+
+
+# Generate parser
+set(BISON_ALGEBRAIC_OUT
+    ${CMAKE_CURRENT_SOURCE_DIR}/parser/parse-algebraic.cc
+    ${CMAKE_CURRENT_SOURCE_DIR}/parser/parse-algebraic.h )
+add_custom_command(
+    OUTPUT ${BISON_ALGEBRAIC_OUT}
+    COMMAND ${BISON_EXECUTABLE}
+                --defines=${CMAKE_CURRENT_SOURCE_DIR}/parser/parse-algebraic.h
+                --output=${CMAKE_CURRENT_SOURCE_DIR}/parser/parse-algebraic.cc
+                ${CMAKE_CURRENT_SOURCE_DIR}/parser/parse-algebraic.ypp
+    DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/parser/parse-algebraic.ypp
+)
+set_source_files_properties(${BISON_ALGEBRAIC_OUT} PROPERTIES GENERATED TRUE)
+
+
+add_library(${PROJECT_NAME} SHARED
+    ${SRCS}
+    ${FLEX_HSPICE_OUT}
+    ${BISON_HSPICE_OUT}
+    ${FLEX_ALGEBRAIC_OUT}
+    ${BISON_ALGEBRAIC_OUT}
+)
 
 target_link_libraries(${PROJECT_NAME} csimUtils)

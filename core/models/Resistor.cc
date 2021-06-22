@@ -25,7 +25,7 @@ namespace csimModel
           m_G(0.0),
           m_cutThrough(false)
     {
-        property().addProperty("R", Variant(Variant::VariantDouble).setDouble(1.0), 0l, csimModel::PropertyBag::Required | csimModel::PropertyBag::Write | csimModel::PropertyBag::Read);
+        property().addProperty("R", Variant(Variant::VariantDouble).setDouble(1.0), nullptr, csimModel::PropertyBag::Required | csimModel::PropertyBag::Write | csimModel::PropertyBag::Read);
     }
 
     Resistor::~Resistor()

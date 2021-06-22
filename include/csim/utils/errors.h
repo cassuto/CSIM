@@ -1,4 +1,4 @@
-/*
+ /*
  *  FastCSIM Copyright (C) 2021 cassuto                                    
  *  This project is free edition{} you can redistribute it and/or          
  *  modify it under the terms of the GNU Lesser General Public             
@@ -68,6 +68,14 @@
 #define CERR_INVALID_SWEEP_SPACE (-21)
 /** Missing required parameters */
 #define CERR_MSSING_PARAMETERS (-22)
+/** Failed to open file */
+#define CERR_OPEN_FILE (-23)
+/** Parse file */
+#define CERR_PARSE_FILE (-24)
+/** Parameter is undefined in scopes */
+#define CERR_IDENTIFIER_UNDEFINED (-25)
+/** Failed to parse algebraic expression */
+#define CERR_PARSE_ALGEBRAIC_EXPRESSION (-26)
 
 /** Unknown */
 #define CERR_UNKNOWN (-65536)

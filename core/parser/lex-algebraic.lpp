@@ -1,0 +1,147 @@
+%option prefix="algebraic_"
+%{
+/**
+ * @file Lexer of SPICE-compatible algebraic expression
+ */
+
+/*
+ *  FastCSIM Copyright (C) 2021 cassuto                                    
+ *  This project is free edition{} you can redistribute it and/or          
+ *  modify it under the terms of the GNU Lesser General Public             
+ *  License(LGPL) as published by the Free Software Foundation{} either     
+ *  version 2.1 of the License, or (at your option) any later version.     
+ *                                                                         
+ *  This project is distributed in the hope that it will be useful,        
+ *  but WITHOUT ANY WARRANTY{} without even the implied warranty of        
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU      
+ *  Lesser General Public License for more details.                        
+ */
+#include <iostream>
+#include "csim/internal/parser/algebraic-defs.h"
+#include "parse-algebraic.h"
+#undef YY_INPUT
+#define YY_INPUT(b, r, ms) do { r = csim::algebraic_yyinput(b, ms); } while(0)
+%}
+
+%option yylineno
+
+SPACE [ \t\f\v]
+DIGIT [0-9]
+SIGNED [+-]?{DIGIT}+
+EXPONENT [Ee][+-]?{DIGIT}+
+F_INT_EXP [+-]?{DIGIT}+{EXPONENT}
+F_INT_SML_EXP [+-]?{DIGIT}*"."{DIGIT}+({EXPONENT})?
+F_INT_PT [+-]?{DIGIT}+"."
+SCALE ([fF]|[pP]|[nN]|[uU]|[mM]|[mM][iI][lL]|[kK]|[mM][eE][gG]|[gG]|[tT])
+UNIT ([vV]|[aA]|[oO][hH][mM]|[mM][hH][oO]|[sS]|[fF]|[hH])
+NUMBER ({SIGNED}|{F_INT_EXP}|{F_INT_SML_EXP}|{F_INT_PT}){SCALE}?{UNIT}?
+IDENTIFIER [A-Za-z][A-Za-z0-9_]*
+
+/* Actions */
+%x STARTUP
+
+%%
+
+ /* Algebraic expression */
+<INITIAL>"'" {
+    BEGIN(STARTUP);
+    return K_ExprBegin;
+}
+<STARTUP>"-" {
+    return K_ExprMinus;
+}
+<STARTUP>"!" {
+    return K_ExprNot;
+}
+<STARTUP>"**"|"^" {
+    return K_ExprPow;
+}
+<STARTUP>"*" {
+    return K_ExprMul;
+}
+<STARTUP>"/" {
+    return K_ExprDiv;
+}
+<STARTUP>"%" {
+    return K_ExprMod;
+}
+<STARTUP>"\\" {
+    return K_ExprIntDiv;
+}
+<STARTUP>"+" {
+    return K_ExprPlus;
+}
+<STARTUP>"==" {
+    return K_ExprEq;
+}
+<STARTUP>"!="|"<>" {
+    return K_ExprNe;
+}
+<STARTUP>"<=" {
+    return K_ExprLe;
+}
+<STARTUP>">=" {
+    return K_ExprGe;
+}
+<STARTUP>"<" {
+    return K_ExprLt;
+}
+<STARTUP>">" {
+    return K_ExprGt;
+}
+<STARTUP>"&&" {
+    return K_ExprAnd;
+}
+<STARTUP>"||" {
+    return K_ExprOr;
+}
+<STARTUP>"?" {
+    return K_ExprSel;
+}
+<STARTUP>":" {
+    return K_ExprColon;
+}
+<STARTUP>"(" {
+    return K_ExprLPar;
+}
+<STARTUP>")" {
+    return K_ExprRPar;
+}
+<STARTUP>"," {
+    return K_ExprComma;
+}
+
+ /* Text of unsigned digits  */
+<STARTUP>{DIGIT}+ {
+    algebraic_lval.text = strdup (algebraic_text);
+    return K_Unsigned;
+}
+
+ /* Signed integers or floats */
+<STARTUP>{NUMBER} {
+    algebraic_lval.text = strdup (algebraic_text);
+    return K_Number;
+}
+
+ /* Identifiers */
+<STARTUP>{IDENTIFIER}+ {
+    algebraic_lval.text = strdup (algebraic_text);
+    return K_ExprId;
+}
+
+<STARTUP>{SPACE}+ {
+    /* ignore spaces */
+}
+
+<STARTUP>"'" {
+    BEGIN(STARTUP);
+    return K_ExprEnd;
+}
+
+
+%%
+
+int yywrap() {
+    {BEGIN INITIAL;}
+    return 1;
+}

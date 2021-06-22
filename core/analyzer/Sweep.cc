@@ -40,7 +40,7 @@ namespace csim
         }
         else
         {
-            return 0l;
+            return nullptr;
         }
     }
 }

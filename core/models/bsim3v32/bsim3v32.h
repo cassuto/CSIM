@@ -635,6 +635,7 @@ namespace csimModel
     class BSIM3v32model : public PropertyMdl
     {
     public:
+        BSIM3v32model();
         virtual ~BSIM3v32model();
         virtual int getPropertyNum() const;
         virtual const char *getPropertyName(int id) const;

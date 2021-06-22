@@ -23,7 +23,7 @@ namespace csimModel
     VDC::VDC(MODELBASE_CONSTRUCTOR_DEF)
         : ModelBase(MODELBASE_CONSTRUCTOR_VAR)
     {
-        property().addProperty("V", Variant(Variant::VariantDouble).setDouble(5.0), 0l, csimModel::PropertyBag::Required | csimModel::PropertyBag::Write | csimModel::PropertyBag::Read);
+        property().addProperty("V", Variant(Variant::VariantDouble).setDouble(5.0), nullptr, csimModel::PropertyBag::Required | csimModel::PropertyBag::Write | csimModel::PropertyBag::Read);
     }
 
     VDC::~VDC()

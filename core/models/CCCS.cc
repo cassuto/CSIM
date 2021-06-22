@@ -22,7 +22,7 @@ namespace csimModel
     CCCS::CCCS(MODELBASE_CONSTRUCTOR_DEF)
         : ModelBase(MODELBASE_CONSTRUCTOR_VAR)
     {
-        property().addProperty("alpha", Variant(Variant::VariantDouble).setDouble(1.0), 0l, csimModel::PropertyBag::Required | csimModel::PropertyBag::Write | csimModel::PropertyBag::Read);
+        property().addProperty("alpha", Variant(Variant::VariantDouble).setDouble(1.0), nullptr, csimModel::PropertyBag::Required | csimModel::PropertyBag::Write | csimModel::PropertyBag::Read);
     }
 
     CCCS::~CCCS()

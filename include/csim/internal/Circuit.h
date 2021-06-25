@@ -146,6 +146,7 @@ namespace csim
         int prepareMNA(AnalyzerBase *analyzer);
         int solveMNA(AnalyzerBase *analyzer);
         int saveOP();
+        int setupMdl();
         int loadTempature(double temp);
         int stepIntegral(AnalyzerBase *analyzer);
 

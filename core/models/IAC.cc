@@ -95,6 +95,10 @@ extern "C" void deleteModel(csimModel::ModelBase *model)
     delete model;
 }
 
+const PropertyMdlDescriptor *mdlDescriptors = nullptr;
+
+const size_t numMdlDescriptors = 0;
+
 const ModelDescriptor descriptor = {
     /* id */
     "IAC",

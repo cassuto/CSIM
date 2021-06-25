@@ -105,6 +105,19 @@ namespace csim
         return 0;
     }
 
+    int Netlist::getBranch(const char *ref, unsigned int idx, unsigned int *out)
+    {
+        std::string refNorm = toUpper(ref);
+        *out = (unsigned int)-1;
+        if (m_modelIndex.find(refNorm) == m_modelIndex.end())
+            return CER_NO_SUCH_COMPONENT_REFERENCE;
+        auto &mif = m_models[m_modelIndex.at(refNorm)];
+        if (idx >= mif.model->getNumBranches())
+            return CERR_INVALID_BRANCH_INDEX;
+        *out = mif.model->getBranch(idx);
+        return 0;
+    }
+
     void Netlist::clear()
     {
         for (auto &mif : m_models)
@@ -113,6 +126,12 @@ namespace csim
         }
         m_modelIndex.clear();
         m_models.clear();
+        for (auto &mif : m_mdls)
+        {
+            mif.entry->deleteInstance(mif.mdl);
+        }
+        m_mdlIndex.clear();
+        m_mdls.clear();
         m_numNodes = m_numBranches = m_numTermls = 0;
         m_ufset.clear();
         m_hasGround = false;
@@ -263,6 +282,36 @@ namespace csim
         return m_ufsetRanks[ufsetGetRoot(m_numTermls)];
     }
 
+    /**
+     * @brief Append a property model
+     * @param name Name of the instance
+     * @param entry Mdl entry
+     * @return status code.
+     */
+    int Netlist::addMdl(const char *name, const ModelEntry::MdlEntry *entry)
+    {
+        std::string refNorm = toUpper(name);
+        if (m_modelIndex.find(refNorm) != m_modelIndex.end())
+            return CERR_DUP_COMPONENT_REFERENCE;
+
+        csimModel::PropertyMdl *mdl = entry->createInstance();
+        MdlInfo mif;
+        mif.entry = entry;
+        mif.mdl = mdl;
+        mif.name = refNorm;
+        m_mdls.push_back(mif);
+        m_mdlIndex[refNorm] = m_mdls.size() - 1;
+        return 0;
+    }
+
+    csimModel::PropertyMdl *Netlist::getMdl(const char *name)
+    {
+        std::string refNorm = toUpper(name);
+        if (m_mdlIndex.find(refNorm) == m_mdlIndex.end())
+            return nullptr;
+        return m_mdls[m_mdlIndex.at(refNorm)].mdl;
+    }
+
     unsigned int Netlist::ufsetGetRoot(unsigned int v)
     {
         /* Find the root of v */
@@ -299,5 +348,4 @@ namespace csim
                 m_ufsetRanks[ry]++; /* Updating tree rank */
         }
     }
-
 }

@@ -18,6 +18,7 @@
 #include <exception>
 #include <iostream>
 #include "csim/utils/errors.h"
+#include "csim/model/PropertyMdl.h"
 #include "csim/internal/parser/algebraic-defs.h"
 #include "csim/internal/parser/hspice-defs.h"
 
@@ -48,6 +49,31 @@ namespace csim
     {
         delete nodes;
         delete block;
+    }
+
+    int HSPICE_Model::configureMdl(const ModelEntry::MdlEntry *mdlEntry, csimModel::PropertyMdl *mdl)
+    {
+        for (auto p = params->kvs.rbegin(); p != params->kvs.rend(); p++)
+        {
+            const PropertyMdlPropDescriptor *prop = mdlEntry->getProperty(p->first.c_str());
+            if (prop)
+            {
+                if (p->second.getType() == csimModel::Variant::VariantAlgebraic)
+                {
+                    double val;
+                    UPDATE_RC(p->second.getAlgebraic()->evaluate(parent, &val));
+                    UPDATE_RC(mdl->setProperty(prop->id, csimModel::Variant(csimModel::Variant::VariantDouble).setDouble(val)));
+                }
+                else {
+                    UPDATE_RC(mdl->setProperty(prop->id, p->second));
+                }
+            }
+            else
+            {
+                std::cout << "Warning: No such property '" << p->first.c_str() << "'" << std::endl;
+            }
+        }
+        return 0;
     }
 
     HSPICE_AST::HSPICE_AST()

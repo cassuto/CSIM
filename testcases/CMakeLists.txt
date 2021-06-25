@@ -30,6 +30,7 @@ set(TEST_SRCS
     "${CMAKE_CURRENT_SOURCE_DIR}/tstGearTruncationError.cc"
     "${CMAKE_CURRENT_SOURCE_DIR}/tstHSPICEParser.cc"
     "${CMAKE_CURRENT_SOURCE_DIR}/tstAlgebraic.cc"
+    "${CMAKE_CURRENT_SOURCE_DIR}/tstBSIM3v32.cc"
 )
 
 add_executable(tstall ${TEST_SRCS})

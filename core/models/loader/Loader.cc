@@ -24,6 +24,8 @@
 #error Unsupported OS!
 #endif
 #include <cstdio>
+#include "csim/utils/string.h"
+#include "csim/utils/errors.h"
 #include "csim/internal/ModelLoader.h"
 
 namespace csim
@@ -40,6 +42,10 @@ namespace csim
         csimModel::pfnCreateModel_t pfnCreate = nullptr;
         csimModel::pfnDeleteModel_t pfnDelete = nullptr;
         const ModelDescriptor *descriptor = nullptr;
+        const PropertyMdlDescriptor **pMdlDescriptors = nullptr;
+        size_t *pNumMdlDescriptors = nullptr;
+        const PropertyMdlDescriptor *mdlDescriptors;
+        size_t numMdlDescriptors;
 
 #if defined(CSIM_IN_WIN32)
         HINSTANCE handle = LoadLibraryA(filename);
@@ -65,6 +71,10 @@ namespace csim
         {
             goto error_out;
         }
+
+        pMdlDescriptors = (const PropertyMdlDescriptor **)GetProcAddress(handle, "mdlDescriptors");
+
+        pNumMdlDescriptors = (size_t *)GetProcAddress(handle, "numMdlDescriptors");
 
         goto success;
     error_out:
@@ -99,6 +109,10 @@ namespace csim
             goto error_out;
         }
 
+        pMdlDescriptors = (const PropertyMdlDescriptor **)dlsym(handle, "mdlDescriptors");
+
+        pNumMdlDescriptors = (size_t *)dlsym(handle, "numMdlDescriptors");
+
         goto success;
     error_out:
         dlclose(handle);
@@ -106,8 +120,34 @@ namespace csim
     success:
 #endif
 
-        ModelEntry *model = new ModelEntry(pfnCreate, pfnDelete, descriptor);
+        mdlDescriptors = pMdlDescriptors ? *pMdlDescriptors : nullptr;
+        numMdlDescriptors = pNumMdlDescriptors ? *pNumMdlDescriptors : 0;
+
+        ModelEntry *model = new ModelEntry(handle, pfnCreate, pfnDelete, descriptor, mdlDescriptors, numMdlDescriptors);
         return model;
+    }
+
+    ModelEntry::ModelEntry(void *handle, csimModel::pfnCreateModel_t pfnCreate, csimModel::pfnDeleteModel_t pfnDelete,
+                           const ModelDescriptor *descriptor,
+                           const PropertyMdlDescriptor *mdlDescriptors,
+                           size_t numMdlDescriptors)
+        : m_dllHandle(handle),
+          m_pfnCreate(pfnCreate),
+          m_pfnDelete(pfnDelete),
+          m_descriptor(descriptor),
+          m_mdlDescriptors(mdlDescriptors),
+          m_numMdlDescriptors(numMdlDescriptors)
+    {
+        buildMdlIndexs();
+    }
+
+    ModelEntry::~ModelEntry()
+    {
+#if defined(CSIM_IN_WIN32)
+        FreeLibrary((HINSTANCE)m_dllHandle);
+#elif defined(CSIM_IN_UNIX)
+        dlclose(m_dllHandle);
+#endif
     }
 
     csimModel::ModelBase *ModelEntry::createInstance(MODELBASE_CONSTRUCTOR_DEF) const
@@ -118,6 +158,55 @@ namespace csim
     void ModelEntry::deleteInstance(csimModel::ModelBase *model) const
     {
         m_pfnDelete(model);
+    }
+
+    int ModelEntry::buildMdlIndexs()
+    {
+        std::string mdlName, propName;
+        for (size_t i = 0; i < m_numMdlDescriptors; i++)
+        {
+            mdlName = toUpper(m_mdlDescriptors[i].name);
+            if (m_mdls.find(mdlName) != m_mdls.end())
+                return CERR_MDL_EXISTING;
+            MdlEntry &mdl = m_mdls[mdlName];
+            mdl.desc = &m_mdlDescriptors[i];
+
+            for (size_t j = 0; j < mdl.desc->numEntries; j++)
+            {
+                const PropertyMdlPropDescriptor *prop = &mdl.desc->entries[j];
+                propName = toUpper(prop->name);
+                if (mdl.props.find(propName) != mdl.props.end())
+                    return CERR_MDL_PROP_EXISTING;
+                mdl.props[propName] = prop;
+            }
+        }
+        return 0;
+    }
+
+    int ModelEntry::getMdlEntry(const char *mdl, const MdlEntry **out) const
+    {
+        std::string mdlName = toUpper(mdl);
+        if (m_mdls.find(mdlName) == m_mdls.end())
+            return CERR_NO_SUCH_MDL;
+        *out = &m_mdls.at(mdlName);
+        return 0;
+    }
+
+    csimModel::PropertyMdl *ModelEntry::MdlEntry::createInstance() const
+    {
+        return desc->pfnCreate();
+    }
+    void ModelEntry::MdlEntry::deleteInstance(csimModel::PropertyMdl *mdl) const
+    {
+        desc->pfnDelete(mdl);
+    }
+
+    const PropertyMdlPropDescriptor *ModelEntry::MdlEntry::getProperty(const char *name) const
+    {
+        std::string uniname = toUpper(name);
+        if (props.find(uniname) == props.end())
+            return nullptr;
+        return props.at(uniname);
     }
 
 }

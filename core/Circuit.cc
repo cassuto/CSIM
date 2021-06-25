@@ -149,7 +149,11 @@ namespace csim
             m_hPredictorX[k].set(0, m_x[k].real());
         }
 
-        loadTempature(m_environment->getNormTemp());
+        /* Setup property models */
+        UPDATE_RC(setupMdl());
+
+        /* Load environment temperature */
+        UPDATE_RC(loadTempature(m_environment->getNormTemp()));
         return 0;
     }
 
@@ -176,7 +180,15 @@ namespace csim
                 unsigned int ngnd = m_netlist->getGroundNode();
                 m_A[ngnd * m_matrixRows + ngnd] = 0.0;
             }
-
+std::cout<<"A="<<converged<<"\n";
+            for (unsigned int i = 0; i < m_matrixRows; i++)
+            {
+                for (unsigned int j = 0; j < m_matrixRows; j++)
+                {
+                    std::cout<<m_A[i * m_matrixRows + j] <<" ";
+                }
+                std::cout<<std::endl;
+            }
             UPDATE_RC(m_linearSolver->solve(m_A, m_matrixRows, m_x, m_z));
 
             if (converged && iteration)
@@ -186,11 +198,11 @@ namespace csim
             UPDATE_RC(m_spiceCompatible->upateStateMachine(converged));
 
             /* save vector x and z */
-            memcpy((void*)m_x_1, m_x, sizeof(*m_x) * m_matrixRows);
-            memcpy((void*)m_z_1, m_z, sizeof(*m_z) * m_matrixRows);
+            memcpy((void *)m_x_1, m_x, sizeof(*m_x) * m_matrixRows);
+            memcpy((void *)m_z_1, m_z, sizeof(*m_z) * m_matrixRows);
 
             iteration++;
-        } while ((!converged || iteration==1) && (iteration < m_maxIterations));
+        } while ((!converged || iteration == 1) && (iteration < m_maxIterations));
 
 #if defined(ENABLE_STAT)
         m_statNumNonlinearIters += iteration;
@@ -268,6 +280,15 @@ namespace csim
         for (auto &mif : m_netlist->models())
         {
             UPDATE_RC(mif.model->saveOP());
+        }
+        return 0;
+    }
+
+    int Circuit::setupMdl()
+    {
+        for (auto &mif : m_netlist->mdls())
+        {
+            UPDATE_RC(mif.mdl->setup(m_environment));
         }
         return 0;
     }

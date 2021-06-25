@@ -17,6 +17,7 @@
 
 #include <cassert>
 #include <cstring>
+#include "csim/utils/string.h"
 #include "csim/model/PropertyBag.h"
 
 namespace csimModel
@@ -24,36 +25,41 @@ namespace csimModel
 
     void PropertyBag::addProperty(const char *entry, const Variant &def, const char *desc, uint32_t flags)
     {
-        assert(!hasProperty(entry));
-        m_props[entry].desc = desc ? desc : entry;
-        m_props[entry].value = Variant(def.getType());
-        m_props[entry].value = def;
-        m_props[entry].flags = flags;
-        m_props[entry].given = false;
+        std::string normEntry = csim::toUpper(entry);
+        assert(!hasProperty(normEntry.c_str()));
+        m_props[normEntry].desc = desc ? desc : normEntry;
+        m_props[normEntry].value = Variant(def.getType());
+        m_props[normEntry].value = def;
+        m_props[normEntry].flags = flags;
+        m_props[normEntry].given = false;
     }
 
     void PropertyBag::setProperty(const char *entry, const Variant &val)
     {
-        assert(hasProperty(entry));
-        m_props[entry].value = val;
-        m_props[entry].given = true;
+        std::string normEntry = csim::toUpper(entry);
+        assert(hasProperty(normEntry.c_str()));
+        m_props[normEntry].value = val;
+        m_props[normEntry].given = true;
     }
 
     Variant &PropertyBag::getProperty(const char *entry)
     {
-        assert(hasProperty(entry));
-        return m_props.at(entry).value;
+        std::string normEntry = csim::toUpper(entry);
+        assert(hasProperty(normEntry.c_str()));
+        return m_props.at(normEntry).value;
     }
 
     bool PropertyBag::hasProperty(const char *entry) const
     {
-        return (m_props.find(entry) != m_props.end());
+        std::string normEntry = csim::toUpper(entry);
+        return (m_props.find(normEntry) != m_props.end());
     }
 
     bool PropertyBag::propertyGiven(const char *entry) const
     {
-        assert(m_props.find(entry) != m_props.end());
-        return m_props.at(entry).given;
+        std::string normEntry = csim::toUpper(entry);
+        assert(m_props.find(normEntry) != m_props.end());
+        return m_props.at(normEntry).given;
     }
 
     bool PropertyBag::missingRequired() const

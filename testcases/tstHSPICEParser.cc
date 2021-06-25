@@ -70,14 +70,16 @@ namespace csim
             "\n"
             " \n"
             ".param level=49\n"
+            ".param tmp='123*level'\n"
             ".param eval0='V1*V2'\n" /* V1 and V2 are not declared here */
             ".subckt Rd 1 2\n"
-            "   .param eval='V1*V2'\n" /* V2 is not overriden here */
-            "   .param V1 = 3.5n\n"
+            "   .param eval='V1*V2*tmp'\n" /* V2 is not overriden here */
+            "   .param V1 = 0\n"
+            "   +V1 = 3.5n\n" /* Override V1 */
             "   .param V2 = -10\n"
             "    \t.subckt Sub2 1 2\n"
             "    \t.param V2 = 3\n"      /* Override outer V2 */
-            "    \t.param eval3='V2'\n"  /*FIXME? This is tested under ngspice, the result shows V2=2.4e17*/
+            "    \t.param eval3='V2'\n"  /*FIXME? This is tested under ngspice, the result shows that V2=2.4e17*/
             "    \t.param V2 = 2.4e17\n" /* Override inner V2 */
             ".model n3 nmos level='level' tox='V1' nch='V2' nsub='eval' vth0='eval' vv='eval0' v3='eval3'\n"
             "    \t.ends Sub2\n"
@@ -121,7 +123,7 @@ namespace csim
             {
                 ASSERT_EQ(csimModel::Variant::VariantAlgebraic, param->second.getType());
                 ASSERT_EQ(CERR_SUCCEEDED, param->second.getAlgebraic()->evaluate(block, &paramValue));
-                ASSERT_FLOAT_EQ(3.5e-9 * -10, paramValue);
+                ASSERT_FLOAT_EQ(3.5e-9 * -10 * 123 * 49, paramValue);
             }
             else if (0 == param->first.compare("vv"))
             {

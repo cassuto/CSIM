@@ -90,6 +90,7 @@ add_custom_command(
     COMMAND ${BISON_EXECUTABLE}
                 --defines=${CMAKE_CURRENT_SOURCE_DIR}/parser/parse-algebraic.h
                 --output=${CMAKE_CURRENT_SOURCE_DIR}/parser/parse-algebraic.cc
+                --debug
                 ${CMAKE_CURRENT_SOURCE_DIR}/parser/parse-algebraic.ypp
     DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/parser/parse-algebraic.ypp
 )

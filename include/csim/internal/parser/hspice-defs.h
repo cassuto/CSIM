@@ -18,9 +18,17 @@
 #include <vector>
 #include <cstdio>
 #include "csim/model/Variant.h"
+#include "csim/internal/ModelLoader.h"
 
+namespace csimModel
+{
+    class PropertyMdl;
+}
 namespace csim
 {
+    class HSPICE_Block;
+    class HSPICE_SubBlock;
+
     class HSPICE_KeyValueList
     {
     public:
@@ -30,11 +38,14 @@ namespace csim
     class HSPICE_Model
     {
     public:
-        HSPICE_Model() : params(nullptr)
+        HSPICE_Model(HSPICE_Block *parent_) : parent(parent_), params(nullptr)
         {
         }
 
+        int configureMdl(const ModelEntry::MdlEntry *mdlEntry, csimModel::PropertyMdl *mdl);
+
     public:
+        HSPICE_Block *parent;
         std::string name, type;
         HSPICE_KeyValueList *params; /* deleted by ~HSPICE_Block() */
     };
@@ -45,7 +56,6 @@ namespace csim
         std::vector<std::string> nodes;
     };
 
-    class HSPICE_SubBlock;
     class HSPICE_Block : public AlgebraicScope
     {
     public:
@@ -79,6 +89,7 @@ namespace csim
         HSPICE_AST();
         ~HSPICE_AST();
         int parse(const char *filename);
+
         void dump();
         void dump(HSPICE_Block *block, int level);
 

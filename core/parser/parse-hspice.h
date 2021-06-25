@@ -49,16 +49,15 @@ extern int hspice_debug;
     K_Unsigned = 259,
     K_Number = 260,
     K_Nodes = 261,
-    K_EOL = 262,
-    K_Title = 263,
-    K_Model = 264,
-    K_ModelType = 265,
-    K_Subckt = 266,
-    K_Ends = 267,
-    K_Equ = 268,
-    K_Algebraic = 269,
-    K_Param = 270,
-    K_End = 271
+    K_Title = 262,
+    K_Model = 263,
+    K_ModelType = 264,
+    K_Subckt = 265,
+    K_Ends = 266,
+    K_Equ = 267,
+    K_Algebraic = 268,
+    K_Param = 269,
+    K_End = 270
   };
 #endif
 
@@ -75,7 +74,7 @@ union YYSTYPE
     csim::HSPICE_SubBlock *subBlock;
     csim::HSPICE_Nodes *nodes;
 
-#line 79 "/cygdrive/e/FastCSIM/core/parser/parse-hspice.h" /* yacc.c:1909  */
+#line 78 "/cygdrive/e/FastCSIM/core/parser/parse-hspice.h" /* yacc.c:1909  */
 };
 
 typedef union YYSTYPE YYSTYPE;

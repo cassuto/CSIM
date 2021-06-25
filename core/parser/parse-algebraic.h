@@ -34,7 +34,7 @@
 # define YY_ALGEBRAIC_CYGDRIVE_E_FASTCSIM_CORE_PARSER_PARSE_ALGEBRAIC_H_INCLUDED
 /* Debug traces.  */
 #ifndef YYDEBUG
-# define YYDEBUG 0
+# define YYDEBUG 1
 #endif
 #if YYDEBUG
 extern int algebraic_debug;

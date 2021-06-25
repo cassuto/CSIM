@@ -236,88 +236,101 @@ namespace csimModel
     {
     }
 
-    int BSIM3V32::loadProperty()
-    {
-        const char *entry;
-        entry = "w";
-        this->BSIM3v32w = property().getProperty(entry).getDouble();
-        this->BSIM3v32wGiven = property().propertyGiven(entry);
-
-        entry = "l";
-        this->BSIM3v32l = property().getProperty(entry).getDouble();
-        this->BSIM3v32lGiven = property().propertyGiven(entry);
-
-        entry = "m";
-        this->BSIM3v32m = property().getProperty(entry).getDouble();
-        this->BSIM3v32mGiven = property().propertyGiven(entry);
-
-        entry = "as";
-        this->BSIM3v32sourceArea = property().getProperty(entry).getDouble();
-        this->BSIM3v32sourceAreaGiven = property().propertyGiven(entry);
-
-        entry = "ad";
-        this->BSIM3v32drainArea = property().getProperty(entry).getDouble();
-        this->BSIM3v32drainAreaGiven = property().propertyGiven(entry);
-
-        entry = "ps";
-        this->BSIM3v32sourcePerimeter = property().getProperty(entry).getDouble();
-        this->BSIM3v32sourcePerimeterGiven = property().propertyGiven(entry);
-
-        entry = "pd";
-        this->BSIM3v32drainPerimeter = property().getProperty(entry).getDouble();
-        this->BSIM3v32drainPerimeterGiven = property().propertyGiven(entry);
-
-        entry = "nrs";
-        this->BSIM3v32sourceSquares = property().getProperty(entry).getDouble();
-        this->BSIM3v32sourceSquaresGiven = property().propertyGiven(entry);
-
-        entry = "nrd";
-        this->BSIM3v32drainSquares = property().getProperty(entry).getDouble();
-        this->BSIM3v32drainSquaresGiven = property().propertyGiven(entry);
-
-        entry = "off";
-        this->BSIM3v32off = property().getProperty(entry).getBoolean();
-
-        entry = "ic_vbs";
-        this->BSIM3v32icVBS = property().getProperty(entry).getDouble();
-        this->BSIM3v32icVBSGiven = property().propertyGiven(entry);
-
-        entry = "ic_vds";
-        this->BSIM3v32icVDS = property().getProperty(entry).getDouble();
-        this->BSIM3v32icVDSGiven = property().propertyGiven(entry);
-
-        entry = "ic_vgs";
-        this->BSIM3v32icVGS = property().getProperty(entry).getDouble();
-        this->BSIM3v32icVGSGiven = property().propertyGiven(entry);
-
-        entry = "nqsmod";
-        this->BSIM3v32nqsMod = property().getProperty(entry).getInt32();
-        this->BSIM3v32nqsModGiven = property().propertyGiven(entry);
-
-        entry = "geo";
-        this->BSIM3v32geo = property().getProperty(entry).getInt32();
-        this->BSIM3v32geoGiven = property().propertyGiven(entry);
-
-        entry = "delvto";
-        this->BSIM3v32delvto = property().getProperty(entry).getDouble();
-        this->BSIM3v32delvtoGiven = property().propertyGiven(entry);
-
-        entry = "mulu0";
-        this->BSIM3v32mulu0 = property().getProperty(entry).getDouble();
-        this->BSIM3v32mulu0Given = property().propertyGiven(entry);
-
-        entry = "mdl";
-        this->model = dynamic_cast<BSIM3v32model *>(property().getProperty(entry).getPropertyModel());
-
-        return (this->model) ? 0 : CERR_NO_MDL;
-    }
-
     int BSIM3V32::configure()
     {
         int rc;
         unsigned int numInnerNodes = 0;
 
-        UPDATE_RC(loadProperty());
+        const char *entry;
+        entry = "w";
+        this->BSIM3v32w = property().getProperty(entry).getDoubleCast(&rc);
+        UPDATE_RC(rc);
+        this->BSIM3v32wGiven = property().propertyGiven(entry);
+
+        entry = "l";
+        this->BSIM3v32l = property().getProperty(entry).getDoubleCast(&rc);
+        UPDATE_RC(rc);
+        this->BSIM3v32lGiven = property().propertyGiven(entry);
+
+        entry = "m";
+        this->BSIM3v32m = property().getProperty(entry).getDoubleCast(&rc);
+        UPDATE_RC(rc);
+        this->BSIM3v32mGiven = property().propertyGiven(entry);
+
+        entry = "as";
+        this->BSIM3v32sourceArea = property().getProperty(entry).getDoubleCast(&rc);
+        UPDATE_RC(rc);
+        this->BSIM3v32sourceAreaGiven = property().propertyGiven(entry);
+
+        entry = "ad";
+        this->BSIM3v32drainArea = property().getProperty(entry).getDoubleCast(&rc);
+        UPDATE_RC(rc);
+        this->BSIM3v32drainAreaGiven = property().propertyGiven(entry);
+
+        entry = "ps";
+        this->BSIM3v32sourcePerimeter = property().getProperty(entry).getDoubleCast(&rc);
+        UPDATE_RC(rc);
+        this->BSIM3v32sourcePerimeterGiven = property().propertyGiven(entry);
+
+        entry = "pd";
+        this->BSIM3v32drainPerimeter = property().getProperty(entry).getDoubleCast(&rc);
+        UPDATE_RC(rc);
+        this->BSIM3v32drainPerimeterGiven = property().propertyGiven(entry);
+
+        entry = "nrs";
+        this->BSIM3v32sourceSquares = property().getProperty(entry).getDoubleCast(&rc);
+        UPDATE_RC(rc);
+        this->BSIM3v32sourceSquaresGiven = property().propertyGiven(entry);
+
+        entry = "nrd";
+        this->BSIM3v32drainSquares = property().getProperty(entry).getDoubleCast(&rc);
+        UPDATE_RC(rc);
+        this->BSIM3v32drainSquaresGiven = property().propertyGiven(entry);
+
+        entry = "off";
+        this->BSIM3v32off = property().getProperty(entry).getBooleanCast(&rc);
+        UPDATE_RC(rc);
+
+        entry = "ic_vbs";
+        this->BSIM3v32icVBS = property().getProperty(entry).getDoubleCast(&rc);
+        UPDATE_RC(rc);
+        this->BSIM3v32icVBSGiven = property().propertyGiven(entry);
+
+        entry = "ic_vds";
+        this->BSIM3v32icVDS = property().getProperty(entry).getDoubleCast(&rc);
+        UPDATE_RC(rc);
+        this->BSIM3v32icVDSGiven = property().propertyGiven(entry);
+
+        entry = "ic_vgs";
+        this->BSIM3v32icVGS = property().getProperty(entry).getDoubleCast(&rc);
+        UPDATE_RC(rc);
+        this->BSIM3v32icVGSGiven = property().propertyGiven(entry);
+
+        entry = "nqsmod";
+        this->BSIM3v32nqsMod = property().getProperty(entry).getInt32Cast(&rc);
+        UPDATE_RC(rc);
+        this->BSIM3v32nqsModGiven = property().propertyGiven(entry);
+
+        entry = "geo";
+        this->BSIM3v32geo = property().getProperty(entry).getInt32Cast(&rc);
+        UPDATE_RC(rc);
+        this->BSIM3v32geoGiven = property().propertyGiven(entry);
+
+        entry = "delvto";
+        this->BSIM3v32delvto = property().getProperty(entry).getDoubleCast(&rc);
+        UPDATE_RC(rc);
+        this->BSIM3v32delvtoGiven = property().propertyGiven(entry);
+
+        entry = "mulu0";
+        this->BSIM3v32mulu0 = property().getProperty(entry).getDoubleCast(&rc);
+        UPDATE_RC(rc);
+        this->BSIM3v32mulu0Given = property().propertyGiven(entry);
+
+        entry = "mdl";
+        this->model = dynamic_cast<BSIM3v32model *>(property().getProperty(entry).getPropertyModel());
+
+        if (!this->model)
+            return CERR_NO_MDL;
 
         /* perform the parameter defaulting */
         if (!this->BSIM3v32drainAreaGiven)
@@ -457,7 +470,16 @@ namespace csimModel
         if (model->BSIM3v32lmltGiven)
             this->BSIM3v32l *= model->BSIM3v32lmlt;
 
-            /* set Sparse Matrix Pointers */
+        return 0;
+    }
+
+    int BSIM3V32::prepareDC()
+    {
+        resizeIntegrator(BSIM3v32numStates);
+        if (!model)
+            return CERR_NO_MDL;
+
+        /* set Sparse Matrix Pointers */
 
 /* macro to make elements with built in test for out of memory */
 #define ALLOC_VOLT(ptr, first, second)      \
@@ -517,15 +539,6 @@ namespace csimModel
             this->BSIM3v32GqPtr = nullptr;
             this->BSIM3v32BqPtr = nullptr;
         }
-
-        return 0;
-    }
-
-    int BSIM3V32::prepareDC()
-    {
-        resizeIntegrator(BSIM3v32numStates);
-        if (!model)
-            return CERR_NO_MDL;
         return 0;
     }
     int BSIM3V32::prepareOP()
@@ -642,7 +655,7 @@ extern "C" void deleteModel(csimModel::ModelBase *model)
     delete model;
 }
 
-const ModelDescriptor descriptor = {
+extern "C" const ModelDescriptor descriptor = {
     /* id */
     "BSIM3V32",
     /* description */

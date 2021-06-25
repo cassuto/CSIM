@@ -16,6 +16,7 @@
 
 #include <vector>
 #include <string>
+#include <map>
 #include "csim/model/Types.h"
 #include "csim/model/Variant.h"
 #include "csim/model/Environment.h"
@@ -29,19 +30,11 @@ namespace csimModel
         PropertyMdl() {}
         virtual ~PropertyMdl() {}
 
-        /* Meta operations */
-        virtual int getPropertyNum() const=0;
-        virtual const char *getPropertyName(int id) const=0;
-        virtual const char *getPropertyDesc(int id) const=0;
-        virtual Variant::VariantType getPropertyType(int id) const=0;
-        virtual uint32_t getPropertyFlags(int id) const=0;
-
         /* Setter */
-        virtual const char *name() const=0;
-        virtual void setProperty(int id, const Variant &value)=0;
-        virtual int setup(Environment *env)=0;
-        virtual int setTemp(Environment *env)=0;
-        virtual int apply(ModelBase *devModel, Environment *env)=0;
+        virtual const char *name() const = 0;
+        virtual int setup(Environment *env) = 0;
+        virtual int setTemp(ModelBase *device, Environment *env) = 0;
+        virtual int setProperty(int id, const Variant &value) = 0;
     };
 
 }

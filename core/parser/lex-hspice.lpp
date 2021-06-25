@@ -38,6 +38,7 @@ F_INT_PT [+-]?{DIGIT}+"."
 SCALE ([fF]|[pP]|[nN]|[uU]|[mM]|[mM][iI][lL]|[kK]|[mM][eE][gG]|[gG]|[tT])
 UNIT ([vV]|[aA]|[oO][hH][mM]|[mM][hH][oO]|[sS]|[fF]|[hH])
 NUMBER ({SIGNED}|{F_INT_EXP}|{F_INT_SML_EXP}|{F_INT_PT}){SCALE}?{UNIT}?
+LINE_CONT {EOL}{SPACE}*"+"
 
 /* Symbol of nodes */
 NODES ([A-Za-z0-9_#\+-]+|[\+]|[-])
@@ -101,7 +102,8 @@ IDENTIFIER [A-Za-z][A-Za-z0-9_]*
 
 
  /* .param */
-<STARTUP>"."[pP][aA][rR][aA][mM] {
+<STARTUP,INITIAL>"."[pP][aA][rR][aA][mM] {
+    BEGIN(STARTUP);
     return K_Param;
 }
 
@@ -123,6 +125,9 @@ IDENTIFIER [A-Za-z][A-Za-z0-9_]*
     return K_Text;
 }
 
+ /* Line continuation */
+<STARTUP>{LINE_CONT} { }
+
  /* Nodes (After TEXT mismatched) */
 <STARTUP>{NODES} {
     hspice_lval.text = strdup (hspice_text);
@@ -134,10 +139,6 @@ IDENTIFIER [A-Za-z][A-Za-z0-9_]*
     return K_Equ;
 }
 
- /* Line continuation */
-<STARTUP>{EOL}{SPACE}*"+" {
-}
-
  /* Algebraic expression */
 <STARTUP>"'" {
     BEGIN(ALGEBRAIC_EXP);
@@ -145,20 +146,23 @@ IDENTIFIER [A-Za-z][A-Za-z0-9_]*
 <ALGEBRAIC_EXP>"'" {
     BEGIN(STARTUP);
     hspice_lval.text = strdup(hspice_text);
+    hspice_lval.text[strlen(hspice_lval.text)-1] = '\0';
     return K_Algebraic;
 }
 <ALGEBRAIC_EXP>. { yymore(); }
 
 
-
-<STARTUP,INITIAL>^"*" { BEGIN(COMMENT); }
-<COMMENT>{EOL} { BEGIN(STARTUP); }
-<COMMENT>. {  }
-
-<STARTUP>{EOL} {
-    BEGIN(STARTUP);
-    return K_EOL;
+ /* Begin of a comment line */
+<STARTUP,INITIAL>^"*" {
+    BEGIN(COMMENT);
 }
+ /* End of a comment (May be accompanied with line continuation) */
+<COMMENT>{LINE_CONT}|{EOL} {
+    BEGIN(STARTUP);
+}
+<COMMENT>. { }
+
+<STARTUP,INITIAL>{EOL} { /* skip EOLs */ }
 
 <STARTUP,INITIAL>^{SPACE}+ { /* skip leading spaces */ }
 

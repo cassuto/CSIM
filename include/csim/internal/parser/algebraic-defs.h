@@ -69,6 +69,7 @@ namespace csim
     extern AlgebraicScope *algebraic_currentScope;
     extern double algebraic_result;
     extern bool algebraic_err;
+    extern const char *algebraic_input;
 }
 
 extern void algebraic_restart(FILE *input_file);
@@ -76,5 +77,6 @@ extern "C" int algebraic_wrap(void);
 extern int algebraic_lex(void);
 extern int algebraic_parse(void);
 extern int algebraic_lineno;
+extern int algebraic_debug;
 
 #endif // CSIM_PARSER_ALGEBRAIC_DEFS_H_

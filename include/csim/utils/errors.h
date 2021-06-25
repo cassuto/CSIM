@@ -1,4 +1,4 @@
- /*
+/*
  *  FastCSIM Copyright (C) 2021 cassuto                                    
  *  This project is free edition{} you can redistribute it and/or          
  *  modify it under the terms of the GNU Lesser General Public             
@@ -76,42 +76,60 @@
 #define CERR_IDENTIFIER_UNDEFINED (-25)
 /** Failed to parse algebraic expression */
 #define CERR_PARSE_ALGEBRAIC_EXPRESSION (-26)
+/** Failed to create mdl */
+#define CERR_CREATE_MDL (-27)
+/** Duplicated identifier of device model */
+#define CERR_DUP_MODEL_ID (-28)
+/** Duplicated identifier of property mdl */
+#define CERR_DUP_MDL_ID (-29)
+/** Property of property mdl is existing */
+#define CERR_MDL_PROP_EXISTING (-28)
+/** No such device model */
+#define CERR_NO_SUCH_MODEL (-29)
+/** Property model is existing */
+#define CERR_MDL_EXISTING (-30)
+/** No such mdl */
+#define CERR_NO_SUCH_MDL (-31)
+/** Invalid branch index */
+#define CERR_INVALID_BRANCH_INDEX (-32)
+/** Data type of value mismatch */
+#define CERR_TYPE_MISMATCH (-33)
 
 /** Unknown */
 #define CERR_UNKNOWN (-65536)
 
 /* }}gen */
 
-#define UPDATE_RC(_rc_) \
-  do                    \
-  {                     \
-    int rc__ = (_rc_);  \
-    if (rc__)           \
-      return rc__;      \
-  } while (0)
+#define UPDATE_RC(_rc_)    \
+    do                     \
+    {                      \
+        int rc__ = (_rc_); \
+        if (rc__)          \
+            return rc__;   \
+    } while (0)
 
 #define CSIM_OK(_rc_) \
-  ((_rc_) == 0 ? true : false)
+    ((_rc_) == 0 ? true : false)
 
 #define CSIM_FAILED(_rc_) \
-  ((_rc_) ? true : false)
+    ((_rc_) ? true : false)
 
 namespace csim
 {
-  class ErrorInfo
-  {
-  public:
-    /** Pointer to the short message string. */
-    const char *msgShort;
-    /** Pointer to the full message string. */
-    const char *msgFull;
-    /** Pointer to the define string. */
-    const char *msgDefine;
-    /** Status code number. */
-    int code;
+    class ErrorInfo
+    {
+    public:
+        /** Pointer to the short message string. */
+        const char *msgShort;
+        /** Pointer to the full message string. */
+        const char *msgFull;
+        /** Pointer to the define string. */
+        const char *msgDefine;
+        /** Status code number. */
+        int code;
 
-    static const ErrorInfo &get(int rc);
-  };
+        static const ErrorInfo &get(int rc);
+    };
 }
 
 #endif //!defined(CSIM_ERRORS_H_)

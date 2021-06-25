@@ -166,7 +166,33 @@ extern "C"
         const char *description;
     };
 
+    struct PropertyMdlPropDescriptor
+    {
+        const char *name;
+        int id;
+        csimModel::Variant::VariantType type;
+        const char *desc;
+        uint32_t flags;
+    };
+
+    typedef csimModel::PropertyMdl *(*pfnCreateMdl)();
+    typedef void (*pfnDeleteMdl)(csimModel::PropertyMdl *mdl);
+
+    struct PropertyMdlDescriptor
+    {
+        const char *name;
+        const PropertyMdlPropDescriptor *entries;
+        size_t numEntries;
+        pfnCreateMdl pfnCreate;
+        pfnDeleteMdl pfnDelete;
+    };
+
+    /*
+     * Exported symbols for model
+     */
     extern const ModelDescriptor descriptor;
+    extern const PropertyMdlDescriptor *mdlDescriptors;
+    extern const size_t numMdlDescriptors;
 }
 
 #endif // CSIM_MODELBASE_H_

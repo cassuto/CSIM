@@ -96,7 +96,7 @@
 #include "csim/internal/parser/hspice-defs.h"
 #include "parse-algebraic.h"
 static void yyerror(char const *msg) {
-    std::cerr<<"Error at line"<<algebraic_lineno<<": "<<msg<<std::endl;
+    std::cerr<<"Error: "<<msg<<std::endl;
     algebraic_wrap();
     csim::algebraic_err = true;
 }
@@ -125,7 +125,7 @@ static void yyerror(char const *msg) {
 # define YY_ALGEBRAIC_CYGDRIVE_E_FASTCSIM_CORE_PARSER_PARSE_ALGEBRAIC_H_INCLUDED
 /* Debug traces.  */
 #ifndef YYDEBUG
-# define YYDEBUG 0
+# define YYDEBUG 1
 #endif
 #if YYDEBUG
 extern int algebraic_debug;
@@ -431,18 +431,18 @@ union yyalloc
 #endif /* !YYCOPY_NEEDED */
 
 /* YYFINAL -- State number of the termination state.  */
-#define YYFINAL  22
+#define YYFINAL  25
 /* YYLAST -- Last index in YYTABLE.  */
-#define YYLAST   54
+#define YYLAST   56
 
 /* YYNTOKENS -- Number of terminals.  */
 #define YYNTOKENS  28
 /* YYNNTS -- Number of nonterminals.  */
-#define YYNNTS  12
+#define YYNNTS  13
 /* YYNRULES -- Number of rules.  */
-#define YYNRULES  35
+#define YYNRULES  37
 /* YYNSTATES -- Number of states.  */
-#define YYNSTATES  63
+#define YYNSTATES  66
 
 /* YYTRANSLATE[YYX] -- Symbol number corresponding to YYX as returned
    by yylex, with out-of-bounds checking.  */
@@ -489,12 +489,12 @@ static const yytype_uint8 yytranslate[] =
 
 #if YYDEBUG
   /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
-static const yytype_uint8 yyrline[] =
+static const yytype_uint16 yyrline[] =
 {
        0,    54,    54,    59,    62,    68,    71,    77,    80,    86,
       89,    92,    98,   101,   104,   107,   110,   116,   119,   122,
      128,   131,   134,   137,   140,   147,   150,   157,   160,   163,
-     169,   177,   181,   185,   188,   246
+     166,   172,   175,   233,   250,   258,   262,   266
 };
 #endif
 
@@ -509,7 +509,8 @@ static const char *const yytname[] =
   "K_ExprLe", "K_ExprGe", "K_ExprLt", "K_ExprGt", "K_ExprAnd", "K_ExprOr",
   "K_ExprSel", "K_ExprColon", "K_ExprLPar", "K_ExprRPar", "K_ExprId",
   "K_ExprComma", "$accept", "S", "Expr", "ExprOr", "ExprAnd", "ExprEQ",
-  "ExprRelation", "ExprTerm", "ExprFactor", "ExprPow", "ExprUnary", "Atom", YY_NULLPTR
+  "ExprRelation", "ExprTerm", "ExprFactor", "ExprPow", "ExprUnary",
+  "ExprFunc", "Atom", YY_NULLPTR
 };
 #endif
 
@@ -524,10 +525,10 @@ static const yytype_uint16 yytoknum[] =
 };
 # endif
 
-#define YYPACT_NINF -16
+#define YYPACT_NINF -24
 
 #define yypact_value_is_default(Yystate) \
-  (!!((Yystate) == (-16)))
+  (!!((Yystate) == (-24)))
 
 #define YYTABLE_NINF -1
 
@@ -538,13 +539,13 @@ static const yytype_uint16 yytoknum[] =
      STATE-NUM.  */
 static const yytype_int8 yypact[] =
 {
-      -1,   -16,   -16,    -1,    -1,    -1,    -4,    24,   -16,    -7,
-      20,     3,   -10,     9,    18,    34,   -16,   -16,    34,    34,
-     -15,    -1,   -16,    -1,    -1,    -1,    -1,    -1,    -1,    -1,
-      -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,   -16,
-     -14,    20,    21,     3,   -10,   -10,     9,     9,     9,     9,
-      18,    18,    34,    34,    34,    34,   -16,   -16,    -1,    -1,
-      22,   -16,   -16
+      -2,   -24,   -24,     1,     1,     1,    -2,   -23,    16,   -24,
+      21,     3,    30,    -4,    34,    20,    13,   -24,   -24,   -24,
+     -24,   -24,   -24,     7,    -2,   -24,    -2,    -2,    -2,    -2,
+      -2,    -2,    -2,    -2,    -2,    -2,    -2,    -2,    -2,    -2,
+      -2,    -2,   -24,    -8,     3,    18,    30,    -4,    -4,    34,
+      34,    34,    34,    20,    20,    13,    13,    13,    13,   -24,
+     -24,    -2,    -2,    27,   -24,   -24
 };
 
   /* YYDEFACT[STATE-NUM] -- Default reduction number in state STATE-NUM.
@@ -552,27 +553,27 @@ static const yytype_int8 yypact[] =
      means the default is an error.  */
 static const yytype_uint8 yydefact[] =
 {
-       0,    31,    32,     0,     0,     0,    30,     0,     2,     3,
-       5,     7,     9,    12,    17,    20,    25,    27,    29,    28,
-       0,     0,     1,     0,     0,     0,     0,     0,     0,     0,
-       0,     0,     0,     0,     0,     0,     0,     0,     0,    33,
-       0,     6,     0,     8,    10,    11,    15,    16,    13,    14,
-      18,    19,    21,    24,    22,    23,    26,    34,     0,     0,
-       0,     4,    35
+       0,    35,    36,     0,     0,     0,     0,    34,     0,     2,
+       3,     5,     7,     9,    12,    17,    20,    25,    27,    31,
+      30,    28,    29,     0,     0,     1,     0,     0,     0,     0,
+       0,     0,     0,     0,     0,     0,     0,     0,     0,     0,
+       0,     0,    37,     0,     6,     0,     8,    10,    11,    15,
+      16,    13,    14,    18,    19,    21,    24,    22,    23,    26,
+      32,     0,     0,     0,     4,    33
 };
 
   /* YYPGOTO[NTERM-NUM].  */
 static const yytype_int8 yypgoto[] =
 {
-     -16,   -16,    -5,   -16,    23,    25,     4,     8,    10,    -2,
-       7,   -16
+     -24,   -24,    -6,   -24,    28,    25,    19,     2,    15,     0,
+     -15,     4,   -24
 };
 
   /* YYDEFGOTO[NTERM-NUM].  */
 static const yytype_int8 yydefgoto[] =
 {
-      -1,     7,     8,     9,    10,    11,    12,    13,    14,    15,
-      16,    17
+      -1,     8,     9,    10,    11,    12,    13,    14,    15,    16,
+      17,    18,    19
 };
 
   /* YYTABLE[YYPACT[STATE-NUM]] -- What to do in state STATE-NUM.  If
@@ -580,35 +581,35 @@ static const yytype_int8 yydefgoto[] =
      number is the opposite.  If YYTABLE_NINF, syntax error.  */
 static const yytype_uint8 yytable[] =
 {
-      20,    18,    19,     1,     2,     3,    28,    29,    30,    31,
-      39,    57,     4,    58,    23,    24,    40,    26,    27,    42,
-      21,    32,    33,     5,    22,     6,    34,    35,    36,    37,
-      44,    45,    52,    53,    54,    55,    46,    47,    48,    49,
-      25,    38,    50,    51,    59,    56,    41,    62,     0,     0,
-      43,     0,     0,    60,    61
+      23,    24,     1,     2,     3,     1,     2,    20,    21,    22,
+       4,     5,    31,    32,    33,    34,    25,    60,    43,    61,
+      41,    45,     6,    28,     7,     6,    59,     7,    37,    38,
+      39,    40,    42,    49,    50,    51,    52,    55,    56,    57,
+      58,    62,    26,    27,    29,    30,    35,    36,    47,    48,
+      53,    54,    65,    46,    44,    63,    64
 };
 
-static const yytype_int8 yycheck[] =
+static const yytype_uint8 yycheck[] =
 {
-       5,     3,     4,     4,     5,     6,    16,    17,    18,    19,
-      25,    25,    13,    27,    21,    22,    21,    14,    15,    24,
-      24,    12,    13,    24,     0,    26,     8,     9,    10,    11,
-      26,    27,    34,    35,    36,    37,    28,    29,    30,    31,
-      20,     7,    32,    33,    23,    38,    23,    25,    -1,    -1,
-      25,    -1,    -1,    58,    59
+       6,    24,     4,     5,     6,     4,     5,     3,     4,     5,
+      12,    13,    16,    17,    18,    19,     0,    25,    24,    27,
+       7,    27,    24,    20,    26,    24,    41,    26,     8,     9,
+      10,    11,    25,    31,    32,    33,    34,    37,    38,    39,
+      40,    23,    21,    22,    14,    15,    12,    13,    29,    30,
+      35,    36,    25,    28,    26,    61,    62
 };
 
   /* YYSTOS[STATE-NUM] -- The (internal number of the) accessing
      symbol of state STATE-NUM.  */
 static const yytype_uint8 yystos[] =
 {
-       0,     4,     5,     6,    13,    24,    26,    29,    30,    31,
-      32,    33,    34,    35,    36,    37,    38,    39,    37,    37,
-      30,    24,     0,    21,    22,    20,    14,    15,    16,    17,
-      18,    19,    12,    13,     8,     9,    10,    11,     7,    25,
-      30,    32,    30,    33,    34,    34,    35,    35,    35,    35,
-      36,    36,    37,    37,    37,    37,    38,    25,    27,    23,
-      30,    30,    25
+       0,     4,     5,     6,    12,    13,    24,    26,    29,    30,
+      31,    32,    33,    34,    35,    36,    37,    38,    39,    40,
+      39,    39,    39,    30,    24,     0,    21,    22,    20,    14,
+      15,    16,    17,    18,    19,    12,    13,     8,     9,    10,
+      11,     7,    25,    30,    32,    30,    33,    34,    34,    35,
+      35,    35,    35,    36,    36,    37,    37,    37,    37,    38,
+      25,    27,    23,    30,    30,    25
 };
 
   /* YYR1[YYN] -- Symbol number of symbol that rule YYN derives.  */
@@ -617,7 +618,7 @@ static const yytype_uint8 yyr1[] =
        0,    28,    29,    30,    30,    31,    31,    32,    32,    33,
       33,    33,    34,    34,    34,    34,    34,    35,    35,    35,
       36,    36,    36,    36,    36,    37,    37,    38,    38,    38,
-      39,    39,    39,    39,    39,    39
+      38,    39,    39,    39,    40,    40,    40,    40
 };
 
   /* YYR2[YYN] -- Number of symbols on the right hand side of rule YYN.  */
@@ -626,7 +627,7 @@ static const yytype_uint8 yyr2[] =
        0,     2,     1,     1,     5,     1,     3,     1,     3,     1,
        3,     3,     1,     3,     3,     3,     3,     1,     3,     3,
        1,     3,     3,     3,     3,     1,     3,     1,     2,     2,
-       1,     1,     1,     3,     4,     6
+       2,     1,     4,     6,     1,     1,     1,     3
 };
 
 
@@ -1307,7 +1308,7 @@ yyreduce:
     {
     csim::algebraic_result = (yyvsp[0].real);
 }
-#line 1311 "/cygdrive/e/FastCSIM/core/parser/parse-algebraic.cc" /* yacc.c:1646  */
+#line 1312 "/cygdrive/e/FastCSIM/core/parser/parse-algebraic.cc" /* yacc.c:1646  */
     break;
 
   case 3:
@@ -1315,7 +1316,7 @@ yyreduce:
     {
         (yyval.real) = (yyvsp[0].real);
     }
-#line 1319 "/cygdrive/e/FastCSIM/core/parser/parse-algebraic.cc" /* yacc.c:1646  */
+#line 1320 "/cygdrive/e/FastCSIM/core/parser/parse-algebraic.cc" /* yacc.c:1646  */
     break;
 
   case 4:
@@ -1323,7 +1324,7 @@ yyreduce:
     {
         (yyval.real) = (std::fabs((yyvsp[-4].real))>std::numeric_limits<float>::epsilon()) ? (yyvsp[-2].real) : (yyvsp[0].real);
     }
-#line 1327 "/cygdrive/e/FastCSIM/core/parser/parse-algebraic.cc" /* yacc.c:1646  */
+#line 1328 "/cygdrive/e/FastCSIM/core/parser/parse-algebraic.cc" /* yacc.c:1646  */
     break;
 
   case 5:
@@ -1331,7 +1332,7 @@ yyreduce:
     {
         (yyval.real) = (yyvsp[0].real);
     }
-#line 1335 "/cygdrive/e/FastCSIM/core/parser/parse-algebraic.cc" /* yacc.c:1646  */
+#line 1336 "/cygdrive/e/FastCSIM/core/parser/parse-algebraic.cc" /* yacc.c:1646  */
     break;
 
   case 6:
@@ -1339,7 +1340,7 @@ yyreduce:
     {
         (yyval.real) = ((std::fabs((yyvsp[-2].real))>std::numeric_limits<float>::epsilon()) || (std::fabs((yyvsp[0].real))>std::numeric_limits<float>::epsilon())) ? 1.0 : 0.0;
     }
-#line 1343 "/cygdrive/e/FastCSIM/core/parser/parse-algebraic.cc" /* yacc.c:1646  */
+#line 1344 "/cygdrive/e/FastCSIM/core/parser/parse-algebraic.cc" /* yacc.c:1646  */
     break;
 
   case 7:
@@ -1347,7 +1348,7 @@ yyreduce:
     {
         (yyval.real) = (yyvsp[0].real);
     }
-#line 1351 "/cygdrive/e/FastCSIM/core/parser/parse-algebraic.cc" /* yacc.c:1646  */
+#line 1352 "/cygdrive/e/FastCSIM/core/parser/parse-algebraic.cc" /* yacc.c:1646  */
     break;
 
   case 8:
@@ -1355,7 +1356,7 @@ yyreduce:
     {
         (yyval.real) = ((std::fabs((yyvsp[-2].real))<=std::numeric_limits<float>::epsilon()) && (std::fabs((yyvsp[0].real))<=std::numeric_limits<float>::epsilon())) ? 1.0 : 0.0;
     }
-#line 1359 "/cygdrive/e/FastCSIM/core/parser/parse-algebraic.cc" /* yacc.c:1646  */
+#line 1360 "/cygdrive/e/FastCSIM/core/parser/parse-algebraic.cc" /* yacc.c:1646  */
     break;
 
   case 9:
@@ -1363,7 +1364,7 @@ yyreduce:
     {
         (yyval.real) = (yyvsp[0].real);
     }
-#line 1367 "/cygdrive/e/FastCSIM/core/parser/parse-algebraic.cc" /* yacc.c:1646  */
+#line 1368 "/cygdrive/e/FastCSIM/core/parser/parse-algebraic.cc" /* yacc.c:1646  */
     break;
 
   case 10:
@@ -1371,7 +1372,7 @@ yyreduce:
     {
         (yyval.real) = ((yyvsp[-2].real) == (yyvsp[0].real)) ? 1.0 : 0.0;
     }
-#line 1375 "/cygdrive/e/FastCSIM/core/parser/parse-algebraic.cc" /* yacc.c:1646  */
+#line 1376 "/cygdrive/e/FastCSIM/core/parser/parse-algebraic.cc" /* yacc.c:1646  */
     break;
 
   case 11:
@@ -1379,7 +1380,7 @@ yyreduce:
     {
         (yyval.real) = ((yyvsp[-2].real) != (yyvsp[0].real)) ? 1.0 : 0.0;
     }
-#line 1383 "/cygdrive/e/FastCSIM/core/parser/parse-algebraic.cc" /* yacc.c:1646  */
+#line 1384 "/cygdrive/e/FastCSIM/core/parser/parse-algebraic.cc" /* yacc.c:1646  */
     break;
 
   case 12:
@@ -1387,7 +1388,7 @@ yyreduce:
     {
         (yyval.real) = (yyvsp[0].real);
     }
-#line 1391 "/cygdrive/e/FastCSIM/core/parser/parse-algebraic.cc" /* yacc.c:1646  */
+#line 1392 "/cygdrive/e/FastCSIM/core/parser/parse-algebraic.cc" /* yacc.c:1646  */
     break;
 
   case 13:
@@ -1395,7 +1396,7 @@ yyreduce:
     {
         (yyval.real) = ((yyvsp[-2].real) < (yyvsp[0].real)) ? 1.0 : 0.0;
     }
-#line 1399 "/cygdrive/e/FastCSIM/core/parser/parse-algebraic.cc" /* yacc.c:1646  */
+#line 1400 "/cygdrive/e/FastCSIM/core/parser/parse-algebraic.cc" /* yacc.c:1646  */
     break;
 
   case 14:
@@ -1403,7 +1404,7 @@ yyreduce:
     {
         (yyval.real) = ((yyvsp[-2].real) > (yyvsp[0].real)) ? 1.0 : 0.0;
     }
-#line 1407 "/cygdrive/e/FastCSIM/core/parser/parse-algebraic.cc" /* yacc.c:1646  */
+#line 1408 "/cygdrive/e/FastCSIM/core/parser/parse-algebraic.cc" /* yacc.c:1646  */
     break;
 
   case 15:
@@ -1411,7 +1412,7 @@ yyreduce:
     {
         (yyval.real) = ((yyvsp[-2].real) <= (yyvsp[0].real)) ? 1.0 : 0.0;
     }
-#line 1415 "/cygdrive/e/FastCSIM/core/parser/parse-algebraic.cc" /* yacc.c:1646  */
+#line 1416 "/cygdrive/e/FastCSIM/core/parser/parse-algebraic.cc" /* yacc.c:1646  */
     break;
 
   case 16:
@@ -1419,7 +1420,7 @@ yyreduce:
     {
         (yyval.real) = ((yyvsp[-2].real) >= (yyvsp[0].real)) ? 1.0 : 0.0;
     }
-#line 1423 "/cygdrive/e/FastCSIM/core/parser/parse-algebraic.cc" /* yacc.c:1646  */
+#line 1424 "/cygdrive/e/FastCSIM/core/parser/parse-algebraic.cc" /* yacc.c:1646  */
     break;
 
   case 17:
@@ -1427,7 +1428,7 @@ yyreduce:
     {
         (yyval.real) = (yyvsp[0].real);
     }
-#line 1431 "/cygdrive/e/FastCSIM/core/parser/parse-algebraic.cc" /* yacc.c:1646  */
+#line 1432 "/cygdrive/e/FastCSIM/core/parser/parse-algebraic.cc" /* yacc.c:1646  */
     break;
 
   case 18:
@@ -1435,7 +1436,7 @@ yyreduce:
     {
         (yyval.real) = (yyvsp[-2].real) + (yyvsp[0].real);
     }
-#line 1439 "/cygdrive/e/FastCSIM/core/parser/parse-algebraic.cc" /* yacc.c:1646  */
+#line 1440 "/cygdrive/e/FastCSIM/core/parser/parse-algebraic.cc" /* yacc.c:1646  */
     break;
 
   case 19:
@@ -1443,7 +1444,7 @@ yyreduce:
     {
         (yyval.real) = (yyvsp[-2].real) - (yyvsp[0].real);
     }
-#line 1447 "/cygdrive/e/FastCSIM/core/parser/parse-algebraic.cc" /* yacc.c:1646  */
+#line 1448 "/cygdrive/e/FastCSIM/core/parser/parse-algebraic.cc" /* yacc.c:1646  */
     break;
 
   case 20:
@@ -1451,7 +1452,7 @@ yyreduce:
     {
         (yyval.real) = (yyvsp[0].real);
     }
-#line 1455 "/cygdrive/e/FastCSIM/core/parser/parse-algebraic.cc" /* yacc.c:1646  */
+#line 1456 "/cygdrive/e/FastCSIM/core/parser/parse-algebraic.cc" /* yacc.c:1646  */
     break;
 
   case 21:
@@ -1459,7 +1460,7 @@ yyreduce:
     {
         (yyval.real) = (yyvsp[-2].real) * (yyvsp[0].real);
     }
-#line 1463 "/cygdrive/e/FastCSIM/core/parser/parse-algebraic.cc" /* yacc.c:1646  */
+#line 1464 "/cygdrive/e/FastCSIM/core/parser/parse-algebraic.cc" /* yacc.c:1646  */
     break;
 
   case 22:
@@ -1467,7 +1468,7 @@ yyreduce:
     {
         (yyval.real) = (yyvsp[-2].real) / (yyvsp[0].real);
     }
-#line 1471 "/cygdrive/e/FastCSIM/core/parser/parse-algebraic.cc" /* yacc.c:1646  */
+#line 1472 "/cygdrive/e/FastCSIM/core/parser/parse-algebraic.cc" /* yacc.c:1646  */
     break;
 
   case 23:
@@ -1475,7 +1476,7 @@ yyreduce:
     {
         (yyval.real) = csim::algebraic_trunc(std::fabs((yyvsp[-2].real) / (yyvsp[0].real)));
     }
-#line 1479 "/cygdrive/e/FastCSIM/core/parser/parse-algebraic.cc" /* yacc.c:1646  */
+#line 1480 "/cygdrive/e/FastCSIM/core/parser/parse-algebraic.cc" /* yacc.c:1646  */
     break;
 
   case 24:
@@ -1484,7 +1485,7 @@ yyreduce:
         double t = csim::algebraic_trunc((yyvsp[-2].real) / (yyvsp[0].real));
         (yyval.real) = (yyvsp[-2].real) - (yyvsp[0].real) * t;
     }
-#line 1488 "/cygdrive/e/FastCSIM/core/parser/parse-algebraic.cc" /* yacc.c:1646  */
+#line 1489 "/cygdrive/e/FastCSIM/core/parser/parse-algebraic.cc" /* yacc.c:1646  */
     break;
 
   case 25:
@@ -1492,7 +1493,7 @@ yyreduce:
     {
         (yyval.real) = (yyvsp[0].real);
     }
-#line 1496 "/cygdrive/e/FastCSIM/core/parser/parse-algebraic.cc" /* yacc.c:1646  */
+#line 1497 "/cygdrive/e/FastCSIM/core/parser/parse-algebraic.cc" /* yacc.c:1646  */
     break;
 
   case 26:
@@ -1500,7 +1501,7 @@ yyreduce:
     {
         (yyval.real) = std::pow(std::fabs((yyvsp[-2].real)),(yyvsp[0].real));
     }
-#line 1504 "/cygdrive/e/FastCSIM/core/parser/parse-algebraic.cc" /* yacc.c:1646  */
+#line 1505 "/cygdrive/e/FastCSIM/core/parser/parse-algebraic.cc" /* yacc.c:1646  */
     break;
 
   case 27:
@@ -1508,66 +1509,43 @@ yyreduce:
     {
         (yyval.real) = (yyvsp[0].real);
     }
-#line 1512 "/cygdrive/e/FastCSIM/core/parser/parse-algebraic.cc" /* yacc.c:1646  */
+#line 1513 "/cygdrive/e/FastCSIM/core/parser/parse-algebraic.cc" /* yacc.c:1646  */
     break;
 
   case 28:
 #line 160 "/cygdrive/e/FastCSIM/core/parser/parse-algebraic.ypp" /* yacc.c:1646  */
     {
-        (yyval.real) = -(yyvsp[0].real);
+        (yyval.real) = (yyvsp[0].real);
     }
-#line 1520 "/cygdrive/e/FastCSIM/core/parser/parse-algebraic.cc" /* yacc.c:1646  */
+#line 1521 "/cygdrive/e/FastCSIM/core/parser/parse-algebraic.cc" /* yacc.c:1646  */
     break;
 
   case 29:
 #line 163 "/cygdrive/e/FastCSIM/core/parser/parse-algebraic.ypp" /* yacc.c:1646  */
     {
-        (yyval.real) = int((yyvsp[0].real)) ? 0.0 : 1.0;
+        (yyval.real) = -(yyvsp[0].real);
     }
-#line 1528 "/cygdrive/e/FastCSIM/core/parser/parse-algebraic.cc" /* yacc.c:1646  */
+#line 1529 "/cygdrive/e/FastCSIM/core/parser/parse-algebraic.cc" /* yacc.c:1646  */
     break;
 
   case 30:
-#line 169 "/cygdrive/e/FastCSIM/core/parser/parse-algebraic.ypp" /* yacc.c:1646  */
+#line 166 "/cygdrive/e/FastCSIM/core/parser/parse-algebraic.ypp" /* yacc.c:1646  */
     {
-        double val;
-        if (csim::algebraic_currentScope->getValue((yyvsp[0].text),&val)) {
-            yyerror("Variable undefined");
-        }
-        (yyval.real) = val;
-        free((yyvsp[0].text));
+        (yyval.real) = ((yyvsp[0].real)<=std::numeric_limits<float>::epsilon()) ? 1.0 : 0.0;
     }
-#line 1541 "/cygdrive/e/FastCSIM/core/parser/parse-algebraic.cc" /* yacc.c:1646  */
+#line 1537 "/cygdrive/e/FastCSIM/core/parser/parse-algebraic.cc" /* yacc.c:1646  */
     break;
 
   case 31:
-#line 177 "/cygdrive/e/FastCSIM/core/parser/parse-algebraic.ypp" /* yacc.c:1646  */
+#line 172 "/cygdrive/e/FastCSIM/core/parser/parse-algebraic.ypp" /* yacc.c:1646  */
     {
-        (yyval.real) = csim::algebraic_parseReal((yyvsp[0].text));
-        free((yyvsp[0].text));
+        (yyval.real) = (yyvsp[0].real);
     }
-#line 1550 "/cygdrive/e/FastCSIM/core/parser/parse-algebraic.cc" /* yacc.c:1646  */
+#line 1545 "/cygdrive/e/FastCSIM/core/parser/parse-algebraic.cc" /* yacc.c:1646  */
     break;
 
   case 32:
-#line 181 "/cygdrive/e/FastCSIM/core/parser/parse-algebraic.ypp" /* yacc.c:1646  */
-    {
-        (yyval.real) = csim::algebraic_parseReal((yyvsp[0].text));
-        free((yyvsp[0].text));
-    }
-#line 1559 "/cygdrive/e/FastCSIM/core/parser/parse-algebraic.cc" /* yacc.c:1646  */
-    break;
-
-  case 33:
-#line 185 "/cygdrive/e/FastCSIM/core/parser/parse-algebraic.ypp" /* yacc.c:1646  */
-    {
-        (yyval.real) = (yyvsp[-1].real);
-    }
-#line 1567 "/cygdrive/e/FastCSIM/core/parser/parse-algebraic.cc" /* yacc.c:1646  */
-    break;
-
-  case 34:
-#line 188 "/cygdrive/e/FastCSIM/core/parser/parse-algebraic.ypp" /* yacc.c:1646  */
+#line 175 "/cygdrive/e/FastCSIM/core/parser/parse-algebraic.ypp" /* yacc.c:1646  */
     {
         if (0==csim::strcmp_nocase((yyvsp[-3].text), "sqr"))
             (yyval.real) = (yyvsp[-1].real) * (yyvsp[-1].real);
@@ -1626,11 +1604,11 @@ yyreduce:
         }
         free((yyvsp[-3].text));
     }
-#line 1630 "/cygdrive/e/FastCSIM/core/parser/parse-algebraic.cc" /* yacc.c:1646  */
+#line 1608 "/cygdrive/e/FastCSIM/core/parser/parse-algebraic.cc" /* yacc.c:1646  */
     break;
 
-  case 35:
-#line 246 "/cygdrive/e/FastCSIM/core/parser/parse-algebraic.ypp" /* yacc.c:1646  */
+  case 33:
+#line 233 "/cygdrive/e/FastCSIM/core/parser/parse-algebraic.ypp" /* yacc.c:1646  */
     {
         if (0==csim::strcmp_nocase((yyvsp[-5].text), "pow"))
             (yyval.real) = std::pow((yyvsp[-3].real), (yyvsp[-1].real));
@@ -1645,11 +1623,50 @@ yyreduce:
         }
         free((yyvsp[-5].text));
     }
+#line 1627 "/cygdrive/e/FastCSIM/core/parser/parse-algebraic.cc" /* yacc.c:1646  */
+    break;
+
+  case 34:
+#line 250 "/cygdrive/e/FastCSIM/core/parser/parse-algebraic.ypp" /* yacc.c:1646  */
+    {
+        double val;
+        if (csim::algebraic_currentScope->getValue((yyvsp[0].text),&val)) {
+            yyerror("Variable undefined");
+        }
+        (yyval.real) = val;
+        free((yyvsp[0].text));
+    }
+#line 1640 "/cygdrive/e/FastCSIM/core/parser/parse-algebraic.cc" /* yacc.c:1646  */
+    break;
+
+  case 35:
+#line 258 "/cygdrive/e/FastCSIM/core/parser/parse-algebraic.ypp" /* yacc.c:1646  */
+    {
+        (yyval.real) = csim::algebraic_parseReal((yyvsp[0].text));
+        free((yyvsp[0].text));
+    }
 #line 1649 "/cygdrive/e/FastCSIM/core/parser/parse-algebraic.cc" /* yacc.c:1646  */
     break;
 
+  case 36:
+#line 262 "/cygdrive/e/FastCSIM/core/parser/parse-algebraic.ypp" /* yacc.c:1646  */
+    {
+        (yyval.real) = csim::algebraic_parseReal((yyvsp[0].text));
+        free((yyvsp[0].text));
+    }
+#line 1658 "/cygdrive/e/FastCSIM/core/parser/parse-algebraic.cc" /* yacc.c:1646  */
+    break;
 
-#line 1653 "/cygdrive/e/FastCSIM/core/parser/parse-algebraic.cc" /* yacc.c:1646  */
+  case 37:
+#line 266 "/cygdrive/e/FastCSIM/core/parser/parse-algebraic.ypp" /* yacc.c:1646  */
+    {
+        (yyval.real) = (yyvsp[-1].real);
+    }
+#line 1666 "/cygdrive/e/FastCSIM/core/parser/parse-algebraic.cc" /* yacc.c:1646  */
+    break;
+
+
+#line 1670 "/cygdrive/e/FastCSIM/core/parser/parse-algebraic.cc" /* yacc.c:1646  */
       default: break;
     }
   /* User semantic actions sometimes alter yychar, and that requires
@@ -1877,7 +1894,7 @@ yyreturn:
 #endif
   return yyresult;
 }
-#line 262 "/cygdrive/e/FastCSIM/core/parser/parse-algebraic.ypp" /* yacc.c:1906  */
+#line 271 "/cygdrive/e/FastCSIM/core/parser/parse-algebraic.ypp" /* yacc.c:1906  */
 
 
 /**/

@@ -75,6 +75,11 @@ namespace csimModel
         PropertyMdl *getPropertyModel() const;
         csim::Algebraic *getAlgebraic() const;
 
+        int32_t getInt32Cast(int *rc) const;
+        double getDoubleCast(int *rc) const;
+        bool getBooleanCast(int *rc) const;
+        const char *getStringCast(int *rc);
+
     private:
         VariantType m_type;
         union

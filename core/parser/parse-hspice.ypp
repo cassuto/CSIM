@@ -28,7 +28,7 @@ static void yyerror(char const *msg) {
 
 %name-prefix "hspice_"
 
-%token K_Text K_Unsigned K_Number K_Nodes K_EOL
+%token K_Text K_Unsigned K_Number K_Nodes
 %token K_Title
 %token K_Model K_ModelType
 %token K_Subckt
@@ -82,29 +82,29 @@ Netlist:
 Block: /* empty */ { $$ = new csim::HSPICE_Block(); }
     | SUBCKT Block {
         $1->block->setParent($2);
-        $2->subs.push_back($1);
+        $2->subs.emplace_back($1);
         $$ = $2;
     }
-    | K_Model K_Text K_ModelType ParamLine K_EOL Block {
+    | K_Model K_Text K_ModelType ParamLine Block {
         /* .model */
-        $6->models.emplace_back();
-        csim::HSPICE_Model &model = $6->models.back();
+        csim::HSPICE_Model model($5);
         model.name = $2;
         model.type = $3;
         model.params = $4;
+        $5->models.emplace_back(model);
         free($2); free($3);
-        $$ = $6;
+        $$ = $5;
     }
-    | K_Param ParamLine K_EOL Block {
+    | K_Param ParamLine Block {
         /* .param */
-        for(auto it = $2->kvs.rbegin(); it != $2->kvs.rend(); it++) {
+        for(auto it = $2->kvs.begin(); it != $2->kvs.end(); it++) {
             switch (it->second.getType()){
                 case csimModel::Variant::VariantAlgebraic:
-                    $4->addParam(it->first.c_str(), it->second.getAlgebraic()); /* Unsolved */
+                    $3->addParam(it->first.c_str(), it->second.getAlgebraic()); /* Unsolved */
                     break;
 
                 case csimModel::Variant::VariantDouble:
-                    $4->addParam(it->first.c_str(), it->second.getDouble()); /* Solved */
+                    $3->addParam(it->first.c_str(), it->second.getDouble()); /* Solved */
                     break;
 
                 default:
@@ -112,29 +112,26 @@ Block: /* empty */ { $$ = new csim::HSPICE_Block(); }
             }
         }
         delete $2;
-        $$ = $4;
-    }
-    | K_EOL Block {
-        $$ = $2;
+        $$ = $3;
     }
 ;
 
 ParamLine: /* empty*/ { $$ = new csim::HSPICE_KeyValueList(); }
     | K_Text K_Equ RealValue ParamLine {
-        $4->kvs.push_back(std::make_pair($1, csim::hspice_parseReal($3)));
+        $4->kvs.emplace_back(std::make_pair($1, csim::hspice_parseReal($3)));
         free($1);
         free($3);
         $$ = $4;
     }
     | K_Text K_Equ K_Text ParamLine {
-        $4->kvs.push_back(std::make_pair($1, csimModel::Variant(csimModel::Variant::VariantString).setString($3)));
+        $4->kvs.emplace_back(std::make_pair($1, csimModel::Variant(csimModel::Variant::VariantString).setString($3)));
         free($1);
         free($3);
         $$ = $4;
     }
     | K_Text K_Equ K_Algebraic ParamLine {
         csim::Algebraic *alg = new csim::Algebraic($3);
-        $4->kvs.push_back(std::make_pair($1, csimModel::Variant(csimModel::Variant::VariantAlgebraic).setAlgebraic(alg)));
+        $4->kvs.emplace_back(std::make_pair($1, csimModel::Variant(csimModel::Variant::VariantAlgebraic).setAlgebraic(alg)));
         free($1);
         free($3);
         $$ = $4;
@@ -148,7 +145,7 @@ SUBCKT:
     }
 ;
 SUBCKTBegin:
-    K_Subckt K_Text NodeList K_EOL {
+    K_Subckt K_Text NodeList {
         $$ = new csim::HSPICE_SubBlock($2);
         free($2);
         $$->nodes = $3;
@@ -161,7 +158,7 @@ SUBCKTEnd:
 
 NodeList: /* empty */ { $$ = new csim::HSPICE_Nodes(); }
     | NodeName NodeList {
-        $2->nodes.push_back($1);
+        $2->nodes.emplace_back($1);
         free($1);
         $$ = $2;
     }

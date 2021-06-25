@@ -23,6 +23,7 @@
 #include <string>
 #include "csim/model/ModelBase.h"
 #include "csim/utils/errors.h"
+#include "csim/utils/macros.h"
 #include "csim/model/compact/SPICE-Devsup.h"
 
 namespace csimModel
@@ -637,14 +638,9 @@ namespace csimModel
     public:
         BSIM3v32model();
         virtual ~BSIM3v32model();
-        virtual int getPropertyNum() const;
-        virtual const char *getPropertyName(int id) const;
-        virtual const char *getPropertyDesc(int id) const;
-        virtual Variant::VariantType getPropertyType(int id) const;
-        virtual uint32_t getPropertyFlags(int id) const;
 
         virtual const char *name() const;
-        virtual void setProperty(int id, const Variant &value);
+        virtual int setProperty(int id, const Variant &value);
         virtual int setup(Environment *env);
         virtual int setTemp(ModelBase *device, Environment *env);
 
@@ -1762,7 +1758,6 @@ namespace csimModel
         };
 
     private:
-        int loadProperty();
         int stampDCTran(Environment *env);
         int stampAC(Environment *env, double omega);
 

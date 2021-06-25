@@ -27,14 +27,14 @@
 
 SPACE [ \t\f\v]
 DIGIT [0-9]
-SIGNED [+-]?{DIGIT}+
+INTEGERS {DIGIT}+
 EXPONENT [Ee][+-]?{DIGIT}+
-F_INT_EXP [+-]?{DIGIT}+{EXPONENT}
-F_INT_SML_EXP [+-]?{DIGIT}*"."{DIGIT}+({EXPONENT})?
-F_INT_PT [+-]?{DIGIT}+"."
+F_INT_EXP {DIGIT}+{EXPONENT}
+F_INT_SML_EXP {DIGIT}*"."{DIGIT}+({EXPONENT})?
+F_INT_PT {DIGIT}+"."
 SCALE ([fF]|[pP]|[nN]|[uU]|[mM]|[mM][iI][lL]|[kK]|[mM][eE][gG]|[gG]|[tT])
 UNIT ([vV]|[aA]|[oO][hH][mM]|[mM][hH][oO]|[sS]|[fF]|[hH])
-NUMBER ({SIGNED}|{F_INT_EXP}|{F_INT_SML_EXP}|{F_INT_PT}){SCALE}?{UNIT}?
+NUMBER ({INTEGERS}|{F_INT_EXP}|{F_INT_SML_EXP}|{F_INT_PT}){SCALE}?{UNIT}?
 IDENTIFIER [A-Za-z][A-Za-z0-9_]*
 
 %%

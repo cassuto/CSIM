@@ -23,7 +23,7 @@
 #include "csim/internal/parser/hspice-defs.h"
 #include "parse-algebraic.h"
 static void yyerror(char const *msg) {
-    std::cerr<<"Error at line"<<algebraic_lineno<<": "<<msg<<std::endl;
+    std::cerr<<"Error: "<<msg<<std::endl;
     algebraic_wrap();
     csim::algebraic_err = true;
 }
@@ -45,7 +45,7 @@ static void yyerror(char const *msg) {
 }
 
 %type <text> K_ExprId K_Unsigned K_Number
-%type <real> Expr ExprOr ExprAnd ExprEQ ExprRelation ExprTerm ExprFactor ExprPow ExprUnary Atom
+%type <real> Expr ExprOr ExprAnd ExprEQ ExprRelation ExprTerm ExprFactor ExprPow ExprUnary ExprFunc Atom
 
 %start S
 
@@ -154,36 +154,23 @@ ExprPow:
     
 
 ExprUnary:
-    Atom {
+    ExprFunc {
         $$ = $1;
     }
-	| K_ExprMinus ExprPow {
+    | K_ExprPlus ExprFunc {
+        $$ = $2;
+    }
+	| K_ExprMinus ExprFunc {
         $$ = -$2;
     }
-    | K_ExprNot ExprPow {
-        $$ = int($2) ? 0.0 : 1.0;
+    | K_ExprNot ExprFunc {
+        $$ = ($2<=std::numeric_limits<float>::epsilon()) ? 1.0 : 0.0;
     }
 ;
 
-Atom:
-	K_ExprId {
-        double val;
-        if (csim::algebraic_currentScope->getValue($1,&val)) {
-            yyerror("Variable undefined");
-        }
-        $$ = val;
-        free($1);
-    }
-	| K_Unsigned {
-        $$ = csim::algebraic_parseReal($1);
-        free($1);
-    }
-	| K_Number {
-        $$ = csim::algebraic_parseReal($1);
-        free($1);
-    }
-	| K_ExprLPar Expr K_ExprRPar {
-        $$ = $2;
+ExprFunc:
+    Atom {
+        $$ = $1;
     }
     | K_ExprId K_ExprLPar Expr K_ExprRPar {
         if (0==csim::strcmp_nocase($1, "sqr"))
@@ -256,6 +243,28 @@ Atom:
             algebraic_error("Unknown function");
         }
         free($1);
+    }
+;
+
+Atom:
+	K_ExprId {
+        double val;
+        if (csim::algebraic_currentScope->getValue($1,&val)) {
+            yyerror("Variable undefined");
+        }
+        $$ = val;
+        free($1);
+    }
+	| K_Unsigned {
+        $$ = csim::algebraic_parseReal($1);
+        free($1);
+    }
+	| K_Number {
+        $$ = csim::algebraic_parseReal($1);
+        free($1);
+    }
+	| K_ExprLPar Expr K_ExprRPar {
+        $$ = $2;
     }
 ;
 

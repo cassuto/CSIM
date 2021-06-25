@@ -10,6 +10,7 @@
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU      
  *  Lesser General Public License for more details.                        
  */
+#include <iostream>
 #include <cmath>
 #include <cassert>
 #include <algorithm>
@@ -194,6 +195,7 @@ namespace csim
         algebraic_wrap();
         algebraic_lineno = 1;
         algebraic_err = false;
+        algebraic_debug=0;
         if (algebraic_parse())
             rc = CERR_PARSE_ALGEBRAIC_EXPRESSION;
         if (algebraic_err)

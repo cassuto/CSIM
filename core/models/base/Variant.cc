@@ -15,7 +15,9 @@
  *  Lesser General Public License for more details.                        
  */
 
+#include <limits>
 #include <cassert>
+#include "csim/utils/errors.h"
 #include "csim/model/Variant.h"
 
 namespace csimModel
@@ -203,6 +205,181 @@ namespace csimModel
         assert(m_type == VariantString);
         return m_str.c_str();
     }
+
+    int32_t Variant::getInt32Cast(int *rc) const
+    {
+        *rc = 0;
+        if (m_type != VariantInt32)
+        {
+            switch (m_type)
+            {
+            case VariantUint8:
+                return int32_t(m_dat.u8);
+            case VariantUint16:
+                return int32_t(m_dat.u16);
+            case VariantUint64:
+                return int32_t(m_dat.u64);
+            case VariantInt8:
+                return int32_t(m_dat.i8);
+            case VariantInt16:
+                return int32_t(m_dat.i16);
+            case VariantInt32:
+                return int32_t(m_dat.i32);
+            case VariantInt64:
+                return int32_t(m_dat.i64);
+            case VariantDouble:
+                return int32_t(m_dat.d);
+            case VariantBoolean:
+                return m_dat.b ? 1.0 : 0.0;
+            case VariantString:
+                return std::stoi(m_str);
+            case VariantPropertyModel:
+            case VariantAlgebraic:
+            case VariantUnknown:
+                *rc = CERR_TYPE_MISMATCH;
+                return 0;
+            default:
+                assert(0);
+            }
+        }
+        else
+            return m_dat.i32;
+    }
+    double Variant::getDoubleCast(int *rc) const
+    {
+        *rc = 0;
+        if (m_type != VariantDouble)
+        {
+            switch (m_type)
+            {
+            case VariantUint8:
+                return double(m_dat.u8);
+            case VariantUint16:
+                return double(m_dat.u16);
+            case VariantUint32:
+                return double(m_dat.u32);
+            case VariantUint64:
+                return double(m_dat.u64);
+            case VariantInt8:
+                return double(m_dat.i8);
+            case VariantInt16:
+                return double(m_dat.i16);
+            case VariantInt32:
+                return double(m_dat.i32);
+            case VariantInt64:
+                return double(m_dat.i64);
+            case VariantBoolean:
+                return m_dat.b ? 1.0 : 0.0;
+            case VariantString:
+                return std::stod(m_str);
+            case VariantPropertyModel:
+            case VariantAlgebraic:
+            case VariantUnknown:
+                *rc = CERR_TYPE_MISMATCH;
+                return 0;
+            default:
+                assert(0);
+            }
+        }
+        else
+            return m_dat.d;
+    }
+    bool Variant::getBooleanCast(int *rc) const
+    {
+        *rc = 0;
+        if (m_type != VariantBoolean)
+        {
+            switch (m_type)
+            {
+            case VariantUint8:
+                return (m_dat.u8);
+            case VariantUint16:
+                return (m_dat.u16);
+            case VariantUint32:
+                return (m_dat.u32);
+            case VariantUint64:
+                return (m_dat.u64);
+            case VariantInt8:
+                return (m_dat.i8);
+            case VariantInt16:
+                return (m_dat.i16);
+            case VariantInt32:
+                return (m_dat.i32);
+            case VariantInt64:
+                return (m_dat.i64);
+            case VariantDouble:
+                return (std::fabs(m_dat.d) > std::numeric_limits<float>::epsilon());
+            case VariantString:
+                if ((0 == m_str.compare("t")) || (0 == m_str.compare("T")))
+                    return true;
+                else if ((0 == m_str.compare("f")) || (0 == m_str.compare("F")))
+                    return false;
+                else {
+                    *rc = CERR_TYPE_MISMATCH;
+                    return false;
+                }
+            case VariantPropertyModel:
+            case VariantAlgebraic:
+            case VariantUnknown:
+                *rc = CERR_TYPE_MISMATCH;
+                return 0;
+            default:
+                assert(0);
+            }
+        }
+        else
+            return m_dat.b;
+    }
+
+    const char *Variant::getStringCast(int *rc)
+    {
+        *rc = 0;
+        if (m_type != VariantString)
+        {
+            switch (m_type)
+            {
+            case VariantUint8:
+                m_str = std::to_string(m_dat.u8);
+                break;
+            case VariantUint16:
+                m_str = std::to_string(m_dat.u16);
+                break;
+            case VariantUint32:
+                m_str = std::to_string(m_dat.u32);
+                break;
+            case VariantUint64:
+                m_str = std::to_string(m_dat.u64);
+                break;
+            case VariantInt8:
+                m_str = std::to_string(m_dat.i8);
+                break;
+            case VariantInt16:
+                m_str = std::to_string(m_dat.i16);
+                break;
+            case VariantInt32:
+                m_str = std::to_string(m_dat.i32);
+                break;
+            case VariantInt64:
+                m_str = std::to_string(m_dat.i64);
+                break;
+            case VariantDouble:
+                m_str = std::to_string(m_dat.d);
+                break;
+            case VariantBoolean:
+                m_str = m_dat.b ? "t" : "f";
+                break;
+            case VariantPropertyModel:
+            case VariantAlgebraic:
+            case VariantUnknown:
+                *rc = CERR_TYPE_MISMATCH;
+                return nullptr;
+            default:
+                assert(0);
+            }
+        }
+        return m_str.c_str();
+    }
+
     PropertyMdl *Variant::getPropertyModel() const
     {
         assert(m_type == VariantPropertyModel);

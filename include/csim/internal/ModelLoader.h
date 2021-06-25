@@ -14,6 +14,7 @@
 #ifndef CSIM_MODELLOADER_H_
 #define CSIM_MODELLOADER_H_
 
+#include <map>
 #include "csim/model/ModelBase.h"
 
 namespace csimModel
@@ -28,12 +29,11 @@ namespace csim
     class ModelEntry
     {
     public:
-        ModelEntry(csimModel::pfnCreateModel_t pfnCreate, csimModel::pfnDeleteModel_t pfnDelete, const ModelDescriptor *descriptor)
-            : m_pfnCreate(pfnCreate),
-              m_pfnDelete(pfnDelete),
-              m_descriptor(descriptor)
-        {
-        }
+        ModelEntry(void *handle, csimModel::pfnCreateModel_t pfnCreate, csimModel::pfnDeleteModel_t pfnDelete,
+                   const ModelDescriptor *descriptor,
+                   const PropertyMdlDescriptor *mdlDescriptors,
+                   size_t numMdlDescriptors);
+        ~ModelEntry();
 
         csimModel::ModelBase *createInstance(MODELBASE_CONSTRUCTOR_DEF) const;
 
@@ -44,10 +44,41 @@ namespace csim
             return m_descriptor;
         }
 
+        inline size_t numMdlDescriptors() const
+        {
+            return m_numMdlDescriptors;
+        }
+
+        inline const PropertyMdlDescriptor *mdlDescriptors(size_t i) const
+        {
+            return m_mdlDescriptors + i;
+        }
+
+        class MdlEntry
+        {
+        public:
+            csimModel::PropertyMdl *createInstance() const;
+            void deleteInstance(csimModel::PropertyMdl *mdl) const;
+            const PropertyMdlPropDescriptor *getProperty(const char *name) const;
+
+        public:
+            const PropertyMdlDescriptor *desc;
+            std::map<std::string, const PropertyMdlPropDescriptor *> props;
+        };
+
+        int getMdlEntry(const char *mdl, const MdlEntry **out) const;
+
     private:
+        int buildMdlIndexs();
+
+    private:
+        void *m_dllHandle;
         csimModel::pfnCreateModel_t m_pfnCreate;
         csimModel::pfnDeleteModel_t m_pfnDelete;
         const ModelDescriptor *m_descriptor;
+        const PropertyMdlDescriptor *m_mdlDescriptors;
+        size_t m_numMdlDescriptors;
+        std::map<std::string, MdlEntry> m_mdls;
     };
 
     class ModelLoader

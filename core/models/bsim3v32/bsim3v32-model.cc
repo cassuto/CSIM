@@ -28,16 +28,6 @@
 
 namespace csimModel
 {
-    class MdlEntry
-    {
-    public:
-        const char *entry;
-        int id;
-        Variant::VariantType type;
-        const char *desc;
-        uint32_t flags;
-    };
-
 #define IOP(_entry, _id, _type, _desc)                                                          \
     {                                                                                           \
         _entry, _id, _type, _desc, csimModel::PropertyBag::Write | csimModel::PropertyBag::Read \
@@ -51,7 +41,7 @@ namespace csimModel
         _entry, _id, _type, _desc, csimModel::PropertyBag::Write \
     }
 
-    static const MdlEntry mdls[] = {
+    static const PropertyMdlPropDescriptor bsim3v32_mdl_props[] = {
         IOP("capmod", BSIM3v32_MOD_CAPMOD, Variant::VariantInt32, "Capacitance model selector"),
         IOP("mobmod", BSIM3v32_MOD_MOBMOD, Variant::VariantInt32, "Mobility model selector"),
         IOP("noimod", BSIM3v32_MOD_NOIMOD, Variant::VariantInt32, "Noise model selector"),
@@ -1445,1785 +1435,2202 @@ namespace csimModel
         }
     }
 
-    int BSIM3v32model::getPropertyNum() const
-    {
-        return sizeof(mdls) / sizeof(MdlEntry);
-    }
-    const char *BSIM3v32model::getPropertyName(int id) const
-    {
-        return mdls[id].entry;
-    }
-    const char *BSIM3v32model::getPropertyDesc(int id) const
-    {
-        return mdls[id].desc;
-    }
-    Variant::VariantType BSIM3v32model::getPropertyType(int id) const
-    {
-        return mdls[id].type;
-    }
-    uint32_t BSIM3v32model::getPropertyFlags(int id) const
-    {
-        return mdls[id].flags;
-    }
-
     const char *BSIM3v32model::name() const
     {
         return m_modelName.c_str();
     }
 
-    void BSIM3v32model::setProperty(int id, const Variant &value)
+    int BSIM3v32model::setProperty(int id, const Variant &value)
     {
+        int rc;
         switch (id)
         {
         case BSIM3v32_MOD_MOBMOD:
-            this->BSIM3v32mobMod = value.getInt32();
+            this->BSIM3v32mobMod = value.getInt32Cast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32mobModGiven = true;
             break;
         case BSIM3v32_MOD_BINUNIT:
-            this->BSIM3v32binUnit = value.getInt32();
+            this->BSIM3v32binUnit = value.getInt32Cast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32binUnitGiven = true;
             break;
         case BSIM3v32_MOD_PARAMCHK:
-            this->BSIM3v32paramChk = value.getInt32();
+            this->BSIM3v32paramChk = value.getInt32Cast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32paramChkGiven = true;
             break;
         case BSIM3v32_MOD_CAPMOD:
-            this->BSIM3v32capMod = value.getInt32();
+            this->BSIM3v32capMod = value.getInt32Cast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32capModGiven = true;
             break;
         case BSIM3v32_MOD_ACMMOD:
-            this->BSIM3v32acmMod = value.getInt32();
+            this->BSIM3v32acmMod = value.getInt32Cast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32acmModGiven = true;
             break;
         case BSIM3v32_MOD_CALCACM:
-            this->BSIM3v32calcacm = value.getInt32();
+            this->BSIM3v32calcacm = value.getInt32Cast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32calcacmGiven = true;
             break;
         case BSIM3v32_MOD_NOIMOD:
-            this->BSIM3v32noiMod = value.getInt32();
+            this->BSIM3v32noiMod = value.getInt32Cast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32noiModGiven = true;
             break;
         case BSIM3v32_MOD_NQSMOD:
-            this->BSIM3v32nqsMod = value.getInt32();
+            this->BSIM3v32nqsMod = value.getInt32Cast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32nqsModGiven = true;
             break;
         case BSIM3v32_MOD_VERSION:
-            this->BSIM3v32version = value.getString();
+        {
+            Variant c(value);
+            this->BSIM3v32version = c.getStringCast(&rc);
+            std::cout<<"ver="<<this->BSIM3v32version<<"\n";
+            UPDATE_RC(rc);
             this->BSIM3v32versionGiven = true;
             break;
+        }
         case BSIM3v32_MOD_TOX:
-            this->BSIM3v32tox = value.getDouble();
+            this->BSIM3v32tox = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32toxGiven = true;
             break;
         case BSIM3v32_MOD_TOXM:
-            this->BSIM3v32toxm = value.getDouble();
+            this->BSIM3v32toxm = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32toxmGiven = true;
             break;
 
         case BSIM3v32_MOD_CDSC:
-            this->BSIM3v32cdsc = value.getDouble();
+            this->BSIM3v32cdsc = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32cdscGiven = true;
             break;
         case BSIM3v32_MOD_CDSCB:
-            this->BSIM3v32cdscb = value.getDouble();
+            this->BSIM3v32cdscb = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32cdscbGiven = true;
             break;
 
         case BSIM3v32_MOD_CDSCD:
-            this->BSIM3v32cdscd = value.getDouble();
+            this->BSIM3v32cdscd = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32cdscdGiven = true;
             break;
 
         case BSIM3v32_MOD_CIT:
-            this->BSIM3v32cit = value.getDouble();
+            this->BSIM3v32cit = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32citGiven = true;
             break;
         case BSIM3v32_MOD_NFACTOR:
-            this->BSIM3v32nfactor = value.getDouble();
+            this->BSIM3v32nfactor = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32nfactorGiven = true;
             break;
         case BSIM3v32_MOD_XJ:
-            this->BSIM3v32xj = value.getDouble();
+            this->BSIM3v32xj = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32xjGiven = true;
             break;
         case BSIM3v32_MOD_VSAT:
-            this->BSIM3v32vsat = value.getDouble();
+            this->BSIM3v32vsat = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32vsatGiven = true;
             break;
         case BSIM3v32_MOD_A0:
-            this->BSIM3v32a0 = value.getDouble();
+            this->BSIM3v32a0 = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32a0Given = true;
             break;
 
         case BSIM3v32_MOD_AGS:
-            this->BSIM3v32ags = value.getDouble();
+            this->BSIM3v32ags = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32agsGiven = true;
             break;
 
         case BSIM3v32_MOD_A1:
-            this->BSIM3v32a1 = value.getDouble();
+            this->BSIM3v32a1 = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32a1Given = true;
             break;
         case BSIM3v32_MOD_A2:
-            this->BSIM3v32a2 = value.getDouble();
+            this->BSIM3v32a2 = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32a2Given = true;
             break;
         case BSIM3v32_MOD_AT:
-            this->BSIM3v32at = value.getDouble();
+            this->BSIM3v32at = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32atGiven = true;
             break;
         case BSIM3v32_MOD_KETA:
-            this->BSIM3v32keta = value.getDouble();
+            this->BSIM3v32keta = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32ketaGiven = true;
             break;
         case BSIM3v32_MOD_NSUB:
-            this->BSIM3v32nsub = value.getDouble();
+            this->BSIM3v32nsub = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32nsubGiven = true;
             break;
         case BSIM3v32_MOD_NPEAK:
-            this->BSIM3v32npeak = value.getDouble();
+            this->BSIM3v32npeak = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32npeakGiven = true;
             if (this->BSIM3v32npeak > 1.0e20)
                 this->BSIM3v32npeak *= 1.0e-6;
             break;
         case BSIM3v32_MOD_NGATE:
-            this->BSIM3v32ngate = value.getDouble();
+            this->BSIM3v32ngate = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32ngateGiven = true;
             if (this->BSIM3v32ngate > 1.000001e24)
                 this->BSIM3v32ngate *= 1.0e-6;
             break;
         case BSIM3v32_MOD_GAMMA1:
-            this->BSIM3v32gamma1 = value.getDouble();
+            this->BSIM3v32gamma1 = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32gamma1Given = true;
             break;
         case BSIM3v32_MOD_GAMMA2:
-            this->BSIM3v32gamma2 = value.getDouble();
+            this->BSIM3v32gamma2 = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32gamma2Given = true;
             break;
         case BSIM3v32_MOD_VBX:
-            this->BSIM3v32vbx = value.getDouble();
+            this->BSIM3v32vbx = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32vbxGiven = true;
             break;
         case BSIM3v32_MOD_VBM:
-            this->BSIM3v32vbm = value.getDouble();
+            this->BSIM3v32vbm = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32vbmGiven = true;
             break;
         case BSIM3v32_MOD_XT:
-            this->BSIM3v32xt = value.getDouble();
+            this->BSIM3v32xt = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32xtGiven = true;
             break;
         case BSIM3v32_MOD_K1:
-            this->BSIM3v32k1 = value.getDouble();
+            this->BSIM3v32k1 = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32k1Given = true;
             break;
         case BSIM3v32_MOD_KT1:
-            this->BSIM3v32kt1 = value.getDouble();
+            this->BSIM3v32kt1 = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32kt1Given = true;
             break;
         case BSIM3v32_MOD_KT1L:
-            this->BSIM3v32kt1l = value.getDouble();
+            this->BSIM3v32kt1l = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32kt1lGiven = true;
             break;
         case BSIM3v32_MOD_KT2:
-            this->BSIM3v32kt2 = value.getDouble();
+            this->BSIM3v32kt2 = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32kt2Given = true;
             break;
         case BSIM3v32_MOD_K2:
-            this->BSIM3v32k2 = value.getDouble();
+            this->BSIM3v32k2 = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32k2Given = true;
             break;
         case BSIM3v32_MOD_K3:
-            this->BSIM3v32k3 = value.getDouble();
+            this->BSIM3v32k3 = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32k3Given = true;
             break;
         case BSIM3v32_MOD_K3B:
-            this->BSIM3v32k3b = value.getDouble();
+            this->BSIM3v32k3b = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32k3bGiven = true;
             break;
         case BSIM3v32_MOD_NLX:
-            this->BSIM3v32nlx = value.getDouble();
+            this->BSIM3v32nlx = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32nlxGiven = true;
             break;
         case BSIM3v32_MOD_W0:
-            this->BSIM3v32w0 = value.getDouble();
+            this->BSIM3v32w0 = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32w0Given = true;
             break;
         case BSIM3v32_MOD_DVT0:
-            this->BSIM3v32dvt0 = value.getDouble();
+            this->BSIM3v32dvt0 = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32dvt0Given = true;
             break;
         case BSIM3v32_MOD_DVT1:
-            this->BSIM3v32dvt1 = value.getDouble();
+            this->BSIM3v32dvt1 = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32dvt1Given = true;
             break;
         case BSIM3v32_MOD_DVT2:
-            this->BSIM3v32dvt2 = value.getDouble();
+            this->BSIM3v32dvt2 = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32dvt2Given = true;
             break;
         case BSIM3v32_MOD_DVT0W:
-            this->BSIM3v32dvt0w = value.getDouble();
+            this->BSIM3v32dvt0w = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32dvt0wGiven = true;
             break;
         case BSIM3v32_MOD_DVT1W:
-            this->BSIM3v32dvt1w = value.getDouble();
+            this->BSIM3v32dvt1w = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32dvt1wGiven = true;
             break;
         case BSIM3v32_MOD_DVT2W:
-            this->BSIM3v32dvt2w = value.getDouble();
+            this->BSIM3v32dvt2w = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32dvt2wGiven = true;
             break;
         case BSIM3v32_MOD_DROUT:
-            this->BSIM3v32drout = value.getDouble();
+            this->BSIM3v32drout = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32droutGiven = true;
             break;
         case BSIM3v32_MOD_DSUB:
-            this->BSIM3v32dsub = value.getDouble();
+            this->BSIM3v32dsub = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32dsubGiven = true;
             break;
         case BSIM3v32_MOD_VTH0:
-            this->BSIM3v32vth0 = value.getDouble();
+            this->BSIM3v32vth0 = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32vth0Given = true;
             break;
         case BSIM3v32_MOD_UA:
-            this->BSIM3v32ua = value.getDouble();
+            this->BSIM3v32ua = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32uaGiven = true;
             break;
         case BSIM3v32_MOD_UA1:
-            this->BSIM3v32ua1 = value.getDouble();
+            this->BSIM3v32ua1 = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32ua1Given = true;
             break;
         case BSIM3v32_MOD_UB:
-            this->BSIM3v32ub = value.getDouble();
+            this->BSIM3v32ub = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32ubGiven = true;
             break;
         case BSIM3v32_MOD_UB1:
-            this->BSIM3v32ub1 = value.getDouble();
+            this->BSIM3v32ub1 = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32ub1Given = true;
             break;
         case BSIM3v32_MOD_UC:
-            this->BSIM3v32uc = value.getDouble();
+            this->BSIM3v32uc = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32ucGiven = true;
             break;
         case BSIM3v32_MOD_UC1:
-            this->BSIM3v32uc1 = value.getDouble();
+            this->BSIM3v32uc1 = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32uc1Given = true;
             break;
         case BSIM3v32_MOD_U0:
-            this->BSIM3v32u0 = value.getDouble();
+            this->BSIM3v32u0 = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32u0Given = true;
             break;
         case BSIM3v32_MOD_UTE:
-            this->BSIM3v32ute = value.getDouble();
+            this->BSIM3v32ute = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32uteGiven = true;
             break;
         case BSIM3v32_MOD_VOFF:
-            this->BSIM3v32voff = value.getDouble();
+            this->BSIM3v32voff = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32voffGiven = true;
             break;
         case BSIM3v32_MOD_DELTA:
-            this->BSIM3v32delta = value.getDouble();
+            this->BSIM3v32delta = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32deltaGiven = true;
             break;
         case BSIM3v32_MOD_RDSW:
-            this->BSIM3v32rdsw = value.getDouble();
+            this->BSIM3v32rdsw = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32rdswGiven = true;
             break;
         case BSIM3v32_MOD_PRWG:
-            this->BSIM3v32prwg = value.getDouble();
+            this->BSIM3v32prwg = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32prwgGiven = true;
             break;
         case BSIM3v32_MOD_PRWB:
-            this->BSIM3v32prwb = value.getDouble();
+            this->BSIM3v32prwb = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32prwbGiven = true;
             break;
         case BSIM3v32_MOD_PRT:
-            this->BSIM3v32prt = value.getDouble();
+            this->BSIM3v32prt = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32prtGiven = true;
             break;
         case BSIM3v32_MOD_ETA0:
-            this->BSIM3v32eta0 = value.getDouble();
+            this->BSIM3v32eta0 = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32eta0Given = true;
             break;
         case BSIM3v32_MOD_ETAB:
-            this->BSIM3v32etab = value.getDouble();
+            this->BSIM3v32etab = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32etabGiven = true;
             break;
         case BSIM3v32_MOD_PCLM:
-            this->BSIM3v32pclm = value.getDouble();
+            this->BSIM3v32pclm = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32pclmGiven = true;
             break;
         case BSIM3v32_MOD_PDIBL1:
-            this->BSIM3v32pdibl1 = value.getDouble();
+            this->BSIM3v32pdibl1 = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32pdibl1Given = true;
             break;
         case BSIM3v32_MOD_PDIBL2:
-            this->BSIM3v32pdibl2 = value.getDouble();
+            this->BSIM3v32pdibl2 = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32pdibl2Given = true;
             break;
         case BSIM3v32_MOD_PDIBLB:
-            this->BSIM3v32pdiblb = value.getDouble();
+            this->BSIM3v32pdiblb = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32pdiblbGiven = true;
             break;
         case BSIM3v32_MOD_PSCBE1:
-            this->BSIM3v32pscbe1 = value.getDouble();
+            this->BSIM3v32pscbe1 = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32pscbe1Given = true;
             break;
         case BSIM3v32_MOD_PSCBE2:
-            this->BSIM3v32pscbe2 = value.getDouble();
+            this->BSIM3v32pscbe2 = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32pscbe2Given = true;
             break;
         case BSIM3v32_MOD_PVAG:
-            this->BSIM3v32pvag = value.getDouble();
+            this->BSIM3v32pvag = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32pvagGiven = true;
             break;
         case BSIM3v32_MOD_WR:
-            this->BSIM3v32wr = value.getDouble();
+            this->BSIM3v32wr = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32wrGiven = true;
             break;
         case BSIM3v32_MOD_DWG:
-            this->BSIM3v32dwg = value.getDouble();
+            this->BSIM3v32dwg = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32dwgGiven = true;
             break;
         case BSIM3v32_MOD_DWB:
-            this->BSIM3v32dwb = value.getDouble();
+            this->BSIM3v32dwb = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32dwbGiven = true;
             break;
         case BSIM3v32_MOD_B0:
-            this->BSIM3v32b0 = value.getDouble();
+            this->BSIM3v32b0 = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32b0Given = true;
             break;
         case BSIM3v32_MOD_B1:
-            this->BSIM3v32b1 = value.getDouble();
+            this->BSIM3v32b1 = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32b1Given = true;
             break;
         case BSIM3v32_MOD_ALPHA0:
-            this->BSIM3v32alpha0 = value.getDouble();
+            this->BSIM3v32alpha0 = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32alpha0Given = true;
             break;
         case BSIM3v32_MOD_ALPHA1:
-            this->BSIM3v32alpha1 = value.getDouble();
+            this->BSIM3v32alpha1 = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32alpha1Given = true;
             break;
         case BSIM3v32_MOD_BETA0:
-            this->BSIM3v32beta0 = value.getDouble();
+            this->BSIM3v32beta0 = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32beta0Given = true;
             break;
         case BSIM3v32_MOD_IJTH:
-            this->BSIM3v32ijth = value.getDouble();
+            this->BSIM3v32ijth = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32ijthGiven = true;
             break;
         case BSIM3v32_MOD_VFB:
-            this->BSIM3v32vfb = value.getDouble();
+            this->BSIM3v32vfb = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32vfbGiven = true;
             break;
 
         case BSIM3v32_MOD_ELM:
-            this->BSIM3v32elm = value.getDouble();
+            this->BSIM3v32elm = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32elmGiven = true;
             break;
         case BSIM3v32_MOD_CGSL:
-            this->BSIM3v32cgsl = value.getDouble();
+            this->BSIM3v32cgsl = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32cgslGiven = true;
             break;
         case BSIM3v32_MOD_CGDL:
-            this->BSIM3v32cgdl = value.getDouble();
+            this->BSIM3v32cgdl = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32cgdlGiven = true;
             break;
         case BSIM3v32_MOD_CKAPPA:
-            this->BSIM3v32ckappa = value.getDouble();
+            this->BSIM3v32ckappa = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32ckappaGiven = true;
             break;
         case BSIM3v32_MOD_CF:
-            this->BSIM3v32cf = value.getDouble();
+            this->BSIM3v32cf = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32cfGiven = true;
             break;
         case BSIM3v32_MOD_CLC:
-            this->BSIM3v32clc = value.getDouble();
+            this->BSIM3v32clc = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32clcGiven = true;
             break;
         case BSIM3v32_MOD_CLE:
-            this->BSIM3v32cle = value.getDouble();
+            this->BSIM3v32cle = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32cleGiven = true;
             break;
         case BSIM3v32_MOD_DWC:
-            this->BSIM3v32dwc = value.getDouble();
+            this->BSIM3v32dwc = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32dwcGiven = true;
             break;
         case BSIM3v32_MOD_DLC:
-            this->BSIM3v32dlc = value.getDouble();
+            this->BSIM3v32dlc = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32dlcGiven = true;
             break;
         case BSIM3v32_MOD_VFBCV:
-            this->BSIM3v32vfbcv = value.getDouble();
+            this->BSIM3v32vfbcv = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32vfbcvGiven = true;
             break;
         case BSIM3v32_MOD_ACDE:
-            this->BSIM3v32acde = value.getDouble();
+            this->BSIM3v32acde = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32acdeGiven = true;
             break;
         case BSIM3v32_MOD_MOIN:
-            this->BSIM3v32moin = value.getDouble();
+            this->BSIM3v32moin = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32moinGiven = true;
             break;
         case BSIM3v32_MOD_NOFF:
-            this->BSIM3v32noff = value.getDouble();
+            this->BSIM3v32noff = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32noffGiven = true;
             break;
         case BSIM3v32_MOD_VOFFCV:
-            this->BSIM3v32voffcv = value.getDouble();
+            this->BSIM3v32voffcv = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32voffcvGiven = true;
             break;
         case BSIM3v32_MOD_TCJ:
-            this->BSIM3v32tcj = value.getDouble();
+            this->BSIM3v32tcj = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32tcjGiven = true;
             break;
         case BSIM3v32_MOD_TPB:
-            this->BSIM3v32tpb = value.getDouble();
+            this->BSIM3v32tpb = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32tpbGiven = true;
             break;
         case BSIM3v32_MOD_TCJSW:
-            this->BSIM3v32tcjsw = value.getDouble();
+            this->BSIM3v32tcjsw = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32tcjswGiven = true;
             break;
         case BSIM3v32_MOD_TPBSW:
-            this->BSIM3v32tpbsw = value.getDouble();
+            this->BSIM3v32tpbsw = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32tpbswGiven = true;
             break;
         case BSIM3v32_MOD_TCJSWG:
-            this->BSIM3v32tcjswg = value.getDouble();
+            this->BSIM3v32tcjswg = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32tcjswgGiven = true;
             break;
         case BSIM3v32_MOD_TPBSWG:
-            this->BSIM3v32tpbswg = value.getDouble();
+            this->BSIM3v32tpbswg = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32tpbswgGiven = true;
             break;
 
             /* acm model */
         case BSIM3v32_MOD_HDIF:
-            this->BSIM3v32hdif = value.getDouble();
+            this->BSIM3v32hdif = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32hdifGiven = true;
             break;
         case BSIM3v32_MOD_LDIF:
-            this->BSIM3v32ldif = value.getDouble();
+            this->BSIM3v32ldif = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32ldifGiven = true;
             break;
         case BSIM3v32_MOD_LD:
-            this->BSIM3v32ld = value.getDouble();
+            this->BSIM3v32ld = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32ldGiven = true;
             break;
         case BSIM3v32_MOD_RD:
-            this->BSIM3v32rd = value.getDouble();
+            this->BSIM3v32rd = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32rdGiven = true;
             break;
         case BSIM3v32_MOD_RS:
-            this->BSIM3v32rs = value.getDouble();
+            this->BSIM3v32rs = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32rsGiven = true;
             break;
         case BSIM3v32_MOD_RDC:
-            this->BSIM3v32rdc = value.getDouble();
+            this->BSIM3v32rdc = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32rdcGiven = true;
             break;
         case BSIM3v32_MOD_RSC:
-            this->BSIM3v32rsc = value.getDouble();
+            this->BSIM3v32rsc = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32rscGiven = true;
             break;
         case BSIM3v32_MOD_WMLT:
-            this->BSIM3v32wmlt = value.getDouble();
+            this->BSIM3v32wmlt = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32wmltGiven = true;
             break;
 
             /* Length shrink */
         case BSIM3v32_MOD_LMLT:
-            this->BSIM3v32lmlt = value.getDouble();
+            this->BSIM3v32lmlt = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32lmltGiven = true;
             break;
 
         /* Length dependence */
         case BSIM3v32_MOD_LCDSC:
-            this->BSIM3v32lcdsc = value.getDouble();
+            this->BSIM3v32lcdsc = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32lcdscGiven = true;
             break;
 
         case BSIM3v32_MOD_LCDSCB:
-            this->BSIM3v32lcdscb = value.getDouble();
+            this->BSIM3v32lcdscb = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32lcdscbGiven = true;
             break;
         case BSIM3v32_MOD_LCDSCD:
-            this->BSIM3v32lcdscd = value.getDouble();
+            this->BSIM3v32lcdscd = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32lcdscdGiven = true;
             break;
         case BSIM3v32_MOD_LCIT:
-            this->BSIM3v32lcit = value.getDouble();
+            this->BSIM3v32lcit = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32lcitGiven = true;
             break;
         case BSIM3v32_MOD_LNFACTOR:
-            this->BSIM3v32lnfactor = value.getDouble();
+            this->BSIM3v32lnfactor = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32lnfactorGiven = true;
             break;
         case BSIM3v32_MOD_LXJ:
-            this->BSIM3v32lxj = value.getDouble();
+            this->BSIM3v32lxj = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32lxjGiven = true;
             break;
         case BSIM3v32_MOD_LVSAT:
-            this->BSIM3v32lvsat = value.getDouble();
+            this->BSIM3v32lvsat = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32lvsatGiven = true;
             break;
 
         case BSIM3v32_MOD_LA0:
-            this->BSIM3v32la0 = value.getDouble();
+            this->BSIM3v32la0 = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32la0Given = true;
             break;
         case BSIM3v32_MOD_LAGS:
-            this->BSIM3v32lags = value.getDouble();
+            this->BSIM3v32lags = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32lagsGiven = true;
             break;
         case BSIM3v32_MOD_LA1:
-            this->BSIM3v32la1 = value.getDouble();
+            this->BSIM3v32la1 = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32la1Given = true;
             break;
         case BSIM3v32_MOD_LA2:
-            this->BSIM3v32la2 = value.getDouble();
+            this->BSIM3v32la2 = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32la2Given = true;
             break;
         case BSIM3v32_MOD_LAT:
-            this->BSIM3v32lat = value.getDouble();
+            this->BSIM3v32lat = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32latGiven = true;
             break;
         case BSIM3v32_MOD_LKETA:
-            this->BSIM3v32lketa = value.getDouble();
+            this->BSIM3v32lketa = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32lketaGiven = true;
             break;
         case BSIM3v32_MOD_LNSUB:
-            this->BSIM3v32lnsub = value.getDouble();
+            this->BSIM3v32lnsub = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32lnsubGiven = true;
             break;
         case BSIM3v32_MOD_LNPEAK:
-            this->BSIM3v32lnpeak = value.getDouble();
+            this->BSIM3v32lnpeak = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32lnpeakGiven = true;
             if (this->BSIM3v32lnpeak > 1.0e20)
                 this->BSIM3v32lnpeak *= 1.0e-6;
             break;
         case BSIM3v32_MOD_LNGATE:
-            this->BSIM3v32lngate = value.getDouble();
+            this->BSIM3v32lngate = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32lngateGiven = true;
             if (this->BSIM3v32lngate > 1.0e23)
                 this->BSIM3v32lngate *= 1.0e-6;
             break;
         case BSIM3v32_MOD_LGAMMA1:
-            this->BSIM3v32lgamma1 = value.getDouble();
+            this->BSIM3v32lgamma1 = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32lgamma1Given = true;
             break;
         case BSIM3v32_MOD_LGAMMA2:
-            this->BSIM3v32lgamma2 = value.getDouble();
+            this->BSIM3v32lgamma2 = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32lgamma2Given = true;
             break;
         case BSIM3v32_MOD_LVBX:
-            this->BSIM3v32lvbx = value.getDouble();
+            this->BSIM3v32lvbx = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32lvbxGiven = true;
             break;
         case BSIM3v32_MOD_LVBM:
-            this->BSIM3v32lvbm = value.getDouble();
+            this->BSIM3v32lvbm = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32lvbmGiven = true;
             break;
         case BSIM3v32_MOD_LXT:
-            this->BSIM3v32lxt = value.getDouble();
+            this->BSIM3v32lxt = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32lxtGiven = true;
             break;
         case BSIM3v32_MOD_LK1:
-            this->BSIM3v32lk1 = value.getDouble();
+            this->BSIM3v32lk1 = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32lk1Given = true;
             break;
         case BSIM3v32_MOD_LKT1:
-            this->BSIM3v32lkt1 = value.getDouble();
+            this->BSIM3v32lkt1 = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32lkt1Given = true;
             break;
         case BSIM3v32_MOD_LKT1L:
-            this->BSIM3v32lkt1l = value.getDouble();
+            this->BSIM3v32lkt1l = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32lkt1lGiven = true;
             break;
         case BSIM3v32_MOD_LKT2:
-            this->BSIM3v32lkt2 = value.getDouble();
+            this->BSIM3v32lkt2 = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32lkt2Given = true;
             break;
         case BSIM3v32_MOD_LK2:
-            this->BSIM3v32lk2 = value.getDouble();
+            this->BSIM3v32lk2 = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32lk2Given = true;
             break;
         case BSIM3v32_MOD_LK3:
-            this->BSIM3v32lk3 = value.getDouble();
+            this->BSIM3v32lk3 = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32lk3Given = true;
             break;
         case BSIM3v32_MOD_LK3B:
-            this->BSIM3v32lk3b = value.getDouble();
+            this->BSIM3v32lk3b = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32lk3bGiven = true;
             break;
         case BSIM3v32_MOD_LNLX:
-            this->BSIM3v32lnlx = value.getDouble();
+            this->BSIM3v32lnlx = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32lnlxGiven = true;
             break;
         case BSIM3v32_MOD_LW0:
-            this->BSIM3v32lw0 = value.getDouble();
+            this->BSIM3v32lw0 = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32lw0Given = true;
             break;
         case BSIM3v32_MOD_LDVT0:
-            this->BSIM3v32ldvt0 = value.getDouble();
+            this->BSIM3v32ldvt0 = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32ldvt0Given = true;
             break;
         case BSIM3v32_MOD_LDVT1:
-            this->BSIM3v32ldvt1 = value.getDouble();
+            this->BSIM3v32ldvt1 = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32ldvt1Given = true;
             break;
         case BSIM3v32_MOD_LDVT2:
-            this->BSIM3v32ldvt2 = value.getDouble();
+            this->BSIM3v32ldvt2 = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32ldvt2Given = true;
             break;
         case BSIM3v32_MOD_LDVT0W:
-            this->BSIM3v32ldvt0w = value.getDouble();
+            this->BSIM3v32ldvt0w = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32ldvt0wGiven = true;
             break;
         case BSIM3v32_MOD_LDVT1W:
-            this->BSIM3v32ldvt1w = value.getDouble();
+            this->BSIM3v32ldvt1w = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32ldvt1wGiven = true;
             break;
         case BSIM3v32_MOD_LDVT2W:
-            this->BSIM3v32ldvt2w = value.getDouble();
+            this->BSIM3v32ldvt2w = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32ldvt2wGiven = true;
             break;
         case BSIM3v32_MOD_LDROUT:
-            this->BSIM3v32ldrout = value.getDouble();
+            this->BSIM3v32ldrout = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32ldroutGiven = true;
             break;
         case BSIM3v32_MOD_LDSUB:
-            this->BSIM3v32ldsub = value.getDouble();
+            this->BSIM3v32ldsub = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32ldsubGiven = true;
             break;
         case BSIM3v32_MOD_LVTH0:
-            this->BSIM3v32lvth0 = value.getDouble();
+            this->BSIM3v32lvth0 = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32lvth0Given = true;
             break;
         case BSIM3v32_MOD_LUA:
-            this->BSIM3v32lua = value.getDouble();
+            this->BSIM3v32lua = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32luaGiven = true;
             break;
         case BSIM3v32_MOD_LUA1:
-            this->BSIM3v32lua1 = value.getDouble();
+            this->BSIM3v32lua1 = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32lua1Given = true;
             break;
         case BSIM3v32_MOD_LUB:
-            this->BSIM3v32lub = value.getDouble();
+            this->BSIM3v32lub = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32lubGiven = true;
             break;
         case BSIM3v32_MOD_LUB1:
-            this->BSIM3v32lub1 = value.getDouble();
+            this->BSIM3v32lub1 = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32lub1Given = true;
             break;
         case BSIM3v32_MOD_LUC:
-            this->BSIM3v32luc = value.getDouble();
+            this->BSIM3v32luc = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32lucGiven = true;
             break;
         case BSIM3v32_MOD_LUC1:
-            this->BSIM3v32luc1 = value.getDouble();
+            this->BSIM3v32luc1 = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32luc1Given = true;
             break;
         case BSIM3v32_MOD_LU0:
-            this->BSIM3v32lu0 = value.getDouble();
+            this->BSIM3v32lu0 = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32lu0Given = true;
             break;
         case BSIM3v32_MOD_LUTE:
-            this->BSIM3v32lute = value.getDouble();
+            this->BSIM3v32lute = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32luteGiven = true;
             break;
         case BSIM3v32_MOD_LVOFF:
-            this->BSIM3v32lvoff = value.getDouble();
+            this->BSIM3v32lvoff = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32lvoffGiven = true;
             break;
         case BSIM3v32_MOD_LDELTA:
-            this->BSIM3v32ldelta = value.getDouble();
+            this->BSIM3v32ldelta = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32ldeltaGiven = true;
             break;
         case BSIM3v32_MOD_LRDSW:
-            this->BSIM3v32lrdsw = value.getDouble();
+            this->BSIM3v32lrdsw = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32lrdswGiven = true;
             break;
         case BSIM3v32_MOD_LPRWB:
-            this->BSIM3v32lprwb = value.getDouble();
+            this->BSIM3v32lprwb = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32lprwbGiven = true;
             break;
         case BSIM3v32_MOD_LPRWG:
-            this->BSIM3v32lprwg = value.getDouble();
+            this->BSIM3v32lprwg = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32lprwgGiven = true;
             break;
         case BSIM3v32_MOD_LPRT:
-            this->BSIM3v32lprt = value.getDouble();
+            this->BSIM3v32lprt = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32lprtGiven = true;
             break;
         case BSIM3v32_MOD_LETA0:
-            this->BSIM3v32leta0 = value.getDouble();
+            this->BSIM3v32leta0 = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32leta0Given = true;
             break;
         case BSIM3v32_MOD_LETAB:
-            this->BSIM3v32letab = value.getDouble();
+            this->BSIM3v32letab = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32letabGiven = true;
             break;
         case BSIM3v32_MOD_LPCLM:
-            this->BSIM3v32lpclm = value.getDouble();
+            this->BSIM3v32lpclm = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32lpclmGiven = true;
             break;
         case BSIM3v32_MOD_LPDIBL1:
-            this->BSIM3v32lpdibl1 = value.getDouble();
+            this->BSIM3v32lpdibl1 = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32lpdibl1Given = true;
             break;
         case BSIM3v32_MOD_LPDIBL2:
-            this->BSIM3v32lpdibl2 = value.getDouble();
+            this->BSIM3v32lpdibl2 = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32lpdibl2Given = true;
             break;
         case BSIM3v32_MOD_LPDIBLB:
-            this->BSIM3v32lpdiblb = value.getDouble();
+            this->BSIM3v32lpdiblb = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32lpdiblbGiven = true;
             break;
         case BSIM3v32_MOD_LPSCBE1:
-            this->BSIM3v32lpscbe1 = value.getDouble();
+            this->BSIM3v32lpscbe1 = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32lpscbe1Given = true;
             break;
         case BSIM3v32_MOD_LPSCBE2:
-            this->BSIM3v32lpscbe2 = value.getDouble();
+            this->BSIM3v32lpscbe2 = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32lpscbe2Given = true;
             break;
         case BSIM3v32_MOD_LPVAG:
-            this->BSIM3v32lpvag = value.getDouble();
+            this->BSIM3v32lpvag = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32lpvagGiven = true;
             break;
         case BSIM3v32_MOD_LWR:
-            this->BSIM3v32lwr = value.getDouble();
+            this->BSIM3v32lwr = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32lwrGiven = true;
             break;
         case BSIM3v32_MOD_LDWG:
-            this->BSIM3v32ldwg = value.getDouble();
+            this->BSIM3v32ldwg = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32ldwgGiven = true;
             break;
         case BSIM3v32_MOD_LDWB:
-            this->BSIM3v32ldwb = value.getDouble();
+            this->BSIM3v32ldwb = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32ldwbGiven = true;
             break;
         case BSIM3v32_MOD_LB0:
-            this->BSIM3v32lb0 = value.getDouble();
+            this->BSIM3v32lb0 = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32lb0Given = true;
             break;
         case BSIM3v32_MOD_LB1:
-            this->BSIM3v32lb1 = value.getDouble();
+            this->BSIM3v32lb1 = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32lb1Given = true;
             break;
         case BSIM3v32_MOD_LALPHA0:
-            this->BSIM3v32lalpha0 = value.getDouble();
+            this->BSIM3v32lalpha0 = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32lalpha0Given = true;
             break;
         case BSIM3v32_MOD_LALPHA1:
-            this->BSIM3v32lalpha1 = value.getDouble();
+            this->BSIM3v32lalpha1 = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32lalpha1Given = true;
             break;
         case BSIM3v32_MOD_LBETA0:
-            this->BSIM3v32lbeta0 = value.getDouble();
+            this->BSIM3v32lbeta0 = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32lbeta0Given = true;
             break;
         case BSIM3v32_MOD_LVFB:
-            this->BSIM3v32lvfb = value.getDouble();
+            this->BSIM3v32lvfb = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32lvfbGiven = true;
             break;
 
         case BSIM3v32_MOD_LELM:
-            this->BSIM3v32lelm = value.getDouble();
+            this->BSIM3v32lelm = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32lelmGiven = true;
             break;
         case BSIM3v32_MOD_LCGSL:
-            this->BSIM3v32lcgsl = value.getDouble();
+            this->BSIM3v32lcgsl = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32lcgslGiven = true;
             break;
         case BSIM3v32_MOD_LCGDL:
-            this->BSIM3v32lcgdl = value.getDouble();
+            this->BSIM3v32lcgdl = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32lcgdlGiven = true;
             break;
         case BSIM3v32_MOD_LCKAPPA:
-            this->BSIM3v32lckappa = value.getDouble();
+            this->BSIM3v32lckappa = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32lckappaGiven = true;
             break;
         case BSIM3v32_MOD_LCF:
-            this->BSIM3v32lcf = value.getDouble();
+            this->BSIM3v32lcf = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32lcfGiven = true;
             break;
         case BSIM3v32_MOD_LCLC:
-            this->BSIM3v32lclc = value.getDouble();
+            this->BSIM3v32lclc = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32lclcGiven = true;
             break;
         case BSIM3v32_MOD_LCLE:
-            this->BSIM3v32lcle = value.getDouble();
+            this->BSIM3v32lcle = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32lcleGiven = true;
             break;
         case BSIM3v32_MOD_LVFBCV:
-            this->BSIM3v32lvfbcv = value.getDouble();
+            this->BSIM3v32lvfbcv = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32lvfbcvGiven = true;
             break;
         case BSIM3v32_MOD_LACDE:
-            this->BSIM3v32lacde = value.getDouble();
+            this->BSIM3v32lacde = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32lacdeGiven = true;
             break;
         case BSIM3v32_MOD_LMOIN:
-            this->BSIM3v32lmoin = value.getDouble();
+            this->BSIM3v32lmoin = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32lmoinGiven = true;
             break;
         case BSIM3v32_MOD_LNOFF:
-            this->BSIM3v32lnoff = value.getDouble();
+            this->BSIM3v32lnoff = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32lnoffGiven = true;
             break;
         case BSIM3v32_MOD_LVOFFCV:
-            this->BSIM3v32lvoffcv = value.getDouble();
+            this->BSIM3v32lvoffcv = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32lvoffcvGiven = true;
             break;
 
         /* Width dependence */
         case BSIM3v32_MOD_WCDSC:
-            this->BSIM3v32wcdsc = value.getDouble();
+            this->BSIM3v32wcdsc = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32wcdscGiven = true;
             break;
 
         case BSIM3v32_MOD_WCDSCB:
-            this->BSIM3v32wcdscb = value.getDouble();
+            this->BSIM3v32wcdscb = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32wcdscbGiven = true;
             break;
         case BSIM3v32_MOD_WCDSCD:
-            this->BSIM3v32wcdscd = value.getDouble();
+            this->BSIM3v32wcdscd = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32wcdscdGiven = true;
             break;
         case BSIM3v32_MOD_WCIT:
-            this->BSIM3v32wcit = value.getDouble();
+            this->BSIM3v32wcit = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32wcitGiven = true;
             break;
         case BSIM3v32_MOD_WNFACTOR:
-            this->BSIM3v32wnfactor = value.getDouble();
+            this->BSIM3v32wnfactor = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32wnfactorGiven = true;
             break;
         case BSIM3v32_MOD_WXJ:
-            this->BSIM3v32wxj = value.getDouble();
+            this->BSIM3v32wxj = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32wxjGiven = true;
             break;
         case BSIM3v32_MOD_WVSAT:
-            this->BSIM3v32wvsat = value.getDouble();
+            this->BSIM3v32wvsat = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32wvsatGiven = true;
             break;
 
         case BSIM3v32_MOD_WA0:
-            this->BSIM3v32wa0 = value.getDouble();
+            this->BSIM3v32wa0 = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32wa0Given = true;
             break;
         case BSIM3v32_MOD_WAGS:
-            this->BSIM3v32wags = value.getDouble();
+            this->BSIM3v32wags = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32wagsGiven = true;
             break;
         case BSIM3v32_MOD_WA1:
-            this->BSIM3v32wa1 = value.getDouble();
+            this->BSIM3v32wa1 = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32wa1Given = true;
             break;
         case BSIM3v32_MOD_WA2:
-            this->BSIM3v32wa2 = value.getDouble();
+            this->BSIM3v32wa2 = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32wa2Given = true;
             break;
         case BSIM3v32_MOD_WAT:
-            this->BSIM3v32wat = value.getDouble();
+            this->BSIM3v32wat = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32watGiven = true;
             break;
         case BSIM3v32_MOD_WKETA:
-            this->BSIM3v32wketa = value.getDouble();
+            this->BSIM3v32wketa = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32wketaGiven = true;
             break;
         case BSIM3v32_MOD_WNSUB:
-            this->BSIM3v32wnsub = value.getDouble();
+            this->BSIM3v32wnsub = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32wnsubGiven = true;
             break;
         case BSIM3v32_MOD_WNPEAK:
-            this->BSIM3v32wnpeak = value.getDouble();
+            this->BSIM3v32wnpeak = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32wnpeakGiven = true;
             if (this->BSIM3v32wnpeak > 1.0e20)
                 this->BSIM3v32wnpeak *= 1.0e-6;
             break;
         case BSIM3v32_MOD_WNGATE:
-            this->BSIM3v32wngate = value.getDouble();
+            this->BSIM3v32wngate = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32wngateGiven = true;
             if (this->BSIM3v32wngate > 1.0e23)
                 this->BSIM3v32wngate *= 1.0e-6;
             break;
         case BSIM3v32_MOD_WGAMMA1:
-            this->BSIM3v32wgamma1 = value.getDouble();
+            this->BSIM3v32wgamma1 = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32wgamma1Given = true;
             break;
         case BSIM3v32_MOD_WGAMMA2:
-            this->BSIM3v32wgamma2 = value.getDouble();
+            this->BSIM3v32wgamma2 = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32wgamma2Given = true;
             break;
         case BSIM3v32_MOD_WVBX:
-            this->BSIM3v32wvbx = value.getDouble();
+            this->BSIM3v32wvbx = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32wvbxGiven = true;
             break;
         case BSIM3v32_MOD_WVBM:
-            this->BSIM3v32wvbm = value.getDouble();
+            this->BSIM3v32wvbm = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32wvbmGiven = true;
             break;
         case BSIM3v32_MOD_WXT:
-            this->BSIM3v32wxt = value.getDouble();
+            this->BSIM3v32wxt = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32wxtGiven = true;
             break;
         case BSIM3v32_MOD_WK1:
-            this->BSIM3v32wk1 = value.getDouble();
+            this->BSIM3v32wk1 = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32wk1Given = true;
             break;
         case BSIM3v32_MOD_WKT1:
-            this->BSIM3v32wkt1 = value.getDouble();
+            this->BSIM3v32wkt1 = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32wkt1Given = true;
             break;
         case BSIM3v32_MOD_WKT1L:
-            this->BSIM3v32wkt1l = value.getDouble();
+            this->BSIM3v32wkt1l = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32wkt1lGiven = true;
             break;
         case BSIM3v32_MOD_WKT2:
-            this->BSIM3v32wkt2 = value.getDouble();
+            this->BSIM3v32wkt2 = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32wkt2Given = true;
             break;
         case BSIM3v32_MOD_WK2:
-            this->BSIM3v32wk2 = value.getDouble();
+            this->BSIM3v32wk2 = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32wk2Given = true;
             break;
         case BSIM3v32_MOD_WK3:
-            this->BSIM3v32wk3 = value.getDouble();
+            this->BSIM3v32wk3 = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32wk3Given = true;
             break;
         case BSIM3v32_MOD_WK3B:
-            this->BSIM3v32wk3b = value.getDouble();
+            this->BSIM3v32wk3b = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32wk3bGiven = true;
             break;
         case BSIM3v32_MOD_WNLX:
-            this->BSIM3v32wnlx = value.getDouble();
+            this->BSIM3v32wnlx = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32wnlxGiven = true;
             break;
         case BSIM3v32_MOD_WW0:
-            this->BSIM3v32ww0 = value.getDouble();
+            this->BSIM3v32ww0 = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32ww0Given = true;
             break;
         case BSIM3v32_MOD_WDVT0:
-            this->BSIM3v32wdvt0 = value.getDouble();
+            this->BSIM3v32wdvt0 = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32wdvt0Given = true;
             break;
         case BSIM3v32_MOD_WDVT1:
-            this->BSIM3v32wdvt1 = value.getDouble();
+            this->BSIM3v32wdvt1 = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32wdvt1Given = true;
             break;
         case BSIM3v32_MOD_WDVT2:
-            this->BSIM3v32wdvt2 = value.getDouble();
+            this->BSIM3v32wdvt2 = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32wdvt2Given = true;
             break;
         case BSIM3v32_MOD_WDVT0W:
-            this->BSIM3v32wdvt0w = value.getDouble();
+            this->BSIM3v32wdvt0w = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32wdvt0wGiven = true;
             break;
         case BSIM3v32_MOD_WDVT1W:
-            this->BSIM3v32wdvt1w = value.getDouble();
+            this->BSIM3v32wdvt1w = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32wdvt1wGiven = true;
             break;
         case BSIM3v32_MOD_WDVT2W:
-            this->BSIM3v32wdvt2w = value.getDouble();
+            this->BSIM3v32wdvt2w = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32wdvt2wGiven = true;
             break;
         case BSIM3v32_MOD_WDROUT:
-            this->BSIM3v32wdrout = value.getDouble();
+            this->BSIM3v32wdrout = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32wdroutGiven = true;
             break;
         case BSIM3v32_MOD_WDSUB:
-            this->BSIM3v32wdsub = value.getDouble();
+            this->BSIM3v32wdsub = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32wdsubGiven = true;
             break;
         case BSIM3v32_MOD_WVTH0:
-            this->BSIM3v32wvth0 = value.getDouble();
+            this->BSIM3v32wvth0 = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32wvth0Given = true;
             break;
         case BSIM3v32_MOD_WUA:
-            this->BSIM3v32wua = value.getDouble();
+            this->BSIM3v32wua = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32wuaGiven = true;
             break;
         case BSIM3v32_MOD_WUA1:
-            this->BSIM3v32wua1 = value.getDouble();
+            this->BSIM3v32wua1 = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32wua1Given = true;
             break;
         case BSIM3v32_MOD_WUB:
-            this->BSIM3v32wub = value.getDouble();
+            this->BSIM3v32wub = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32wubGiven = true;
             break;
         case BSIM3v32_MOD_WUB1:
-            this->BSIM3v32wub1 = value.getDouble();
+            this->BSIM3v32wub1 = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32wub1Given = true;
             break;
         case BSIM3v32_MOD_WUC:
-            this->BSIM3v32wuc = value.getDouble();
+            this->BSIM3v32wuc = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32wucGiven = true;
             break;
         case BSIM3v32_MOD_WUC1:
-            this->BSIM3v32wuc1 = value.getDouble();
+            this->BSIM3v32wuc1 = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32wuc1Given = true;
             break;
         case BSIM3v32_MOD_WU0:
-            this->BSIM3v32wu0 = value.getDouble();
+            this->BSIM3v32wu0 = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32wu0Given = true;
             break;
         case BSIM3v32_MOD_WUTE:
-            this->BSIM3v32wute = value.getDouble();
+            this->BSIM3v32wute = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32wuteGiven = true;
             break;
         case BSIM3v32_MOD_WVOFF:
-            this->BSIM3v32wvoff = value.getDouble();
+            this->BSIM3v32wvoff = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32wvoffGiven = true;
             break;
         case BSIM3v32_MOD_WDELTA:
-            this->BSIM3v32wdelta = value.getDouble();
+            this->BSIM3v32wdelta = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32wdeltaGiven = true;
             break;
         case BSIM3v32_MOD_WRDSW:
-            this->BSIM3v32wrdsw = value.getDouble();
+            this->BSIM3v32wrdsw = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32wrdswGiven = true;
             break;
         case BSIM3v32_MOD_WPRWB:
-            this->BSIM3v32wprwb = value.getDouble();
+            this->BSIM3v32wprwb = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32wprwbGiven = true;
             break;
         case BSIM3v32_MOD_WPRWG:
-            this->BSIM3v32wprwg = value.getDouble();
+            this->BSIM3v32wprwg = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32wprwgGiven = true;
             break;
         case BSIM3v32_MOD_WPRT:
-            this->BSIM3v32wprt = value.getDouble();
+            this->BSIM3v32wprt = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32wprtGiven = true;
             break;
         case BSIM3v32_MOD_WETA0:
-            this->BSIM3v32weta0 = value.getDouble();
+            this->BSIM3v32weta0 = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32weta0Given = true;
             break;
         case BSIM3v32_MOD_WETAB:
-            this->BSIM3v32wetab = value.getDouble();
+            this->BSIM3v32wetab = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32wetabGiven = true;
             break;
         case BSIM3v32_MOD_WPCLM:
-            this->BSIM3v32wpclm = value.getDouble();
+            this->BSIM3v32wpclm = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32wpclmGiven = true;
             break;
         case BSIM3v32_MOD_WPDIBL1:
-            this->BSIM3v32wpdibl1 = value.getDouble();
+            this->BSIM3v32wpdibl1 = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32wpdibl1Given = true;
             break;
         case BSIM3v32_MOD_WPDIBL2:
-            this->BSIM3v32wpdibl2 = value.getDouble();
+            this->BSIM3v32wpdibl2 = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32wpdibl2Given = true;
             break;
         case BSIM3v32_MOD_WPDIBLB:
-            this->BSIM3v32wpdiblb = value.getDouble();
+            this->BSIM3v32wpdiblb = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32wpdiblbGiven = true;
             break;
         case BSIM3v32_MOD_WPSCBE1:
-            this->BSIM3v32wpscbe1 = value.getDouble();
+            this->BSIM3v32wpscbe1 = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32wpscbe1Given = true;
             break;
         case BSIM3v32_MOD_WPSCBE2:
-            this->BSIM3v32wpscbe2 = value.getDouble();
+            this->BSIM3v32wpscbe2 = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32wpscbe2Given = true;
             break;
         case BSIM3v32_MOD_WPVAG:
-            this->BSIM3v32wpvag = value.getDouble();
+            this->BSIM3v32wpvag = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32wpvagGiven = true;
             break;
         case BSIM3v32_MOD_WWR:
-            this->BSIM3v32wwr = value.getDouble();
+            this->BSIM3v32wwr = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32wwrGiven = true;
             break;
         case BSIM3v32_MOD_WDWG:
-            this->BSIM3v32wdwg = value.getDouble();
+            this->BSIM3v32wdwg = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32wdwgGiven = true;
             break;
         case BSIM3v32_MOD_WDWB:
-            this->BSIM3v32wdwb = value.getDouble();
+            this->BSIM3v32wdwb = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32wdwbGiven = true;
             break;
         case BSIM3v32_MOD_WB0:
-            this->BSIM3v32wb0 = value.getDouble();
+            this->BSIM3v32wb0 = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32wb0Given = true;
             break;
         case BSIM3v32_MOD_WB1:
-            this->BSIM3v32wb1 = value.getDouble();
+            this->BSIM3v32wb1 = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32wb1Given = true;
             break;
         case BSIM3v32_MOD_WALPHA0:
-            this->BSIM3v32walpha0 = value.getDouble();
+            this->BSIM3v32walpha0 = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32walpha0Given = true;
             break;
         case BSIM3v32_MOD_WALPHA1:
-            this->BSIM3v32walpha1 = value.getDouble();
+            this->BSIM3v32walpha1 = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32walpha1Given = true;
             break;
         case BSIM3v32_MOD_WBETA0:
-            this->BSIM3v32wbeta0 = value.getDouble();
+            this->BSIM3v32wbeta0 = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32wbeta0Given = true;
             break;
         case BSIM3v32_MOD_WVFB:
-            this->BSIM3v32wvfb = value.getDouble();
+            this->BSIM3v32wvfb = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32wvfbGiven = true;
             break;
 
         case BSIM3v32_MOD_WELM:
-            this->BSIM3v32welm = value.getDouble();
+            this->BSIM3v32welm = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32welmGiven = true;
             break;
         case BSIM3v32_MOD_WCGSL:
-            this->BSIM3v32wcgsl = value.getDouble();
+            this->BSIM3v32wcgsl = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32wcgslGiven = true;
             break;
         case BSIM3v32_MOD_WCGDL:
-            this->BSIM3v32wcgdl = value.getDouble();
+            this->BSIM3v32wcgdl = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32wcgdlGiven = true;
             break;
         case BSIM3v32_MOD_WCKAPPA:
-            this->BSIM3v32wckappa = value.getDouble();
+            this->BSIM3v32wckappa = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32wckappaGiven = true;
             break;
         case BSIM3v32_MOD_WCF:
-            this->BSIM3v32wcf = value.getDouble();
+            this->BSIM3v32wcf = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32wcfGiven = true;
             break;
         case BSIM3v32_MOD_WCLC:
-            this->BSIM3v32wclc = value.getDouble();
+            this->BSIM3v32wclc = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32wclcGiven = true;
             break;
         case BSIM3v32_MOD_WCLE:
-            this->BSIM3v32wcle = value.getDouble();
+            this->BSIM3v32wcle = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32wcleGiven = true;
             break;
         case BSIM3v32_MOD_WVFBCV:
-            this->BSIM3v32wvfbcv = value.getDouble();
+            this->BSIM3v32wvfbcv = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32wvfbcvGiven = true;
             break;
         case BSIM3v32_MOD_WACDE:
-            this->BSIM3v32wacde = value.getDouble();
+            this->BSIM3v32wacde = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32wacdeGiven = true;
             break;
         case BSIM3v32_MOD_WMOIN:
-            this->BSIM3v32wmoin = value.getDouble();
+            this->BSIM3v32wmoin = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32wmoinGiven = true;
             break;
         case BSIM3v32_MOD_WNOFF:
-            this->BSIM3v32wnoff = value.getDouble();
+            this->BSIM3v32wnoff = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32wnoffGiven = true;
             break;
         case BSIM3v32_MOD_WVOFFCV:
-            this->BSIM3v32wvoffcv = value.getDouble();
+            this->BSIM3v32wvoffcv = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32wvoffcvGiven = true;
             break;
 
         /* Cross-term dependence */
         case BSIM3v32_MOD_PCDSC:
-            this->BSIM3v32pcdsc = value.getDouble();
+            this->BSIM3v32pcdsc = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32pcdscGiven = true;
             break;
 
         case BSIM3v32_MOD_PCDSCB:
-            this->BSIM3v32pcdscb = value.getDouble();
+            this->BSIM3v32pcdscb = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32pcdscbGiven = true;
             break;
         case BSIM3v32_MOD_PCDSCD:
-            this->BSIM3v32pcdscd = value.getDouble();
+            this->BSIM3v32pcdscd = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32pcdscdGiven = true;
             break;
         case BSIM3v32_MOD_PCIT:
-            this->BSIM3v32pcit = value.getDouble();
+            this->BSIM3v32pcit = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32pcitGiven = true;
             break;
         case BSIM3v32_MOD_PNFACTOR:
-            this->BSIM3v32pnfactor = value.getDouble();
+            this->BSIM3v32pnfactor = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32pnfactorGiven = true;
             break;
         case BSIM3v32_MOD_PXJ:
-            this->BSIM3v32pxj = value.getDouble();
+            this->BSIM3v32pxj = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32pxjGiven = true;
             break;
         case BSIM3v32_MOD_PVSAT:
-            this->BSIM3v32pvsat = value.getDouble();
+            this->BSIM3v32pvsat = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32pvsatGiven = true;
             break;
 
         case BSIM3v32_MOD_PA0:
-            this->BSIM3v32pa0 = value.getDouble();
+            this->BSIM3v32pa0 = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32pa0Given = true;
             break;
         case BSIM3v32_MOD_PAGS:
-            this->BSIM3v32pags = value.getDouble();
+            this->BSIM3v32pags = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32pagsGiven = true;
             break;
         case BSIM3v32_MOD_PA1:
-            this->BSIM3v32pa1 = value.getDouble();
+            this->BSIM3v32pa1 = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32pa1Given = true;
             break;
         case BSIM3v32_MOD_PA2:
-            this->BSIM3v32pa2 = value.getDouble();
+            this->BSIM3v32pa2 = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32pa2Given = true;
             break;
         case BSIM3v32_MOD_PAT:
-            this->BSIM3v32pat = value.getDouble();
+            this->BSIM3v32pat = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32patGiven = true;
             break;
         case BSIM3v32_MOD_PKETA:
-            this->BSIM3v32pketa = value.getDouble();
+            this->BSIM3v32pketa = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32pketaGiven = true;
             break;
         case BSIM3v32_MOD_PNSUB:
-            this->BSIM3v32pnsub = value.getDouble();
+            this->BSIM3v32pnsub = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32pnsubGiven = true;
             break;
         case BSIM3v32_MOD_PNPEAK:
-            this->BSIM3v32pnpeak = value.getDouble();
+            this->BSIM3v32pnpeak = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32pnpeakGiven = true;
             if (this->BSIM3v32pnpeak > 1.0e20)
                 this->BSIM3v32pnpeak *= 1.0e-6;
             break;
         case BSIM3v32_MOD_PNGATE:
-            this->BSIM3v32pngate = value.getDouble();
+            this->BSIM3v32pngate = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32pngateGiven = true;
             if (this->BSIM3v32pngate > 1.0e23)
                 this->BSIM3v32pngate *= 1.0e-6;
             break;
         case BSIM3v32_MOD_PGAMMA1:
-            this->BSIM3v32pgamma1 = value.getDouble();
+            this->BSIM3v32pgamma1 = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32pgamma1Given = true;
             break;
         case BSIM3v32_MOD_PGAMMA2:
-            this->BSIM3v32pgamma2 = value.getDouble();
+            this->BSIM3v32pgamma2 = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32pgamma2Given = true;
             break;
         case BSIM3v32_MOD_PVBX:
-            this->BSIM3v32pvbx = value.getDouble();
+            this->BSIM3v32pvbx = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32pvbxGiven = true;
             break;
         case BSIM3v32_MOD_PVBM:
-            this->BSIM3v32pvbm = value.getDouble();
+            this->BSIM3v32pvbm = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32pvbmGiven = true;
             break;
         case BSIM3v32_MOD_PXT:
-            this->BSIM3v32pxt = value.getDouble();
+            this->BSIM3v32pxt = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32pxtGiven = true;
             break;
         case BSIM3v32_MOD_PK1:
-            this->BSIM3v32pk1 = value.getDouble();
+            this->BSIM3v32pk1 = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32pk1Given = true;
             break;
         case BSIM3v32_MOD_PKT1:
-            this->BSIM3v32pkt1 = value.getDouble();
+            this->BSIM3v32pkt1 = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32pkt1Given = true;
             break;
         case BSIM3v32_MOD_PKT1L:
-            this->BSIM3v32pkt1l = value.getDouble();
+            this->BSIM3v32pkt1l = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32pkt1lGiven = true;
             break;
         case BSIM3v32_MOD_PKT2:
-            this->BSIM3v32pkt2 = value.getDouble();
+            this->BSIM3v32pkt2 = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32pkt2Given = true;
             break;
         case BSIM3v32_MOD_PK2:
-            this->BSIM3v32pk2 = value.getDouble();
+            this->BSIM3v32pk2 = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32pk2Given = true;
             break;
         case BSIM3v32_MOD_PK3:
-            this->BSIM3v32pk3 = value.getDouble();
+            this->BSIM3v32pk3 = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32pk3Given = true;
             break;
         case BSIM3v32_MOD_PK3B:
-            this->BSIM3v32pk3b = value.getDouble();
+            this->BSIM3v32pk3b = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32pk3bGiven = true;
             break;
         case BSIM3v32_MOD_PNLX:
-            this->BSIM3v32pnlx = value.getDouble();
+            this->BSIM3v32pnlx = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32pnlxGiven = true;
             break;
         case BSIM3v32_MOD_PW0:
-            this->BSIM3v32pw0 = value.getDouble();
+            this->BSIM3v32pw0 = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32pw0Given = true;
             break;
         case BSIM3v32_MOD_PDVT0:
-            this->BSIM3v32pdvt0 = value.getDouble();
+            this->BSIM3v32pdvt0 = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32pdvt0Given = true;
             break;
         case BSIM3v32_MOD_PDVT1:
-            this->BSIM3v32pdvt1 = value.getDouble();
+            this->BSIM3v32pdvt1 = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32pdvt1Given = true;
             break;
         case BSIM3v32_MOD_PDVT2:
-            this->BSIM3v32pdvt2 = value.getDouble();
+            this->BSIM3v32pdvt2 = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32pdvt2Given = true;
             break;
         case BSIM3v32_MOD_PDVT0W:
-            this->BSIM3v32pdvt0w = value.getDouble();
+            this->BSIM3v32pdvt0w = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32pdvt0wGiven = true;
             break;
         case BSIM3v32_MOD_PDVT1W:
-            this->BSIM3v32pdvt1w = value.getDouble();
+            this->BSIM3v32pdvt1w = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32pdvt1wGiven = true;
             break;
         case BSIM3v32_MOD_PDVT2W:
-            this->BSIM3v32pdvt2w = value.getDouble();
+            this->BSIM3v32pdvt2w = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32pdvt2wGiven = true;
             break;
         case BSIM3v32_MOD_PDROUT:
-            this->BSIM3v32pdrout = value.getDouble();
+            this->BSIM3v32pdrout = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32pdroutGiven = true;
             break;
         case BSIM3v32_MOD_PDSUB:
-            this->BSIM3v32pdsub = value.getDouble();
+            this->BSIM3v32pdsub = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32pdsubGiven = true;
             break;
         case BSIM3v32_MOD_PVTH0:
-            this->BSIM3v32pvth0 = value.getDouble();
+            this->BSIM3v32pvth0 = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32pvth0Given = true;
             break;
         case BSIM3v32_MOD_PUA:
-            this->BSIM3v32pua = value.getDouble();
+            this->BSIM3v32pua = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32puaGiven = true;
             break;
         case BSIM3v32_MOD_PUA1:
-            this->BSIM3v32pua1 = value.getDouble();
+            this->BSIM3v32pua1 = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32pua1Given = true;
             break;
         case BSIM3v32_MOD_PUB:
-            this->BSIM3v32pub = value.getDouble();
+            this->BSIM3v32pub = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32pubGiven = true;
             break;
         case BSIM3v32_MOD_PUB1:
-            this->BSIM3v32pub1 = value.getDouble();
+            this->BSIM3v32pub1 = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32pub1Given = true;
             break;
         case BSIM3v32_MOD_PUC:
-            this->BSIM3v32puc = value.getDouble();
+            this->BSIM3v32puc = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32pucGiven = true;
             break;
         case BSIM3v32_MOD_PUC1:
-            this->BSIM3v32puc1 = value.getDouble();
+            this->BSIM3v32puc1 = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32puc1Given = true;
             break;
         case BSIM3v32_MOD_PU0:
-            this->BSIM3v32pu0 = value.getDouble();
+            this->BSIM3v32pu0 = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32pu0Given = true;
             break;
         case BSIM3v32_MOD_PUTE:
-            this->BSIM3v32pute = value.getDouble();
+            this->BSIM3v32pute = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32puteGiven = true;
             break;
         case BSIM3v32_MOD_PVOFF:
-            this->BSIM3v32pvoff = value.getDouble();
+            this->BSIM3v32pvoff = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32pvoffGiven = true;
             break;
         case BSIM3v32_MOD_PDELTA:
-            this->BSIM3v32pdelta = value.getDouble();
+            this->BSIM3v32pdelta = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32pdeltaGiven = true;
             break;
         case BSIM3v32_MOD_PRDSW:
-            this->BSIM3v32prdsw = value.getDouble();
+            this->BSIM3v32prdsw = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32prdswGiven = true;
             break;
         case BSIM3v32_MOD_PPRWB:
-            this->BSIM3v32pprwb = value.getDouble();
+            this->BSIM3v32pprwb = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32pprwbGiven = true;
             break;
         case BSIM3v32_MOD_PPRWG:
-            this->BSIM3v32pprwg = value.getDouble();
+            this->BSIM3v32pprwg = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32pprwgGiven = true;
             break;
         case BSIM3v32_MOD_PPRT:
-            this->BSIM3v32pprt = value.getDouble();
+            this->BSIM3v32pprt = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32pprtGiven = true;
             break;
         case BSIM3v32_MOD_PETA0:
-            this->BSIM3v32peta0 = value.getDouble();
+            this->BSIM3v32peta0 = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32peta0Given = true;
             break;
         case BSIM3v32_MOD_PETAB:
-            this->BSIM3v32petab = value.getDouble();
+            this->BSIM3v32petab = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32petabGiven = true;
             break;
         case BSIM3v32_MOD_PPCLM:
-            this->BSIM3v32ppclm = value.getDouble();
+            this->BSIM3v32ppclm = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32ppclmGiven = true;
             break;
         case BSIM3v32_MOD_PPDIBL1:
-            this->BSIM3v32ppdibl1 = value.getDouble();
+            this->BSIM3v32ppdibl1 = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32ppdibl1Given = true;
             break;
         case BSIM3v32_MOD_PPDIBL2:
-            this->BSIM3v32ppdibl2 = value.getDouble();
+            this->BSIM3v32ppdibl2 = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32ppdibl2Given = true;
             break;
         case BSIM3v32_MOD_PPDIBLB:
-            this->BSIM3v32ppdiblb = value.getDouble();
+            this->BSIM3v32ppdiblb = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32ppdiblbGiven = true;
             break;
         case BSIM3v32_MOD_PPSCBE1:
-            this->BSIM3v32ppscbe1 = value.getDouble();
+            this->BSIM3v32ppscbe1 = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32ppscbe1Given = true;
             break;
         case BSIM3v32_MOD_PPSCBE2:
-            this->BSIM3v32ppscbe2 = value.getDouble();
+            this->BSIM3v32ppscbe2 = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32ppscbe2Given = true;
             break;
         case BSIM3v32_MOD_PPVAG:
-            this->BSIM3v32ppvag = value.getDouble();
+            this->BSIM3v32ppvag = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32ppvagGiven = true;
             break;
         case BSIM3v32_MOD_PWR:
-            this->BSIM3v32pwr = value.getDouble();
+            this->BSIM3v32pwr = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32pwrGiven = true;
             break;
         case BSIM3v32_MOD_PDWG:
-            this->BSIM3v32pdwg = value.getDouble();
+            this->BSIM3v32pdwg = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32pdwgGiven = true;
             break;
         case BSIM3v32_MOD_PDWB:
-            this->BSIM3v32pdwb = value.getDouble();
+            this->BSIM3v32pdwb = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32pdwbGiven = true;
             break;
         case BSIM3v32_MOD_PB0:
-            this->BSIM3v32pb0 = value.getDouble();
+            this->BSIM3v32pb0 = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32pb0Given = true;
             break;
         case BSIM3v32_MOD_PB1:
-            this->BSIM3v32pb1 = value.getDouble();
+            this->BSIM3v32pb1 = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32pb1Given = true;
             break;
         case BSIM3v32_MOD_PALPHA0:
-            this->BSIM3v32palpha0 = value.getDouble();
+            this->BSIM3v32palpha0 = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32palpha0Given = true;
             break;
         case BSIM3v32_MOD_PALPHA1:
-            this->BSIM3v32palpha1 = value.getDouble();
+            this->BSIM3v32palpha1 = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32palpha1Given = true;
             break;
         case BSIM3v32_MOD_PBETA0:
-            this->BSIM3v32pbeta0 = value.getDouble();
+            this->BSIM3v32pbeta0 = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32pbeta0Given = true;
             break;
         case BSIM3v32_MOD_PVFB:
-            this->BSIM3v32pvfb = value.getDouble();
+            this->BSIM3v32pvfb = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32pvfbGiven = true;
             break;
 
         case BSIM3v32_MOD_PELM:
-            this->BSIM3v32pelm = value.getDouble();
+            this->BSIM3v32pelm = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32pelmGiven = true;
             break;
         case BSIM3v32_MOD_PCGSL:
-            this->BSIM3v32pcgsl = value.getDouble();
+            this->BSIM3v32pcgsl = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32pcgslGiven = true;
             break;
         case BSIM3v32_MOD_PCGDL:
-            this->BSIM3v32pcgdl = value.getDouble();
+            this->BSIM3v32pcgdl = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32pcgdlGiven = true;
             break;
         case BSIM3v32_MOD_PCKAPPA:
-            this->BSIM3v32pckappa = value.getDouble();
+            this->BSIM3v32pckappa = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32pckappaGiven = true;
             break;
         case BSIM3v32_MOD_PCF:
-            this->BSIM3v32pcf = value.getDouble();
+            this->BSIM3v32pcf = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32pcfGiven = true;
             break;
         case BSIM3v32_MOD_PCLC:
-            this->BSIM3v32pclc = value.getDouble();
+            this->BSIM3v32pclc = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32pclcGiven = true;
             break;
         case BSIM3v32_MOD_PCLE:
-            this->BSIM3v32pcle = value.getDouble();
+            this->BSIM3v32pcle = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32pcleGiven = true;
             break;
         case BSIM3v32_MOD_PVFBCV:
-            this->BSIM3v32pvfbcv = value.getDouble();
+            this->BSIM3v32pvfbcv = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32pvfbcvGiven = true;
             break;
         case BSIM3v32_MOD_PACDE:
-            this->BSIM3v32pacde = value.getDouble();
+            this->BSIM3v32pacde = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32pacdeGiven = true;
             break;
         case BSIM3v32_MOD_PMOIN:
-            this->BSIM3v32pmoin = value.getDouble();
+            this->BSIM3v32pmoin = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32pmoinGiven = true;
             break;
         case BSIM3v32_MOD_PNOFF:
-            this->BSIM3v32pnoff = value.getDouble();
+            this->BSIM3v32pnoff = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32pnoffGiven = true;
             break;
         case BSIM3v32_MOD_PVOFFCV:
-            this->BSIM3v32pvoffcv = value.getDouble();
+            this->BSIM3v32pvoffcv = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32pvoffcvGiven = true;
             break;
 
         case BSIM3v32_MOD_TNOM:
-            this->BSIM3v32tnom = value.getDouble() + CONSTCtoK;
+            this->BSIM3v32tnom = value.getDoubleCast(&rc) + CONSTCtoK;
+            UPDATE_RC(rc);
             this->BSIM3v32tnomGiven = true;
             break;
         case BSIM3v32_MOD_CGSO:
-            this->BSIM3v32cgso = value.getDouble();
+            this->BSIM3v32cgso = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32cgsoGiven = true;
             break;
         case BSIM3v32_MOD_CGDO:
-            this->BSIM3v32cgdo = value.getDouble();
+            this->BSIM3v32cgdo = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32cgdoGiven = true;
             break;
         case BSIM3v32_MOD_CGBO:
-            this->BSIM3v32cgbo = value.getDouble();
+            this->BSIM3v32cgbo = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32cgboGiven = true;
             break;
         case BSIM3v32_MOD_XPART:
-            this->BSIM3v32xpart = value.getDouble();
+            this->BSIM3v32xpart = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32xpartGiven = true;
             break;
         case BSIM3v32_MOD_RSH:
-            this->BSIM3v32sheetResistance = value.getDouble();
+            this->BSIM3v32sheetResistance = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32sheetResistanceGiven = true;
             break;
         case BSIM3v32_MOD_JS:
-            this->BSIM3v32jctSatCurDensity = value.getDouble();
+            this->BSIM3v32jctSatCurDensity = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32jctSatCurDensityGiven = true;
             break;
         case BSIM3v32_MOD_JSW:
-            this->BSIM3v32jctSidewallSatCurDensity = value.getDouble();
+            this->BSIM3v32jctSidewallSatCurDensity = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32jctSidewallSatCurDensityGiven = true;
             break;
         case BSIM3v32_MOD_PB:
-            this->BSIM3v32bulkJctPotential = value.getDouble();
+            this->BSIM3v32bulkJctPotential = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32bulkJctPotentialGiven = true;
             break;
         case BSIM3v32_MOD_MJ:
-            this->BSIM3v32bulkJctBotGradingCoeff = value.getDouble();
+            this->BSIM3v32bulkJctBotGradingCoeff = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32bulkJctBotGradingCoeffGiven = true;
             break;
         case BSIM3v32_MOD_PBSW:
-            this->BSIM3v32sidewallJctPotential = value.getDouble();
+            this->BSIM3v32sidewallJctPotential = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32sidewallJctPotentialGiven = true;
             break;
         case BSIM3v32_MOD_MJSW:
-            this->BSIM3v32bulkJctSideGradingCoeff = value.getDouble();
+            this->BSIM3v32bulkJctSideGradingCoeff = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32bulkJctSideGradingCoeffGiven = true;
             break;
         case BSIM3v32_MOD_CJ:
-            this->BSIM3v32unitAreaJctCap = value.getDouble();
+            this->BSIM3v32unitAreaJctCap = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32unitAreaJctCapGiven = true;
             break;
         case BSIM3v32_MOD_CJSW:
-            this->BSIM3v32unitLengthSidewallJctCap = value.getDouble();
+            this->BSIM3v32unitLengthSidewallJctCap = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32unitLengthSidewallJctCapGiven = true;
             break;
         case BSIM3v32_MOD_NJ:
-            this->BSIM3v32jctEmissionCoeff = value.getDouble();
+            this->BSIM3v32jctEmissionCoeff = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32jctEmissionCoeffGiven = true;
             break;
         case BSIM3v32_MOD_PBSWG:
-            this->BSIM3v32GatesidewallJctPotential = value.getDouble();
+            this->BSIM3v32GatesidewallJctPotential = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32GatesidewallJctPotentialGiven = true;
             break;
         case BSIM3v32_MOD_MJSWG:
-            this->BSIM3v32bulkJctGateSideGradingCoeff = value.getDouble();
+            this->BSIM3v32bulkJctGateSideGradingCoeff = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32bulkJctGateSideGradingCoeffGiven = true;
             break;
         case BSIM3v32_MOD_CJSWG:
-            this->BSIM3v32unitLengthGateSidewallJctCap = value.getDouble();
+            this->BSIM3v32unitLengthGateSidewallJctCap = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32unitLengthGateSidewallJctCapGiven = true;
             break;
         case BSIM3v32_MOD_XTI:
-            this->BSIM3v32jctTempExponent = value.getDouble();
+            this->BSIM3v32jctTempExponent = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32jctTempExponentGiven = true;
             break;
         case BSIM3v32_MOD_LINT:
-            this->BSIM3v32Lint = value.getDouble();
+            this->BSIM3v32Lint = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32LintGiven = true;
             break;
         case BSIM3v32_MOD_LL:
-            this->BSIM3v32Ll = value.getDouble();
+            this->BSIM3v32Ll = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32LlGiven = true;
             break;
         case BSIM3v32_MOD_LLC:
-            this->BSIM3v32Llc = value.getDouble();
+            this->BSIM3v32Llc = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32LlcGiven = true;
             break;
         case BSIM3v32_MOD_LLN:
-            this->BSIM3v32Lln = value.getDouble();
+            this->BSIM3v32Lln = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32LlnGiven = true;
             break;
         case BSIM3v32_MOD_LW:
-            this->BSIM3v32Lw = value.getDouble();
+            this->BSIM3v32Lw = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32LwGiven = true;
             break;
         case BSIM3v32_MOD_LWC:
-            this->BSIM3v32Lwc = value.getDouble();
+            this->BSIM3v32Lwc = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32LwcGiven = true;
             break;
         case BSIM3v32_MOD_LWN:
-            this->BSIM3v32Lwn = value.getDouble();
+            this->BSIM3v32Lwn = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32LwnGiven = true;
             break;
         case BSIM3v32_MOD_LWL:
-            this->BSIM3v32Lwl = value.getDouble();
+            this->BSIM3v32Lwl = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32LwlGiven = true;
             break;
         case BSIM3v32_MOD_LWLC:
-            this->BSIM3v32Lwlc = value.getDouble();
+            this->BSIM3v32Lwlc = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32LwlcGiven = true;
             break;
         case BSIM3v32_MOD_LMIN:
-            this->BSIM3v32Lmin = value.getDouble();
+            this->BSIM3v32Lmin = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32LminGiven = true;
             break;
         case BSIM3v32_MOD_LMAX:
-            this->BSIM3v32Lmax = value.getDouble();
+            this->BSIM3v32Lmax = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32LmaxGiven = true;
             break;
         case BSIM3v32_MOD_WINT:
-            this->BSIM3v32Wint = value.getDouble();
+            this->BSIM3v32Wint = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32WintGiven = true;
             break;
         case BSIM3v32_MOD_WL:
-            this->BSIM3v32Wl = value.getDouble();
+            this->BSIM3v32Wl = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32WlGiven = true;
             break;
         case BSIM3v32_MOD_WLC:
-            this->BSIM3v32Wlc = value.getDouble();
+            this->BSIM3v32Wlc = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32WlcGiven = true;
             break;
         case BSIM3v32_MOD_WLN:
-            this->BSIM3v32Wln = value.getDouble();
+            this->BSIM3v32Wln = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32WlnGiven = true;
             break;
         case BSIM3v32_MOD_WW:
-            this->BSIM3v32Ww = value.getDouble();
+            this->BSIM3v32Ww = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32WwGiven = true;
             break;
         case BSIM3v32_MOD_WWC:
-            this->BSIM3v32Wwc = value.getDouble();
+            this->BSIM3v32Wwc = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32WwcGiven = true;
             break;
         case BSIM3v32_MOD_WWN:
-            this->BSIM3v32Wwn = value.getDouble();
+            this->BSIM3v32Wwn = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32WwnGiven = true;
             break;
         case BSIM3v32_MOD_WWL:
-            this->BSIM3v32Wwl = value.getDouble();
+            this->BSIM3v32Wwl = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32WwlGiven = true;
             break;
         case BSIM3v32_MOD_WWLC:
-            this->BSIM3v32Wwlc = value.getDouble();
+            this->BSIM3v32Wwlc = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32WwlcGiven = true;
             break;
         case BSIM3v32_MOD_WMIN:
-            this->BSIM3v32Wmin = value.getDouble();
+            this->BSIM3v32Wmin = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32WminGiven = true;
             break;
         case BSIM3v32_MOD_WMAX:
-            this->BSIM3v32Wmax = value.getDouble();
+            this->BSIM3v32Wmax = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32WmaxGiven = true;
             break;
 
         case BSIM3v32_MOD_XL:
-            this->BSIM3v32xl = value.getDouble();
+            this->BSIM3v32xl = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32xlGiven = true;
             break;
         case BSIM3v32_MOD_XW:
-            this->BSIM3v32xw = value.getDouble();
+            this->BSIM3v32xw = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32xwGiven = true;
             break;
 
         case BSIM3v32_MOD_NOIA:
-            this->BSIM3v32oxideTrapDensityA = value.getDouble();
+            this->BSIM3v32oxideTrapDensityA = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32oxideTrapDensityAGiven = true;
             break;
         case BSIM3v32_MOD_NOIB:
-            this->BSIM3v32oxideTrapDensityB = value.getDouble();
+            this->BSIM3v32oxideTrapDensityB = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32oxideTrapDensityBGiven = true;
             break;
         case BSIM3v32_MOD_NOIC:
-            this->BSIM3v32oxideTrapDensityC = value.getDouble();
+            this->BSIM3v32oxideTrapDensityC = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32oxideTrapDensityCGiven = true;
             break;
         case BSIM3v32_MOD_EM:
-            this->BSIM3v32em = value.getDouble();
+            this->BSIM3v32em = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32emGiven = true;
             break;
         case BSIM3v32_MOD_EF:
-            this->BSIM3v32ef = value.getDouble();
+            this->BSIM3v32ef = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32efGiven = true;
             break;
         case BSIM3v32_MOD_AF:
-            this->BSIM3v32af = value.getDouble();
+            this->BSIM3v32af = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32afGiven = true;
             break;
         case BSIM3v32_MOD_KF:
-            this->BSIM3v32kf = value.getDouble();
+            this->BSIM3v32kf = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32kfGiven = true;
             break;
 
         case BSIM3v32_MOD_VGS_MAX:
-            this->BSIM3v32vgsMax = value.getDouble();
+            this->BSIM3v32vgsMax = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32vgsMaxGiven = true;
             break;
         case BSIM3v32_MOD_VGD_MAX:
-            this->BSIM3v32vgdMax = value.getDouble();
+            this->BSIM3v32vgdMax = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32vgdMaxGiven = true;
             break;
         case BSIM3v32_MOD_VGB_MAX:
-            this->BSIM3v32vgbMax = value.getDouble();
+            this->BSIM3v32vgbMax = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32vgbMaxGiven = true;
             break;
         case BSIM3v32_MOD_VDS_MAX:
-            this->BSIM3v32vdsMax = value.getDouble();
+            this->BSIM3v32vdsMax = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32vdsMaxGiven = true;
             break;
         case BSIM3v32_MOD_VBS_MAX:
-            this->BSIM3v32vbsMax = value.getDouble();
+            this->BSIM3v32vbsMax = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32vbsMaxGiven = true;
             break;
         case BSIM3v32_MOD_VBD_MAX:
-            this->BSIM3v32vbdMax = value.getDouble();
+            this->BSIM3v32vbdMax = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32vbdMaxGiven = true;
             break;
         case BSIM3v32_MOD_VGSR_MAX:
-            this->BSIM3v32vgsrMax = value.getDouble();
+            this->BSIM3v32vgsrMax = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32vgsrMaxGiven = true;
             break;
         case BSIM3v32_MOD_VGDR_MAX:
-            this->BSIM3v32vgdrMax = value.getDouble();
+            this->BSIM3v32vgdrMax = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32vgdrMaxGiven = true;
             break;
         case BSIM3v32_MOD_VGBR_MAX:
-            this->BSIM3v32vgbrMax = value.getDouble();
+            this->BSIM3v32vgbrMax = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32vgbrMaxGiven = true;
             break;
         case BSIM3v32_MOD_VBSR_MAX:
-            this->BSIM3v32vbsrMax = value.getDouble();
+            this->BSIM3v32vbsrMax = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32vbsrMaxGiven = true;
             break;
         case BSIM3v32_MOD_VBDR_MAX:
-            this->BSIM3v32vbdrMax = value.getDouble();
+            this->BSIM3v32vbdrMax = value.getDoubleCast(&rc);
+            UPDATE_RC(rc);
             this->BSIM3v32vbdrMaxGiven = true;
             break;
 
         case BSIM3v32_MOD_NMOS:
-            if (value.getBoolean())
+        {
+            bool s = value.getBooleanCast(&rc);
+            UPDATE_RC(rc);
+            if (s)
             {
                 this->BSIM3v32type = BSIM3V32::NMOS;
                 this->BSIM3v32typeGiven = true;
             }
             break;
+        }
         case BSIM3v32_MOD_PMOS:
-            if (value.getBoolean())
+        {
+            bool s = value.getBooleanCast(&rc);
+            UPDATE_RC(rc);
+            if (s)
             {
                 this->BSIM3v32type = BSIM3V32::PMOS;
                 this->BSIM3v32typeGiven = true;
             }
             break;
         }
+        default:
+            return CERR_NO_SUCH_PROPERTY;
+        }
+        return 0;
     }
 
     int BSIM3v32model::setup(Environment *env)
@@ -5182,4 +5589,32 @@ namespace csimModel
         return Fatal_Flag;
     }
 
+    static PropertyMdl *bsim3v32_createNmosMdl()
+    {
+        PropertyMdl *mdl = new BSIM3v32model();
+        mdl->setProperty(BSIM3v32_MOD_NMOS, Variant(Variant::VariantBoolean).setBoolean(true));
+        mdl->setProperty(BSIM3v32_MOD_PMOS, Variant(Variant::VariantBoolean).setBoolean(false));
+        return mdl;
+    }
+    static PropertyMdl *bsim3v32_createPmosMdl()
+    {
+        PropertyMdl *mdl = new BSIM3v32model();
+        mdl->setProperty(BSIM3v32_MOD_NMOS, Variant(Variant::VariantBoolean).setBoolean(false));
+        mdl->setProperty(BSIM3v32_MOD_PMOS, Variant(Variant::VariantBoolean).setBoolean(true));
+        return mdl;
+    }
+
+    static void bsim3v32_deleteMdl(PropertyMdl *mdl)
+    {
+        delete mdl;
+    }
+
+    static const PropertyMdlDescriptor mdlDescriptorsArray[] = {
+        {"nmos", bsim3v32_mdl_props, ARRAY_COUNT(bsim3v32_mdl_props), &bsim3v32_createNmosMdl, &bsim3v32_deleteMdl},
+        {"pmos", bsim3v32_mdl_props, ARRAY_COUNT(bsim3v32_mdl_props), &bsim3v32_createPmosMdl, &bsim3v32_deleteMdl},
+    };
 }
+
+/* Exported symbols */
+const PropertyMdlDescriptor *mdlDescriptors = csimModel::mdlDescriptorsArray;
+const size_t numMdlDescriptors = ARRAY_COUNT(csimModel::mdlDescriptorsArray);

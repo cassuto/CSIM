@@ -50,7 +50,7 @@ namespace csim
                 if (curRow < m_netlist->getNumNodes())
                     std::cout << "A large resistor is inserted between the node" << curRow << " and ground." << std::endl;
                 else
-                    std::cout << "A tiny resistor is inserted at branch" << curRow << std::endl;
+                    std::cout << "A tiny resistor is inserted at branch" << (curRow - m_netlist->getNumNodes()) << std::endl;
                 m_lastFixRow = curRow;
             }
         }

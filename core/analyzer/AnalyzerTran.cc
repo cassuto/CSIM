@@ -148,12 +148,17 @@ namespace csim
         else
         {
             /* Iteration for transient analysis */
+            int rc = 0;
             for (auto &mif : circuit()->netlist()->models())
             {
-                UPDATE_RC(mif.model->iterateTR(circuit()->getTimeInStep()));
+                int ret = mif.model->iterateTR(circuit()->getTimeInStep());
+                if (ret == CERR_NON_CONVERGENCE)
+                    rc = ret;
+                else if (CSIM_FAILED(ret))
+                    return ret;
             }
+            return rc;
         }
         return 0;
     }
-
 }

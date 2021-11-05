@@ -35,8 +35,8 @@ namespace csimModel
 
     void ModelBase::resizeModel(unsigned int numTermls, unsigned int numInnerNodes, unsigned int numBranches)
     {
-        m_termls.resize(numTermls);
-        m_innerNodes.resize(numInnerNodes);
+        m_numTermls = numTermls;
+        m_nodes.resize(numTermls + numInnerNodes);
         m_branches.resize(numBranches);
     }
 
@@ -107,32 +107,24 @@ namespace csimModel
 
     unsigned int ModelBase::getNumTerml() const
     {
-        return m_termls.size();
-    }
-    unsigned int ModelBase::getNumInnerNode() const
-    {
-        return m_innerNodes.size();
+        return m_numTermls;
     }
     unsigned int ModelBase::getNumBranches() const
     {
         return m_branches.size();
     }
+    unsigned int ModelBase::getNumInnerNode() const
+    {
+        return m_nodes.size() - m_numTermls;
+    }
 
-    void ModelBase::setNode(unsigned int terml, unsigned int node)
+    void ModelBase::setNode(unsigned int idx, unsigned int node)
     {
-        m_termls[terml] = node;
+        m_nodes[idx] = node;
     }
-    unsigned int ModelBase::getNode(unsigned int terml) const
+    unsigned int ModelBase::getNode(unsigned int idx) const
     {
-        return m_termls[terml];
-    }
-    void ModelBase::setInnerNode(unsigned int index, unsigned int node)
-    {
-        m_innerNodes[index] = node;
-    }
-    unsigned int ModelBase::getInnerNode(unsigned int index) const
-    {
-        return m_innerNodes[index];
+        return m_nodes[idx];
     }
     void ModelBase::setBranch(unsigned int idx, unsigned int branch)
     {
@@ -141,6 +133,10 @@ namespace csimModel
     unsigned int ModelBase::getBranch(unsigned int idx) const
     {
         return m_branches[idx];
+    }
+    void ModelBase::setInnerNode(unsigned int innerIdx, unsigned int node)
+    {
+        m_nodes[innerIdx + m_numTermls] = node;
     }
 
     /* MNA matrices */

@@ -121,9 +121,23 @@ namespace csim
             {
                 sweepVariable->setDouble(sweepValue);
             }
+
+#if defined(ENABLE_SPICE_COMPATIBLE)
+            /* Rotate state queue */
+            for (auto &mif : circuit()->netlist()->models())
+            {
+                unsigned int numIntegrators = mif.model->getNumIntegrators();
+                for (unsigned int i = 0; i < numIntegrators; ++i)
+                {
+                    mif.model->getIntegratorX(i)->push();
+                    mif.model->getIntegratorY(i)->push();
+                }
+            }
+#endif
+
             UPDATE_RC(circuit()->solveMNA(this));
 #if defined(ENABLE_SPICE_COMPATIBLE)
-            circuit()->spiceCompatible()->setFlagsTRPred();
+            circuit()->spiceCompatible()->setFlagsDCPred();
 #endif
 
             /* Save the result */
@@ -153,11 +167,15 @@ namespace csim
 
     int AnalyzerDC::iterateMNA()
     {
+        int rc = 0;
         for (auto &mif : circuit()->netlist()->models())
         {
-            UPDATE_RC(mif.model->iterateDC());
+            int ret = mif.model->iterateDC();
+            if (ret == CERR_NON_CONVERGENCE)
+                rc = ret;
+            else if (CSIM_FAILED(ret))
+                return ret;
         }
-        return 0;
+        return rc;
     }
-
 }

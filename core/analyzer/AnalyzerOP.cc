@@ -85,11 +85,16 @@ namespace csim
 
     int AnalyzerOP::iterateMNA()
     {
+        int rc = 0;
         for (auto &mif : circuit()->netlist()->models())
         {
-            UPDATE_RC(mif.model->iterateOP());
+            int ret = mif.model->iterateOP();
+            if (ret == CERR_NON_CONVERGENCE)
+                rc = ret;
+            else if (CSIM_FAILED(ret))
+                return ret;
         }
-        return 0;
+        return rc;
     }
 
 }

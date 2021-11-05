@@ -160,49 +160,53 @@ namespace csim
     int Circuit::solveMNA(AnalyzerBase *analyzer)
     {
         int rc;
-        bool converged;
+        bool converged, cont = true;
         unsigned int iteration = 0;
         do
         {
             std::memset((void *)m_A, 0, sizeof(*m_A) * m_matrixRows * m_matrixRows);
             std::memset((void *)m_z, 0, sizeof(*m_z) * m_matrixRows);
 
+            converged = false;
             rc = analyzer->iterateMNA();
-            if (rc == CERR_NON_CONVERGENCE)
-                converged = false;
-            else if (CSIM_OK(rc))
-                converged = true; /* No problem in nonlinear iteration. It may still not converge, depending on futher checks. */
-            else
+            switch (rc)
+            {
+            case 0:
+            case CERR_NON_CONVERGENCE:
+                break;
+            default:
                 return rc; /* Unhandled errors */
+            }
 
             if (m_netlist->hasGroundNode())
             {
                 unsigned int ngnd = m_netlist->getGroundNode();
                 m_A[ngnd * m_matrixRows + ngnd] = 0.0;
             }
-std::cout<<"A="<<converged<<"\n";
-            for (unsigned int i = 0; i < m_matrixRows; i++)
-            {
-                for (unsigned int j = 0; j < m_matrixRows; j++)
-                {
-                    std::cout<<m_A[i * m_matrixRows + j] <<" ";
-                }
-                std::cout<<std::endl;
-            }
+
             UPDATE_RC(m_linearSolver->solve(m_A, m_matrixRows, m_x, m_z));
 
-            if (converged && iteration)
-            {
+            if (iteration)
                 converged = isConverged();
+#if defined(ENABLE_SPICE_COMPATIBLE)
+            switch (m_spiceCompatible->upateStateMachine(converged))
+            {
+            case csimModel::SPICE_Compatible::Result::ContinueIter:
+                break;
+            case csimModel::SPICE_Compatible::Result::BreakIter:
+                cont = false;
+                break;
             }
-            UPDATE_RC(m_spiceCompatible->upateStateMachine(converged));
+#else
+            cont = !converged;
+#endif
 
             /* save vector x and z */
             memcpy((void *)m_x_1, m_x, sizeof(*m_x) * m_matrixRows);
             memcpy((void *)m_z_1, m_z, sizeof(*m_z) * m_matrixRows);
 
             iteration++;
-        } while ((!converged || iteration == 1) && (iteration < m_maxIterations));
+        } while (cont && (iteration < m_maxIterations));
 
 #if defined(ENABLE_STAT)
         m_statNumNonlinearIters += iteration;

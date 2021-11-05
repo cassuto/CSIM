@@ -37,9 +37,9 @@ namespace csimModel
         double delvbd, delvbs, delvds, delvgd, delvgs, vbd, vbs, vds;
         double cbd, cbhat, cbs, cd, cdhat, tol, vgd, vgdo, vgs;
 
-        vbs = model->BSIM3v32type * (getPrevU(this->BSIM3v32bNode).real() - getPrevU(this->BSIM3v32sNodePrime).real());
-        vgs = model->BSIM3v32type * (getPrevU(this->BSIM3v32gNode).real() - getPrevU(this->BSIM3v32sNodePrime).real());
-        vds = model->BSIM3v32type * (getPrevU(this->BSIM3v32dNodePrime).real() - getPrevU(this->BSIM3v32sNodePrime).real());
+        vbs = model->BSIM3v32type * (getPrevU(getNode(this->BSIM3v32bNode)).real() - getPrevU(getNode(this->BSIM3v32sNodePrime)).real());
+        vgs = model->BSIM3v32type * (getPrevU(getNode(this->BSIM3v32gNode)).real() - getPrevU(getNode(this->BSIM3v32sNodePrime)).real());
+        vds = model->BSIM3v32type * (getPrevU(getNode(this->BSIM3v32dNodePrime)).real() - getPrevU(getNode(this->BSIM3v32sNodePrime)).real());
         vbd = vbs - vds;
         vgd = vgs - vds;
         vgdo = getIntegratorX(BSIM3v32vgs)->get(0) - getIntegratorX(BSIM3v32vds)->get(0);

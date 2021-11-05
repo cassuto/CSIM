@@ -55,6 +55,11 @@ namespace csimModel
             SPICE_MODEUIC = 0x10000UL
         };
 
+        enum Result{
+            ContinueIter = 0,
+            BreakIter
+        };
+
         inline void setMode(long spiceCompatibleMode)
         {
             m_spiceCompatibleMode = spiceCompatibleMode;
@@ -75,8 +80,9 @@ namespace csimModel
         int setFlagsAC();
         int setFlagsTR();
         int setFlagsTRPred();
+        int setFlagsDCPred();
         int setFlagsSmallSig();
-        int upateStateMachine(bool converged);
+        Result upateStateMachine(bool converged);
 
     private:
         bool m_useInitialCondition;

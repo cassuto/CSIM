@@ -240,6 +240,7 @@ namespace csimModel
     {
         int rc;
         unsigned int numInnerNodes = 0;
+        unsigned int insertedNodeIdx = 4; /* = Number of terminals */
 
         const char *entry;
         entry = "w";
@@ -423,7 +424,7 @@ namespace csimModel
         {
             if (!this->BSIM3v32dNodePrimeInserted)
             {
-                this->BSIM3v32dNodePrime = numInnerNodes;
+                this->BSIM3v32dNodePrime = insertedNodeIdx++;
                 this->BSIM3v32dNodePrimeInserted = true;
                 numInnerNodes++;
             }
@@ -438,7 +439,7 @@ namespace csimModel
         {
             if (!this->BSIM3v32sNodePrimeInserted)
             {
-                this->BSIM3v32sNodePrime = numInnerNodes;
+                this->BSIM3v32sNodePrime = insertedNodeIdx++;
                 this->BSIM3v32sNodePrimeInserted = true;
                 numInnerNodes++;
             }
@@ -453,7 +454,7 @@ namespace csimModel
         {
             if (!this->BSIM3v32qNodeInserted)
             {
-                this->BSIM3v32qNode = numInnerNodes;
+                this->BSIM3v32qNode = insertedNodeIdx++;
                 this->BSIM3v32qNodeInserted = true;
                 numInnerNodes++;
             }
@@ -479,7 +480,7 @@ namespace csimModel
         if (!model)
             return CERR_NO_MDL;
 
-        /* set Sparse Matrix Pointers */
+            /* set Sparse Matrix Pointers */
 
 /* macro to make elements with built in test for out of memory */
 #define ALLOC_VOLT(ptr, first, second)      \
@@ -488,8 +489,7 @@ namespace csimModel
         this->ptr = getYPtr(first, second); \
     } while (0)
 
-#define GET_INSERTED_NODE(first) \
-    ((first##Inserted) ? getInnerNode(first) : getNode(first))
+#define GET_INSERTED_NODE(first) getNode(first)
 
         ALLOC_VOLT(BSIM3v32DdPtr, getNode(BSIM3v32dNode), getNode(BSIM3v32dNode));
         ALLOC_VOLT(BSIM3v32GgPtr, getNode(BSIM3v32gNode), getNode(BSIM3v32gNode));
@@ -576,6 +576,7 @@ namespace csimModel
 
     int BSIM3V32::iterateDC()
     {
+        std::cout << "mod=" << std::hex << getEnvironment()->getCKTmode() << std::endl;
         return stampDCTran(getEnvironment());
     }
 

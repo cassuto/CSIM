@@ -218,6 +218,8 @@ namespace csim
         ASSERT_EQ(CERR_SUCCEEDED, ret);
         ret = circuit->netlist()->wire("M1", 2, "M1", 3);
         ASSERT_EQ(CERR_SUCCEEDED, ret);
+        ret = circuit->netlist()->ground("M1", 2);
+        ASSERT_EQ(CERR_SUCCEEDED, ret);
 
         ret = circuit->netlist()->generateNodes();
         ASSERT_EQ(CERR_SUCCEEDED, ret);
@@ -231,15 +233,15 @@ namespace csim
         analyzer->property().setProperty("srcname", csimModel::Variant(csimModel::Variant::VariantString).setString("V2"));
 
         /* Get nodes */
-        unsigned int n_gnd, n2, b2;
-        ret = circuit->netlist()->getBranch("V2", 0, &b2);
+        unsigned int n_gnd, n2, b4;
+        ret = circuit->netlist()->getBranch("V4", 0, &b4);
         EXPECT_EQ(CERR_SUCCEEDED, ret);
         ret = circuit->netlist()->getTermlNode("V2", 0, &n2);
         EXPECT_EQ(CERR_SUCCEEDED, ret);
         ret = circuit->netlist()->getTermlNode("V2", 1, &n_gnd);
         EXPECT_EQ(CERR_SUCCEEDED, ret);
 
-        analyzer->addInterestBranch(b2);
+        analyzer->addInterestBranch(b4);
         analyzer->addInterestNode(n2);
         analyzer->addInterestNode(n_gnd);
 
@@ -250,7 +252,7 @@ namespace csim
         const Variable &sweep = dset.getIndependentVar("V2");
         const Variable &Vgnd = dset.getDependentVar("voltage", analyzer->makeVarName("V", n_gnd));
         const Variable &Vn1 = dset.getDependentVar("voltage", analyzer->makeVarName("V", n2));
-        const Variable &Ib2 = dset.getDependentVar("current", analyzer->makeVarName("I", n2));
+        const Variable &Ib2 = dset.getDependentVar("current", analyzer->makeVarName("I", b4));
 
         std::ofstream fof("outBSIM3v32.csv");
         for (size_t i = 0; i < sweep.getNumValues(); i++)

@@ -20,6 +20,7 @@ Modified: 2001 AlansFixes
  *  Lesser General Public License for more details.                        
  */
 
+#include <iostream>
 #include "csim/utils/errors.h"
 #include "csim/model/compact/SPICE-Compatible.h"
 
@@ -64,15 +65,26 @@ namespace csimModel
         return 0;
     }
 
+    int SPICE_Compatible::setFlagsDCPred()
+    {
+        setMode((m_useInitialCondition ? SPICE_MODEUIC : 0) | SPICE_MODEDCTRANCURVE | SPICE_MODEINITPRED);
+        return 0;
+    }
+
     int SPICE_Compatible::setFlagsSmallSig()
     {
         setMode((m_useInitialCondition ? SPICE_MODEUIC : 0) | SPICE_MODEDCOP | SPICE_MODEINITSMSIG);
         return 0;
     }
 
-    int SPICE_Compatible::upateStateMachine(bool converged)
+    SPICE_Compatible::Result SPICE_Compatible::upateStateMachine(bool converged)
     {
-        if (m_spiceCompatibleMode & SPICE_MODEINITFLOAT)
+        if (m_spiceCompatibleMode & SPICE_MODEAC)
+        {
+            if (converged)
+                return Result::BreakIter;
+        }
+        else if (m_spiceCompatibleMode & SPICE_MODEINITFLOAT)
         {
             /*if ((m_spiceCompatibleMode & SPICE_MODEDC) && ckt->CKThadNodeset)
             {
@@ -82,7 +94,7 @@ namespace csimModel
             }*/
             if (converged)
             {
-                return 0;
+                return Result::BreakIter;
             }
         }
         else if (m_spiceCompatibleMode & SPICE_MODEINITJCT)
@@ -110,7 +122,7 @@ namespace csimModel
         {
             m_spiceCompatibleMode = (m_spiceCompatibleMode & ~SPICE_INITF) | SPICE_MODEINITFLOAT;
         }
-        return 0;
+        return Result::ContinueIter;
     }
 
 }

@@ -159,10 +159,16 @@ namespace csim
         else
         {
             /* Iteration step for AC analysis */
+            int rc = 0;
             for (auto &mif : circuit()->netlist()->models())
             {
-                UPDATE_RC(mif.model->iterateAC(m_currentOmega));
+                int ret = mif.model->iterateAC(m_currentOmega);
+                if (ret == CERR_NON_CONVERGENCE)
+                    rc = ret;
+                else if (CSIM_FAILED(ret))
+                    return ret;
             }
+            return rc;
         }
 
         return 0;

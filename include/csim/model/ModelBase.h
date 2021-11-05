@@ -63,14 +63,13 @@ namespace csimModel
         PropertyBag &property();
         void setName(const char *name);
         unsigned int getNumTerml() const;
-        unsigned int getNumInnerNode() const;
         unsigned int getNumBranches() const;
-        void setNode(unsigned int terml, unsigned int node);
-        unsigned int getNode(unsigned int terml) const;
-        void setInnerNode(unsigned int index, unsigned int node);
-        unsigned int getInnerNode(unsigned int index) const;
+        unsigned int getNumInnerNode() const;
+        void setNode(unsigned int idx, unsigned int node);
+        unsigned int getNode(unsigned int idx) const;
         void setBranch(unsigned int idx, unsigned int branch);
         unsigned int getBranch(unsigned int idx) const;
+        void setInnerNode(unsigned int innerIdx, unsigned int node);
 
         /* MNA matrices */
         const MComplex &getY(unsigned int row, unsigned int col) const;
@@ -134,9 +133,9 @@ namespace csimModel
     private:
         csim::Circuit *m_circuit;
         PropertyBag m_props;
-        std::vector<unsigned int> m_termls;
-        std::vector<unsigned int> m_innerNodes;
-        std::vector<unsigned int> m_branches;
+        unsigned int m_numTermls;
+        std::vector<unsigned int> m_nodes; /* Voltage nodes */
+        std::vector<unsigned int> m_branches; /* Current branches */
         csim::IntegralHistory *m_historyX, *m_historyY;
         unsigned int m_numIntegrators;
         std::string m_name;

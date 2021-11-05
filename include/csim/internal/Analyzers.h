@@ -44,7 +44,7 @@ namespace csim
         }
         inline void addInterestBranch(unsigned int vs)
         {
-            m_interestNodes.push_back(vs);
+            m_interestBranches.push_back(vs);
         }
         inline unsigned int getNumInterestNodes() const
         {

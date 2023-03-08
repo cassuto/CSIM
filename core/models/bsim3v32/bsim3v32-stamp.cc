@@ -140,9 +140,10 @@ namespace csimModel
 
         double m;
 
-printf("CKTstate1:\n");
-        for(int kk=0;kk<BSIM3v32numStates;kk++) {
-            printf("%d %lf\n",kk, getIntegratorX(kk)->get(1));
+        printf("CKTstate1:\n");
+        for (int kk = 0; kk < BSIM3v32numStates; kk++)
+        {
+            printf("%d %lf\n", kk, getIntegratorX(kk)->get(1));
         }
         printf("\n");
 
@@ -218,9 +219,9 @@ printf("CKTstate1:\n");
                 vbs = model->BSIM3v32type * (getU(getNode(this->BSIM3v32bNode)).real() - getU(getNode(this->BSIM3v32sNodePrime)).real());
                 vgs = model->BSIM3v32type * (getU(getNode(this->BSIM3v32gNode)).real() - getU(getNode(this->BSIM3v32sNodePrime)).real());
                 vds = model->BSIM3v32type * (getU(getNode(this->BSIM3v32dNodePrime)).real() - getU(getNode(this->BSIM3v32sNodePrime)).real());
-        printf("vbs = %lf\n", vbs);
-        printf("vgs = %lf\n", vgs);
-        printf("vds = %lf\n", vds);
+                printf("vbs = %lf\n", vbs);
+                printf("vgs = %lf\n", vgs);
+                printf("vds = %lf\n", vds);
                 qdef = model->BSIM3v32type * (getU(getNode(this->BSIM3v32qNode)).real());
 #ifndef PREDICTOR
             }
@@ -2710,7 +2711,7 @@ printf("CKTstate1:\n");
             }
         }
         getIntegratorX(BSIM3v32vbs)->set(0, vbs);
-        std::cout<<"set vbd="<<vbd<<"\n";
+        std::cout << "set vbd=" << vbd << "\n";
         getIntegratorX(BSIM3v32vbd)->set(0, vbd);
         getIntegratorX(BSIM3v32vgs)->set(0, vgs);
         getIntegratorX(BSIM3v32vds)->set(0, vds);
@@ -3065,14 +3066,14 @@ printf("CKTstate1:\n");
         }
 
         /* Run integral step */
-        integrate(BSIM3v32qb, 0.0, &geq, &ceq);
-        integrate(BSIM3v32qg, 0.0, &geq, &ceq);
-        integrate(BSIM3v32qd, 0.0, &geq, &ceq);
+        integrate(BSIM3v32qb, 1.0 /* in SPICE this is 0.0 */, &geq, &ceq);
+        integrate(BSIM3v32qg, 1.0, &geq, &ceq);
+        integrate(BSIM3v32qd, 1.0, &geq, &ceq);
 
         if (this->BSIM3v32nqsMod)
         {
-            integrate(BSIM3v32qcdump, 0.0, &geq, &ceq);
-            integrate(BSIM3v32qcheq, 0.0, &geq, &ceq);
+            integrate(BSIM3v32qcdump, 1.0, &geq, &ceq);
+            integrate(BSIM3v32qcheq, 1.0, &geq, &ceq);
         }
 
         goto line860;

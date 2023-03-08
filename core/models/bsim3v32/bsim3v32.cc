@@ -24,7 +24,7 @@
  *  Lesser General Public License for more details.                        
  */
 
-#include "BSIM3V32.h"
+#include "bsim3v32.h"
 
 namespace csimModel
 {

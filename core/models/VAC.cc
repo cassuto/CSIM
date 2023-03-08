@@ -16,7 +16,7 @@
  */
 
 #include <cmath>
-#include "constants.h"
+#include "Constants.h"
 #include "VAC.h"
 
 namespace csimModel

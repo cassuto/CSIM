@@ -26,7 +26,7 @@
 #include <cmath>
 #include <algorithm>
 #include "csim/internal/IntegralHistory.h"
-#include "BSIM3V32.h"
+#include "bsim3v32.h"
 
 #define MAX_EXP 5.834617425e14
 #define MIN_EXP 1.713908431e-15

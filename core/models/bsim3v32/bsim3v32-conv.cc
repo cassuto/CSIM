@@ -26,7 +26,7 @@
 #include <cmath>
 #include <algorithm>
 #include "csim/internal/IntegralHistory.h"
-#include "BSIM3V32.h"
+#include "bsim3v32.h"
 
 namespace csimModel
 {

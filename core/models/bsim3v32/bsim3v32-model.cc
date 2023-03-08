@@ -22,7 +22,7 @@
 
 #include <cmath>
 #include <cstring>
-#include "BSIM3V32.h"
+#include "bsim3v32.h"
 
 #define KboQ 8.617087e-5 /* Kb / q  where q = 1.60219e-19 */
 

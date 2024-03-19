@@ -46,4 +46,5 @@ Build documents:
 * make docs
 
 Run regression tests:
+* export LD_LIBRARY_PATH=\`pwd\`
 * ./tstall

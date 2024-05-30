@@ -11,6 +11,7 @@
  *  Lesser General Public License for more details.                        
  */
 
+#include <iostream>
 #include <cassert>
 #include <cmath>
 #include <algorithm>
@@ -21,34 +22,20 @@ namespace csim
 {
     int SweepLogarithm::init(double start, double stop, int points)
     {
-        if (start * stop < 0)
-        return CERR_INVALID_PARAMETER;
+        if (start * stop < 0 || points<2)
+            return CERR_INVALID_PARAMETER;
 
-        double tmin = std::min(fabs(start), fabs(stop));
-        double tmax = std::max(fabs(start), fabs(stop));
-        if (fabs(start) > fabs(stop))
-        {
-            m_inverse = true;
-            m_start = tmax;
-        }
-        else
-        {
-            m_inverse = false;
-            m_start = tmin;
-        }
-
-        m_step = (std::log(tmax) - std::log(tmin)) / (points - 1);
-        m_point = m_inverse ? points - 1 : 0;
+        
+        m_start = start;
+        m_step = (std::log(stop) - std::log(start)) / (points - 1);
+        m_point = 0;
         m_numPoints = points;
         return 0;
     }
     double SweepLogarithm::next()
     {
         assert(hasNext());
-        if (m_inverse)
-            return m_start * std::exp(m_step * (m_numPoints - 1 - m_point++));
-        else
-            return m_start * std::exp(m_step * (m_point++));
+        return m_start * std::exp(m_step * (m_point++));
     }
     bool SweepLogarithm::hasNext()
     {

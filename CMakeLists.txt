@@ -56,6 +56,14 @@ else()
   message(FATAL_ERROR "BISON is required but not found" )
 endif()
 
+macro (add_coverage target_name)
+	if (enable_coverage)
+		target_compile_options(${target_name} PRIVATE
+			-fprofile-arcs
+			-ftest-coverage)
+	endif ()
+endmacro ()
+
 include_directories(
 	"${PROJECT_SOURCE_DIR}/include"
 	"${PROJECT_SOURCE_DIR}/core"

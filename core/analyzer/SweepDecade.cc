@@ -13,12 +13,15 @@
 
 #include <cassert>
 #include <cmath>
+#include <algorithm>
 #include "csim/internal/SweepDecade.h"
 
 namespace csim
 {
     int SweepDecade::init(double start, double stop, int points)
     {
+        if (start > stop)
+            std::swap(start, stop);
         return SweepLogarithm::init(start, stop, int((std::log10 (stop) - std::log10 (start)) * points));
     }
 }

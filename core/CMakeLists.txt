@@ -107,4 +107,4 @@ add_library(${PROJECT_NAME} SHARED
 )
 
 target_link_libraries(${PROJECT_NAME} csimUtils gcov)
-
+add_coverage(${PROJECT_NAME})

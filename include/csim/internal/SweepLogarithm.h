@@ -29,7 +29,6 @@ namespace csim
     private:
         double m_step;
         double m_start;
-        int m_inverse;
         int m_point, m_numPoints;
     };
 

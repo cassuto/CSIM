@@ -35,11 +35,7 @@ add_executable(tstall
     ${TEST_SRCS}
 )
 target_link_libraries(tstall pthread csim)
-if (enable_coverage)
-    target_compile_options(tstall PRIVATE
-                                -fprofile-arcs
-                                -ftest-coverage)
-endif ()
+add_coverage(tstall)
 
 
 add_custom_target(check COMMAND ${CMAKE_COMMAND} -E env LD_LIBRARY_PATH=${CMAKE_BINARY_DIR} ${CMAKE_BINARY_DIR}/tstall
@@ -55,17 +51,23 @@ if (enable_coverage)
 
     set(COVERALLS_FILE ${CMAKE_BINARY_DIR}/coveralls.json)
 
+    add_custom_target(clear_cov
+        WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
+        COMMAND ${CMAKE_COMMAND} -DPROJECT_BINARY_DIR="${PROJECT_BINARY_DIR}" -P "${CMAKE_CURRENT_SOURCE_DIR}/clear_coverage.cmake"
+        COMMENT "Clearing code coverage reports..."
+        DEPENDS check)
+
     add_custom_target(gen_cov_report
         WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
         COMMAND gcovr -r .. -e '../testcases/googletest/' --html-details -o coverage.html
         COMMENT "Generating code coverage reports..."
-        DEPENDS check)
+        DEPENDS clear_cov)
     
     add_custom_target(gen_coveralls
         WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
         COMMAND gcovr -r .. -e '../testcases/googletest/' --coveralls -o ${COVERALLS_FILE}
         COMMENT "Generating code coverage for coveralls..."
-        DEPENDS check)
+        DEPENDS clear_cov)
     
     add_custom_target(coveralls_upload
         # Upload the JSON to coveralls.

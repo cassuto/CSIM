@@ -17,3 +17,4 @@ add_library(${PROJECT_NAME}
     ${CMAKE_CURRENT_SOURCE_DIR}/errors.cc
     ${CMAKE_CURRENT_SOURCE_DIR}/string.cc
 )
+add_coverage(${PROJECT_NAME})

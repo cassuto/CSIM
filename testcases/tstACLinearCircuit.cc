@@ -8,6 +8,7 @@
 #include "csim/internal/Netlist.h"
 #include "csim/internal/ModelLoader.h"
 #include <algorithm>
+#include <complex>
 #include <cstring>
 
 namespace csim
@@ -31,8 +32,7 @@ namespace csim
      * Under f, the circuit presents pure resistance
      * and the phase of V and I is equal.
      */
-    TEST(tstACLinearCircuit, circuit_LC)
-    {
+    static void tstACLinearCircuit_helper(const char *fspace, double fstart, double fstop) {
         int ret = 0;
         ModelEntry *e_R = ModelLoader::load(resistorLibrary);
         ASSERT_NE(nullptr, e_R);
@@ -56,15 +56,17 @@ namespace csim
         ASSERT_EQ(CERR_SUCCEEDED, ret);
 
         /* Configure */
-        const double L = 10e-3;
-        const double C = 4.7e-6;
+        const double L = 10e-3,
+                     C = 4.7e-6,
+                     R = 1.0,
+                     Vp = 1.0;
         ret = circuit->netlist()->configComponent("L1", "L", csimModel::Variant(csimModel::Variant::VariantDouble).setDouble(L));
         ASSERT_EQ(CERR_SUCCEEDED, ret);
         ret = circuit->netlist()->configComponent("C1", "C", csimModel::Variant(csimModel::Variant::VariantDouble).setDouble(C));
         ASSERT_EQ(CERR_SUCCEEDED, ret);
-        ret = circuit->netlist()->configComponent("R1", "R", csimModel::Variant(csimModel::Variant::VariantDouble).setDouble(1.0));
+        ret = circuit->netlist()->configComponent("R1", "R", csimModel::Variant(csimModel::Variant::VariantDouble).setDouble(R));
         ASSERT_EQ(CERR_SUCCEEDED, ret);
-        ret = circuit->netlist()->configComponent("V1", "Vp", csimModel::Variant(csimModel::Variant::VariantDouble).setDouble(1.0));
+        ret = circuit->netlist()->configComponent("V1", "Vp", csimModel::Variant(csimModel::Variant::VariantDouble).setDouble(Vp));
         ASSERT_EQ(CERR_SUCCEEDED, ret);
         ret = circuit->netlist()->configComponent("V1", "freq", csimModel::Variant(csimModel::Variant::VariantDouble).setDouble(50.0));
         ASSERT_EQ(CERR_SUCCEEDED, ret);
@@ -88,11 +90,10 @@ namespace csim
         /* AC analysis */
         AnalyzerBase *analyzer = Analyzers::createInstance("AC", circuit);
         ASSERT_NE(nullptr, analyzer);
-        const double fstart = 1.0 / (2 * M_PI * std::sqrt(L * C));
         analyzer->property().setProperty("fstart", csimModel::Variant(csimModel::Variant::VariantDouble).setDouble(fstart));
-        analyzer->property().setProperty("fstop", csimModel::Variant(csimModel::Variant::VariantDouble).setDouble(800));
+        analyzer->property().setProperty("fstop", csimModel::Variant(csimModel::Variant::VariantDouble).setDouble(fstop));
         analyzer->property().setProperty("fpoints", csimModel::Variant(csimModel::Variant::VariantUint32).setUint32(50));
-        
+        analyzer->property().setProperty("fspace", csimModel::Variant(csimModel::Variant::VariantString).setString(fspace));
         unsigned int n_gnd, n1;
         ret = circuit->netlist()->getTermlNode("R1", 0, &n1);
         EXPECT_EQ(CERR_SUCCEEDED, ret);
@@ -107,14 +108,18 @@ namespace csim
 
         /* Check solution vector of AC analyzer */
         const Variable &F = dset.getIndependentVar("frequency");
-        EXPECT_NEAR(F.at(0).real(), fstart, epsilon_linear);
         const Variable &Vgnd = dset.getDependentVar("voltage", analyzer->makeVarName("V", n_gnd));
         const Variable &Vn1 = dset.getDependentVar("voltage", analyzer->makeVarName("V", n1));
-        csimModel::MComplex volt = Vn1.at(0) - Vgnd.at(0);
-        double mag = std::abs(volt);
-        double phase = 180.0 * std::arg(volt) / M_PI;
-        EXPECT_NEAR(mag, 1.0, epsilon_linear);
-        EXPECT_NEAR(phase, 0.0, epsilon_linear);
+        for(size_t i=0; i<F.getNumValues(); ++i) {
+            csimModel::MComplex _volt = Vn1.at(i) - Vgnd.at(i);
+            auto volt = std::complex(_volt.real(), _volt.imag());
+            double omega = F.at(i).real() * 2 * M_PI;
+            std::complex<double> z(R, omega*L - 1.0/(omega * C));
+            auto Ic = Vp / z;
+            double mag = std::abs(R*Ic);
+            EXPECT_NEAR(mag, std::abs(volt), epsilon_linear);
+            EXPECT_NEAR(std::arg(volt), std::arg(Ic), epsilon_linear);
+        }
 
         delete analyzer;
         delete circuit;
@@ -122,6 +127,21 @@ namespace csim
         delete e_L;
         delete e_CAP;
         delete e_VAC;
+    }
+    TEST(tstACLinearCircuit, circuit_LC_sweep)
+    {
+        tstACLinearCircuit_helper("lin", 500, 800);
+        tstACLinearCircuit_helper("log", 500, 800);
+        tstACLinearCircuit_helper("dec", 50, 1000);
+        tstACLinearCircuit_helper("oct", 50, 1000);
+    }
+
+    TEST(tstACLinearCircuit, reverse_sweep)
+    {
+        tstACLinearCircuit_helper("lin", 700, 100);
+        tstACLinearCircuit_helper("log", 700, 100);
+        tstACLinearCircuit_helper("dec", 1000, 10);
+        tstACLinearCircuit_helper("oct", 1000, 10);
     }
 
 } // namespace

@@ -19,6 +19,8 @@ namespace csim
 {
     int SweepOctave::init(double start, double stop, int points)
     {
+        if (start > stop)
+            std::swap(start, stop);
         return SweepLogarithm::init(start, stop, int(((log10(stop) - log10(start)) / log10(8.0)) * points));
     }
 }

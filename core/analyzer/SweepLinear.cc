@@ -20,6 +20,8 @@ namespace csim
 {
     int SweepLinear::init(double start, double stop, int points)
     {
+        if (start > stop)
+            std::swap(start, stop);
         m_start = start;
         m_step = (stop - start) / (points - 1);
         return 0;

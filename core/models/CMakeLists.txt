@@ -60,6 +60,7 @@ add_library(
 
 macro(add_csim_model target_name)
     target_link_libraries(${target_name} csim)
+    add_coverage(${target_name})
 endmacro()
 
 add_csim_model(csimModelResistor)

@@ -37,10 +37,23 @@ add_executable(tstall
 target_link_libraries(tstall pthread csim)
 add_coverage(tstall)
 
+if (enable_coverage)
+    add_custom_target(clear_cov
+        WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
+        COMMAND ${CMAKE_COMMAND} -DPROJECT_BINARY_DIR="${PROJECT_BINARY_DIR}" -P "${CMAKE_CURRENT_SOURCE_DIR}/clear_coverage.cmake"
+        COMMENT "Clearing code coverage reports...")
+    
+    add_custom_target(clean_gcno
+        WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
+        COMMAND ${CMAKE_COMMAND} -DPROJECT_BINARY_DIR="${PROJECT_BINARY_DIR}" -P "${CMAKE_CURRENT_SOURCE_DIR}/clear_coverage_no.cmake"
+        COMMENT "Clearing gcno...")
+else ()
+    add_custom_target(clear_cov)
+endif ()
 
 add_custom_target(check COMMAND ${CMAKE_COMMAND} -E env LD_LIBRARY_PATH=${CMAKE_BINARY_DIR} ${CMAKE_BINARY_DIR}/tstall
                         COMMENT "Running tests..."
-                        DEPENDS tstall)
+                        DEPENDS clear_cov)
 
 if (enable_coverage)
     find_program(CURL_EXECUTABLE curl)
@@ -51,23 +64,17 @@ if (enable_coverage)
 
     set(COVERALLS_FILE ${CMAKE_BINARY_DIR}/coveralls.json)
 
-    add_custom_target(clear_cov
-        WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
-        COMMAND ${CMAKE_COMMAND} -DPROJECT_BINARY_DIR="${PROJECT_BINARY_DIR}" -P "${CMAKE_CURRENT_SOURCE_DIR}/clear_coverage.cmake"
-        COMMENT "Clearing code coverage reports..."
-        DEPENDS check)
-
     add_custom_target(gen_cov_report
         WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
         COMMAND gcovr -r .. -e '../testcases/googletest/' --html-details -o coverage.html
         COMMENT "Generating code coverage reports..."
-        DEPENDS clear_cov)
+        DEPENDS check)
     
     add_custom_target(gen_coveralls
         WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
         COMMAND gcovr -r .. -e '../testcases/googletest/' --coveralls -o ${COVERALLS_FILE}
         COMMENT "Generating code coverage for coveralls..."
-        DEPENDS clear_cov)
+        DEPENDS check)
     
     add_custom_target(coveralls_upload
         # Upload the JSON to coveralls.

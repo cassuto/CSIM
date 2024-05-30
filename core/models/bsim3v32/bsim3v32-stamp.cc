@@ -140,12 +140,14 @@ namespace csimModel
 
         double m;
 
+#ifdef VERBOSE_DEBUG
         printf("CKTstate1:\n");
         for (int kk = 0; kk < BSIM3v32numStates; kk++)
         {
             printf("%d %lf\n", kk, getIntegratorX(kk)->get(1));
         }
         printf("\n");
+#endif
 
         struct bsim3v32SizeDependParam *pParam;
         int ByPass, Check, ChargeComputationNeeded, error;
@@ -219,9 +221,11 @@ namespace csimModel
                 vbs = model->BSIM3v32type * (getU(getNode(this->BSIM3v32bNode)).real() - getU(getNode(this->BSIM3v32sNodePrime)).real());
                 vgs = model->BSIM3v32type * (getU(getNode(this->BSIM3v32gNode)).real() - getU(getNode(this->BSIM3v32sNodePrime)).real());
                 vds = model->BSIM3v32type * (getU(getNode(this->BSIM3v32dNodePrime)).real() - getU(getNode(this->BSIM3v32sNodePrime)).real());
+#ifdef VERBOSE_DEBUG
                 printf("vbs = %lf\n", vbs);
                 printf("vgs = %lf\n", vgs);
                 printf("vds = %lf\n", vds);
+#endif
                 qdef = model->BSIM3v32type * (getU(getNode(this->BSIM3v32qNode)).real());
 #ifndef PREDICTOR
             }
@@ -2711,7 +2715,9 @@ namespace csimModel
             }
         }
         getIntegratorX(BSIM3v32vbs)->set(0, vbs);
+#ifdef VERBOSE_DEBUG
         std::cout << "set vbd=" << vbd << "\n";
+#endif
         getIntegratorX(BSIM3v32vbd)->set(0, vbd);
         getIntegratorX(BSIM3v32vgs)->set(0, vgs);
         getIntegratorX(BSIM3v32vds)->set(0, vds);

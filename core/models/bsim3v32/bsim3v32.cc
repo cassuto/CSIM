@@ -576,7 +576,9 @@ namespace csimModel
 
     int BSIM3V32::iterateDC()
     {
+#ifdef VERBOSE_DEBUG
         std::cout << "mod=" << std::hex << getEnvironment()->getCKTmode() << std::endl;
+#endif
         return stampDCTran(getEnvironment());
     }
 

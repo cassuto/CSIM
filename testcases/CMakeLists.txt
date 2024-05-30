@@ -41,20 +41,44 @@ if (enable_coverage)
                                 -ftest-coverage)
 endif ()
 
-add_custom_target(check COMMAND tstall
+
+add_custom_target(check COMMAND ${CMAKE_COMMAND} -E env LD_LIBRARY_PATH=${CMAKE_BINARY_DIR} ${CMAKE_BINARY_DIR}/tstall
+                        COMMENT "Running tests..."
                         DEPENDS tstall)
 
 if (enable_coverage)
-    add_custom_target(run_cov
-        COMMAND  tstall
-        COMMENT "Running tests..."
-        DEPENDS tstall)
+    find_program(CURL_EXECUTABLE curl)
+
+    if (NOT CURL_EXECUTABLE)
+        message(FATAL_ERROR "Coveralls: curl not found! Aborting")
+    endif()
+
+    set(COVERALLS_FILE ${CMAKE_BINARY_DIR}/coveralls.json)
 
     add_custom_target(gen_cov_report
         WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
         COMMAND gcovr -r .. -e '../testcases/googletest/' --html-details -o coverage.html
         COMMENT "Generating code coverage reports..."
-        DEPENDS run_cov)
+        DEPENDS check)
+    
+    add_custom_target(gen_coveralls
+        WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
+        COMMAND gcovr -r .. -e '../testcases/googletest/' --coveralls -o ${COVERALLS_FILE}
+        COMMENT "Generating code coverage for coveralls..."
+        DEPENDS check)
+    
+    add_custom_target(coveralls_upload
+        # Upload the JSON to coveralls.
+        COMMAND ${CURL_EXECUTABLE}
+                -S -F json_file=@${COVERALLS_FILE}
+                https://coveralls.io/api/v1/jobs
+
+        DEPENDS gen_coveralls
+
+        WORKING_DIRECTORY ${PROJECT_BINARY_DIR}
+        COMMENT "Uploading coveralls output...")
 
     add_custom_target(coverage DEPENDS gen_cov_report)
+
+    add_custom_target(coveralls DEPENDS coveralls_upload)
 endif ()

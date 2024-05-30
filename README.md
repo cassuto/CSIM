@@ -1,3 +1,5 @@
+[![Coverage Status](https://coveralls.io/repos/github/cassuto/CSIM/badge.svg)](https://coveralls.io/github/cassuto/CSIM)
+
 # CSIM
 
 This is a SPICE-like analog circuit simulator, for DC/AC Sweep and Transient (time-domain) analysis.
@@ -43,16 +45,17 @@ Build unit tests with code coverage:
 * make -j
 
 ### Run
-Before that, we may need to specify the path for dynamic libraries:
-* export LD_LIBRARY_PATH=\`pwd\`
-
 Running tests with code coverage:
 * make coverage
+
+The result will be reported in build/coverage.html
 
 Running tests without coverage:
 * make check
 
-(or ./tstall)
+or
+* export LD_LIBRARY_PATH=\`pwd\`
+* ./tstall
 
 ### API document
 Generating documents:

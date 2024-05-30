@@ -69,3 +69,4 @@ if (enable_testcases)
 endif ()
 
 add_subdirectory("${PROJECT_SOURCE_DIR}/doc")
+

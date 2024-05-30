@@ -6,10 +6,6 @@ include_directories(
     "${CMAKE_CURRENT_SOURCE_DIR}/googletest"
 )
 
-add_library(gtest "${CMAKE_CURRENT_SOURCE_DIR}/googletest/src/gtest-all.cc")
-add_library(gtest_main "${CMAKE_CURRENT_SOURCE_DIR}/googletest/src/gtest_main.cc")
-target_link_libraries(gtest pthread)
-
 set(TEST_SRCS
     "${CMAKE_CURRENT_SOURCE_DIR}/tstLoader.cc"
     "${CMAKE_CURRENT_SOURCE_DIR}/tstLinearSolver.cc"
@@ -33,7 +29,32 @@ set(TEST_SRCS
     "${CMAKE_CURRENT_SOURCE_DIR}/tstBSIM3v32.cc"
 )
 
-add_executable(tstall ${TEST_SRCS})
-target_link_libraries(tstall gtest gtest_main csim)
+add_executable(tstall
+    "${CMAKE_CURRENT_SOURCE_DIR}/googletest/src/gtest-all.cc"
+    "${CMAKE_CURRENT_SOURCE_DIR}/googletest/src/gtest_main.cc"
+    ${TEST_SRCS}
+)
+target_link_libraries(tstall pthread csim)
+if (enable_coverage)
+    target_compile_options(tstall PRIVATE
+                                -fprofile-arcs
+                                -ftest-coverage)
+endif ()
 
-add_custom_target(check COMMAND tstall)
+add_custom_target(check COMMAND tstall
+                        DEPENDS tstall)
+
+if (enable_coverage)
+    add_custom_target(run_cov
+        COMMAND  tstall
+        COMMENT "Running tests..."
+        DEPENDS tstall)
+
+    add_custom_target(gen_cov_report
+        WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
+        COMMAND gcovr -r .. -e '../testcases/googletest/' --html-details -o coverage.html
+        COMMENT "Generating code coverage reports..."
+        DEPENDS run_cov)
+
+    add_custom_target(coverage DEPENDS gen_cov_report)
+endif ()

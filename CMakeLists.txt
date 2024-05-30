@@ -2,12 +2,21 @@ cmake_minimum_required(VERSION 3.9)
 project(fastcsim)
 
 option(enable_testcases "Build all of tests." ON)
+option(enable_coverage "Test coverage." OFF)
 
 set(COMMON_WARNINGS					"-Wall -Wno-unused-function -Wno-unused-variable")
 set(CMAKE_CXX_FLAGS           		"${COMMON_WARNINGS}")
-set(CMAKE_CXX_FLAGS_DEBUG           "-g")
-set(CMAKE_CXX_FLAGS_RELEASE         "-O2")
-set(CMAKE_CXX_FLAGS_PROFILE         "-O2 -pg")
+
+if (enable_coverage)
+	message(WARNING "Compiler optimizations are disabled, as they are not expected for coverage tests.")
+	set(CMAKE_CXX_FLAGS_DEBUG           "-O0 -g")
+	set(CMAKE_CXX_FLAGS_RELEASE         "-O0")
+	set(CMAKE_CXX_FLAGS_PROFILE         "-O0 -pg")
+else ()
+	set(CMAKE_CXX_FLAGS_DEBUG           "-g")
+	set(CMAKE_CXX_FLAGS_RELEASE         "-O2")
+	set(CMAKE_CXX_FLAGS_PROFILE         "-O2 -pg")
+endif ()
 
 set(CMAKE_MODULE_LINKER_FLAGS_PROFILE "-pg")
 set(CMAKE_SHARED_LINKER_FLAGS_PROFILE "-pg")
@@ -53,7 +62,6 @@ include_directories(
 )
 
 add_subdirectory("${PROJECT_SOURCE_DIR}/core/")
-add_subdirectory("${PROJECT_SOURCE_DIR}/core/models")
 
 if (enable_testcases)
 	enable_testing()

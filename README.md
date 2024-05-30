@@ -36,15 +36,27 @@ TODO:
 
 ## Guides
 
-Build:
+### Build
+Build unit tests with code coverage:
 * mkdir build && cd build
-* cmake .. -Denable_testcases=ON -DCMAKE_BUILD_TYPE=Debug    (or Release)
-* make -j8
+* cmake .. -Denable_testcases=ON -Denable_coverage=ON -DCMAKE_BUILD_TYPE=Debug
+* make -j
 
-Build documents:
-* Doxygen needs to be installed. If not, rerun cmake after the installation
-* make docs
-
-Run regression tests:
+### Run
+Before that, we may need to specify the path for dynamic libraries:
 * export LD_LIBRARY_PATH=\`pwd\`
-* ./tstall
+
+Running tests with code coverage:
+* make coverage
+
+Running tests without coverage:
+* make check
+
+(or ./tstall)
+
+### API document
+Generating documents:
+
+Before that, Doxygen needs to be installed. If not, rerun cmake after the installation.
+
+* make docs

@@ -1,6 +1,7 @@
 cmake_minimum_required(VERSION 3.9)
 project(csim)
 
+add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/models")
 add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/utils")
 
 set(SRCS
@@ -105,4 +106,5 @@ add_library(${PROJECT_NAME} SHARED
     ${BISON_ALGEBRAIC_OUT}
 )
 
-target_link_libraries(${PROJECT_NAME} csimUtils)
+target_link_libraries(${PROJECT_NAME} csimUtils gcov)
+
